@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ComboBox">
+        <attr name="title" format="string"/>
+        <attr name="checkedContent" format="string"/>
+        <attr name="unCheckContent" format="string"/>
+        <attr name="ischeck" format="boolean"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="HeaderView">
+        <attr name="pullText" format="string"/>
+        <attr name="readyText" format="string"/>
+        <attr name="releaseText" format="string"/>
+        <attr name="refreshText" format="string"/>
+        <attr name="status" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="pull" value="1"/>
+            <enum name="ready" value="2"/>
+            <enum name="release" value="3"/>
+            <enum name="refreshing" value="4"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="DragItemView">
+        <attr name="dragStyle" format="enum">
+            <enum name="dragTransparent" value="0"/>
+            <enum name="dragShowButton" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <attr name="styleTextColor" format="color|reference"></attr>
+    <attr name="mainBackground" format="color|reference"></attr>
+    <attr name="styleTextColor55" format="color|reference"></attr>
+    <attr name="styleBackgroundIconColor" format="color|reference"></attr>
+    <attr name="styleCardBackground" format="color|reference"></attr>
+</resources>

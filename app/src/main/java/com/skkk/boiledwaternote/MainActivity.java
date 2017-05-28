@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.skkk.boiledwaternote.Views.NoteListFragment;
+import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
     private void initUI() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

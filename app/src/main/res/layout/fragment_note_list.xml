@@ -2,12 +2,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.skkk.boiledwaternote.Views.NoteListFragment">
+    tools:context="com.skkk.boiledwaternote.Views.Home.NoteListFragment">
 
-    <TextView
-        android:id="@+id/tv_test"
+
+    <com.skkk.boiledwaternote.CostomViews.RefreshLayout.RefreshLayout
+        android:id="@id/rl_note_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/rv_note_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.skkk.boiledwaternote.CostomViews.RefreshLayout.RefreshLayout>
 
 </FrameLayout>

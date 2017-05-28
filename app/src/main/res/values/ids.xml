@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="fl_container" type="id">fl_container</item>
+    <item name="rl_note_list" type="id">rl_note_list</item>
+    <item name="rv_note_list" type="id">rv_note_list</item>
+    <item name="ll_hide" type="id">ll_hide</item>
+    <item name="ll_show" type="id">ll_show</item>
+    <item name="tb_note_edit" type="id">tb_note_edit</item>
+    <item name="tv_item_recylcer" type="id">tv_item_recylcer</item>
+    <item name="iv_item_move" type="id">iv_item_move</item>
+    <item name="rv_note_edit" type="id">rv_note_edit</item>
 </resources>
