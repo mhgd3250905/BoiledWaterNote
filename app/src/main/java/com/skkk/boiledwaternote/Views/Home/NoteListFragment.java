@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.RefreshLayout.RefreshLayout;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
@@ -66,7 +67,6 @@ public class NoteListFragment extends Fragment {
         initUI(view);       //初始化UI
         initEvent();        //设置各种事件
     }
-
 
     /**
      * 初始化UI
@@ -132,9 +132,18 @@ public class NoteListFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //请求码是新建一个Note
+        if (requestCode== Configs.START_NEW_NOTE){
+            adapter.setDataList(getDefaultData());
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
     }
-
 
 }

@@ -116,7 +116,7 @@ public class NoteEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //退出之前我们需要判断一下时候有最后一行文字没有保存的数据列表中
-//                checkAndSyncItem(rvNoteEdit);
+                checkAndSyncItem(rvNoteEdit);
                 presenter.saveNote(presenter.analysisData2NoteStr(mDataList));
                 onBackPressed();
             }
@@ -138,10 +138,9 @@ public class NoteEditActivity extends AppCompatActivity {
      */
     private List<NoteEditModel> loadData() {
         List<NoteEditModel> dates = new ArrayList<>();
-        dates.add(new NoteEditModel("这里是第" + 1 + "条item", NoteEditModel.Flag.TEXT, null));
+        dates.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
         return dates;
     }
-
 
     /**
      * 返回值

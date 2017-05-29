@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -67,9 +68,23 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, NoteEditActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, NoteEditActivity.class),Configs.START_NEW_NOTE);
             }
         });
+    }
+
+    /**
+     * 返回值处理啊
+     * @param requestCode 请求码
+     * @param resultCode    结果码
+     * @param data  数据
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //抛转到NoteList界面
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fl_container);
+        currentFragment.onActivityResult(requestCode,resultCode,data);
     }
 
     /**

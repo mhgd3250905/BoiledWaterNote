@@ -11,26 +11,22 @@ package com.skkk.boiledwaternote.Views.Home;
 */
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.R;
 
-import java.io.File;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import id.zelory.compressor.Compressor;
 
 /**
  * RecyclerView数据适配器
@@ -77,8 +73,6 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.MyViewHold
         String title = null;       //显示标题
         String imagePath=null;   //图片路径
 
-        //设置图片初始化隐藏
-        holder.ivNoteListImage.setVisibility(View.GONE);
 
         if (!TextUtils.isEmpty(content)){
             String[] split = content.split(SEPARATED_FLAG);
@@ -108,20 +102,6 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.MyViewHold
                     break;
                 }
             }
-            if (!TextUtils.isEmpty(imagePath)){
-                holder.ivNoteListImage.setVisibility(View.VISIBLE);
-
-                //压缩图片
-                Bitmap bitmapCompress = new Compressor.Builder(context)
-                        .setMaxWidth(300)
-                        .setMaxHeight(300)
-                        .setQuality(100)
-                        .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                        .build()
-                        .compressToBitmap(new File(imagePath));
-
-                holder.ivNoteListImage.setImageBitmap(bitmapCompress);
-            }
         }
 
 
@@ -132,13 +112,23 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.MyViewHold
         return dataList.size();
     }
 
+    /**
+     * 数据操作
+     * @return
+     */
+    public List<Note> getDataList() {
+        return dataList;
+    }
+
+    public void setDataList(List<Note> dataList) {
+        this.dataList = dataList;
+    }
+
     class MyViewHolder extends RecyclerView.ViewHolder{
         @Bind(R.id.tv_note_list_title)
         public TextView tvNoteListTitle;
         @Bind(R.id.tv_note_list_time)
         public TextView tvNoteListTime;
-        @Bind(R.id.iv_note_list_image)
-        public ImageView ivNoteListImage;
         @Bind(R.id.ll_show)
         public LinearLayout llShow;
         @Bind(R.id.ll_hide)

@@ -26,7 +26,7 @@ public class NoteListPresenter implements NoteListable {
     public List<Note> getNotes() {
         DaoSession session = DBUtils.getInstance(context).getSession();
         NoteDao noteDao = session.getNoteDao();
-        List<Note> list = noteDao.queryBuilder().list();
+        List<Note> list = noteDao.queryBuilder().orderDesc(NoteDao.Properties.CreateTime).list();
         return list;
     }
 }

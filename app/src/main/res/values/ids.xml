@@ -12,4 +12,5 @@
     <item name="tv_note_list_time" type="id">tv_note_list_time</item>
     <item name="tv_note_list_title" type="id">tv_note_list_title</item>
     <item name="iv_note_list_image" type="id">iv_note_list_image</item>
+    <item name="btn_delete" type="id">btn_delete</item>
 </resources>

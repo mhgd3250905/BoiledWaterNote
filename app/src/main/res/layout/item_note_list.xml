@@ -23,9 +23,14 @@
                 android:background="#22000000"
                 android:orientation="horizontal">
 
-                <com.skkk.boiledwaternote.CostomViews.DragItemView.DragBounceItem
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                <Button
+                    android:background="#fff"
+                    android:id="@id/btn_delete"
+                    android:text="Delete"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -33,12 +38,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#fff"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="10dp">
+
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_weight="3"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
                     <TextView
@@ -74,12 +85,7 @@
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@id/iv_note_list_image"
-                    android:layout_margin="5dp"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                </android.support.v7.widget.CardView>
 
             </LinearLayout>
         </com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemView>
