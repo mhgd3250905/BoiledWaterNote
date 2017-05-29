@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.Views.NoteEdit;
+package com.skkk.boiledwaternote.Modles;
 
 /**
  * Created by admin on 2017/4/23.
@@ -9,18 +9,18 @@ package com.skkk.boiledwaternote.Views.NoteEdit;
 * 作    者：ksheng
 * 时    间：2017/4/23$ 19:21$.
 */
-public class DataModel {
+public class NoteEditModel {
     private String content;
     public Flag itemFlag;
     public String imagePath;
 
-    public DataModel(String content, Flag itemFlag, String imagePath) {
+    public NoteEditModel(String content, Flag itemFlag, String imagePath) {
         this.content = content;
         this.itemFlag = itemFlag;
         this.imagePath = imagePath;
     }
 
-    enum Flag{
+    public enum Flag {
         TEXT,
         IMAGE
     }

@@ -9,9 +9,6 @@ import com.skkk.boiledwaternote.Modles.gen.NoteDao;
 
 import java.util.List;
 
-/**
- * Created by admin on 2017/5/28.
- */
 /*
 * 
 * 描    述：用于NoteList界面的管理

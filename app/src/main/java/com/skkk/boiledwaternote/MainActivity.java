@@ -1,9 +1,9 @@
 package com.skkk.boiledwaternote;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
+import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,34 +25,30 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar toolbar;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initUI();               //初始化UI
+        initEvent();            //初始化各种事件
         addDefaultFragment();   //添加进入时候默认的Fragment
 
     }
-
-
 
     /**
      * 初始化UI
      */
     private void initUI() {
+        //toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        //FAB悬浮按钮
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
+        //侧滑菜单
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -63,18 +60,32 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
+     * 初始化各种点击事件
+     */
+    private void initEvent() {
+        //fab点击事件
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, NoteEditActivity.class));
+            }
+        });
+    }
+
+    /**
      * 添加进入时候默认的Fragment
      */
     private void addDefaultFragment() {
         NoteListFragment noteListFragment = NoteListFragment.newInstance("a", "b");
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fl_container,noteListFragment)
+                .replace(R.id.fl_container, noteListFragment)
                 .commit();
     }
 
     /**
      * 加入双击退出提示
+     *
      * @param keyCode
      * @param event
      * @return
@@ -83,8 +94,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
-        if(keyCode == KeyEvent.KEYCODE_BACK)
-        {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -120,6 +130,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * 创建toolbar右侧目录
+     *
      * @param menu
      * @return
      */
@@ -132,6 +143,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * toolbar右侧菜单点击事件
+     *
      * @param item
      * @return
      */
@@ -152,6 +164,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * 侧滑菜单点击事件
+     *
      * @param item
      * @return
      */

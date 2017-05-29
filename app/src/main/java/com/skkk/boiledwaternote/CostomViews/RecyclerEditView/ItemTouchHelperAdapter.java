@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.Views.NoteEdit;
+package com.skkk.boiledwaternote.CostomViews.RecyclerEditView;
 
 /**
  * Created by admin on 2017/4/22.

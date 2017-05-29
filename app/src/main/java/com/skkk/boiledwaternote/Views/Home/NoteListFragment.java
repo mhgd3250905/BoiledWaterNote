@@ -30,9 +30,8 @@ public class NoteListFragment extends Fragment {
     private String mParam2;
     private RefreshLayout refreshLayout;
     private RecyclerView rvNoteList;
-    private ArrayList<String> mDataList;
+    private List<Note> mDataList;
     private HeaderAdapter adapter;
-    private ArrayList<String> defaultData;
 
 
     public static NoteListFragment newInstance(String param1, String param2) {
@@ -77,8 +76,7 @@ public class NoteListFragment extends Fragment {
         rvNoteList = (RecyclerView) view.findViewById(R.id.rv_note_list);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
         rvNoteList.setLayoutManager(new LinearLayoutManager(getContext()));
-        mDataList = new ArrayList<>();
-        mDataList = getDefaultData(mDataList);
+        mDataList = getDefaultData();
         adapter = new HeaderAdapter(getContext(), mDataList);
         rvNoteList.setAdapter(adapter);
     }
@@ -87,15 +85,12 @@ public class NoteListFragment extends Fragment {
      * 获取数据
      * @return
      */
-    public ArrayList<String> getDefaultData(ArrayList<String> dataList) {
+    public List<Note> getDefaultData() {
+        List<Note> notes=new ArrayList<>();
         if (noteListPresenter!=null){
-            dataList.clear();
-            List<Note> notes = noteListPresenter.getNotes();
-            for (int i = 0; i < notes.size(); i++) {
-                dataList.add(notes.get(i).getContent());
-            }
+            notes = noteListPresenter.getNotes();
         }
-        return dataList;
+        return notes;
     }
 
     /**

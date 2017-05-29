@@ -10,6 +10,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdapter;
+import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
+import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
 
 import java.io.File;
@@ -27,47 +30,53 @@ import id.zelory.compressor.Compressor;
 * 作    者：ksheng
 * 时    间：2017/4/22$ 22:34$.
 */
-public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> implements ItemTouchHelperAdapter {
+public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditViewHolder> implements ItemTouchHelperAdapter {
     private Context context;
-    private List<DataModel> mDataList;
+    private List<NoteEditModel> mDataList;
     private OnStartDragListener onStartDragListener;
 
+    /**
+     * 设置滑动拖拽监听
+     * @param onStartDragListener
+     */
     public void setOnStartDragListener(OnStartDragListener onStartDragListener) {
         this.onStartDragListener = onStartDragListener;
     }
 
-    public MyAdapter(Context context, List<DataModel> mDataList) {
+
+    public NoteEditAdapter(Context context, List<NoteEditModel> mDataList) {
         this.context = context;
         this.mDataList = mDataList;
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        MyViewHolder viewHolder = new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.item_note_edit, parent, false));
+    public NoteEditViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        NoteEditViewHolder viewHolder = new NoteEditViewHolder(LayoutInflater.from(context).inflate(R.layout.item_note_edit, parent, false));
         return viewHolder;
     }
 
-    public void setmDataList(List<DataModel> mDataList) {
+    public void setmDataList(List<NoteEditModel> mDataList) {
         this.mDataList = mDataList;
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
-        DataModel itemDate=mDataList.get(position);
+    public void onBindViewHolder(final NoteEditViewHolder holder, final int position) {
+        NoteEditModel itemDate=mDataList.get(position);
 
-        if (itemDate.getItemFlag()== DataModel.Flag.TEXT) {//如果是文本Item
-            holder.tvItem.setText(mDataList.get(position).getContent());
+        //判断我们加载的到底是什么类型的数据
+        if (itemDate.getItemFlag()== NoteEditModel.Flag.TEXT) {//如果是文本Item
+            holder.etItem.setText(mDataList.get(position).getContent());
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.height=ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
-            holder.tvItem.setVisibility(View.VISIBLE);
+            holder.etItem.setVisibility(View.VISIBLE);
             holder.ivItemImage.setVisibility(View.GONE);
             holder.ivItemMove.setVisibility(View.GONE);
 
-        }else if (itemDate.getItemFlag()== DataModel.Flag.IMAGE){//如果是图片Item
+        }else if (itemDate.getItemFlag()== NoteEditModel.Flag.IMAGE){//如果是图片Item
             holder.ivItemImage.setVisibility(View.VISIBLE);
             holder.ivItemMove.setVisibility(View.VISIBLE);
-            holder.tvItem.setVisibility(View.GONE);
+            holder.etItem.setVisibility(View.GONE);
 
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 
@@ -88,6 +97,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> implements Ite
             if (itemDate.getImagePath()==null){
                 return;
             }
+            //压缩图片
             Bitmap bitmapFromUri = new Compressor.Builder(context)
                     .setMaxWidth(540)
                     .setMaxHeight(960)
@@ -100,7 +110,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> implements Ite
             holder.ivItemImage.setImageBitmap(bitmapFromUri);
         }
 
-        Log.d("MyAdapter", "holder.itemView.getLayoutParams().height:" + holder.itemView.getLayoutParams().height);
+        Log.d("NoteEditAdapter", "holder.itemView.getLayoutParams().height:" + holder.itemView.getLayoutParams().height);
     }
 
     @Override

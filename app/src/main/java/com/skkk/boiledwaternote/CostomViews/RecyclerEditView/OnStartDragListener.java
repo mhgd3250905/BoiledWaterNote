@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.Views.NoteEdit;
+package com.skkk.boiledwaternote.CostomViews.RecyclerEditView;
 
 import android.support.v7.widget.RecyclerView;
 
