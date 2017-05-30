@@ -17,6 +17,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,25 +32,27 @@ import butterknife.ButterKnife;
 /**
  * RecyclerView数据适配器
  */
-public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.MyViewHolder>{
+public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyViewHolder>{
     private Context context;
     private List<Note> dataList;
     public OnItemClickListener onItemClickListener;
 
-    private String SEPARATED_FLAG="&";      //用来分隔不同条目传入的不同数据
-    private String SEPARATED_TEXT_FLAG="$|TEXT|$";      //用来分隔不同条目传入的不同数据
-    private String SEPARATED_IMAGE_FLAG="$|IMAGE|$";      //用来分隔不同条目传入的不同数据
+    private String SEPARATED_FLAG="☞";                      //用来分隔不同条目传入的不同数据
+    private
+    private String SEPARATED_TEXT_FLAG="$|TEXT|$";          //用来分隔不同条目传入的不同数据
+    private String SEPARATED_IMAGE_FLAG="$|IMAGE|$";        //用来分隔不同条目传入的不同数据
 
     public interface OnItemClickListener{
         void onItemClickListener(View view, int pos);
         void onDragButtonClickListener(View view,int pos);
+        void onItemDeleteClickListener(View view,int pos);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public HeaderAdapter(Context context, List<Note> dataList) {
+    public NoteListAdapter(Context context, List<Note> dataList) {
         this.context = context;
         this.dataList = dataList;
     }
@@ -93,6 +96,14 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.MyViewHold
                         onItemClickListener.onItemClickListener(v,pos);
                     }
                 });
+
+                holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int pos=position;
+                        onItemClickListener.onItemDeleteClickListener(v,pos);
+                    }
+                });
             }
 
             //获取图片：目前仅获取第一张图片
@@ -103,7 +114,6 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.MyViewHold
                 }
             }
         }
-
 
     }
 
@@ -133,6 +143,8 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.MyViewHold
         public LinearLayout llShow;
         @Bind(R.id.ll_hide)
         public LinearLayout llHide;
+        @Bind(R.id.btn_delete)
+        public Button btnDelete;
 
         public MyViewHolder(View itemView) {
             super(itemView);

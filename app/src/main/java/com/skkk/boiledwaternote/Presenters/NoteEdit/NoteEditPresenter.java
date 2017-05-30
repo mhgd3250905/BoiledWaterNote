@@ -26,7 +26,7 @@ import java.util.List;
 public class NoteEditPresenter implements NoteEditable {
     private final String TAG=NoteEditPresenter.class.getSimpleName();
 
-    private String SEPARATED_FLAG="&";      //用来分隔不同条目传入的不同数据
+    private String SEPARATED_FLAG="☞";      //用来分隔不同条目传入的不同数据
     private String SEPARATED_TEXT_FLAG="$|TEXT|$";      //用来分隔不同条目传入的不同数据
     private String SEPARATED_IMAGE_FLAG="$|IMAGE|$";      //用来分隔不同条目传入的不同数据
     private Context context;

@@ -13,4 +13,14 @@
     <item name="tv_note_list_title" type="id">tv_note_list_title</item>
     <item name="iv_note_list_image" type="id">iv_note_list_image</item>
     <item name="btn_delete" type="id">btn_delete</item>
+    <item name="iv_format_align_left" type="id">iv_format_align_left</item>
+    <item name="iv_format_align_center" type="id">iv_format_align_center</item>
+    <item name="iv_format_align_right" type="id">iv_format_align_right</item>
+    <item name="iv_format_blod" type="id">iv_format_blod</item>
+    <item name="iv_format_italic" type="id">iv_format_italic</item>
+    <item name="iv_format_list" type="id">iv_format_list</item>
+    <item name="iv_format_list_numbered" type="id">iv_format_list_numbered</item>
+    <item name="iv_format_quote" type="id">iv_format_quote</item>
+    <item name="iv_format_size" type="id">iv_format_size</item>
+    <item name="iv_format_underlined" type="id">iv_format_underlined</item>
 </resources>

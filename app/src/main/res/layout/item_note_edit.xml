@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
-    android:background="#fff">
+    android:layout_height="match_parent">
 
     <EditText
         android:background="@null"
@@ -10,7 +9,7 @@
         android:layout_marginRight="10dp"
         android:id="@id/tv_item_recylcer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="left|top"
         android:text="@string/app_name"
         android:textSize="30dp"

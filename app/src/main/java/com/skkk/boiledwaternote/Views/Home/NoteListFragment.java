@@ -32,7 +32,7 @@ public class NoteListFragment extends Fragment {
     private RefreshLayout refreshLayout;
     private RecyclerView rvNoteList;
     private List<Note> mDataList;
-    private HeaderAdapter adapter;
+    private NoteListAdapter adapter;
 
 
     public static NoteListFragment newInstance(String param1, String param2) {
@@ -77,7 +77,7 @@ public class NoteListFragment extends Fragment {
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
         rvNoteList.setLayoutManager(new LinearLayoutManager(getContext()));
         mDataList = getDefaultData();
-        adapter = new HeaderAdapter(getContext(), mDataList);
+        adapter = new NoteListAdapter(getContext(), mDataList);
         rvNoteList.setAdapter(adapter);
     }
 
@@ -115,8 +115,8 @@ public class NoteListFragment extends Fragment {
             }
         });
 
-        //设置Item点击事件以及拖拽是阿金
-        adapter.setOnItemClickListener(new HeaderAdapter.OnItemClickListener() {
+        //设置Item点击事件以及拖拽事件
+        adapter.setOnItemClickListener(new NoteListAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(View view, int pos) {
                 getContext().startActivity(new Intent(getContext(),NoteEditActivity.class));
@@ -124,9 +124,18 @@ public class NoteListFragment extends Fragment {
 
             @Override
             public void onDragButtonClickListener(View view, int pos) {
+//                mDataList.remove(pos);
+//                adapter.notifyItemRemoved(pos);
+//                adapter.notifyItemRangeChanged(0,adapter.getItemCount());
+            }
+
+            @Override
+            public void onItemDeleteClickListener(View view, int pos) {
+                Note note = mDataList.get(pos);
                 mDataList.remove(pos);
                 adapter.notifyItemRemoved(pos);
                 adapter.notifyItemRangeChanged(0,adapter.getItemCount());
+                noteListPresenter.deleteNote(note);
             }
         });
     }

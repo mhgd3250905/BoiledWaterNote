@@ -29,4 +29,13 @@ public class NoteListPresenter implements NoteListable {
         List<Note> list = noteDao.queryBuilder().orderDesc(NoteDao.Properties.CreateTime).list();
         return list;
     }
+
+    @Override
+    public void deleteNote(Note note) {
+        DaoSession session = DBUtils.getInstance(context).getSession();
+        NoteDao noteDao = session.getNoteDao();
+        noteDao.delete(note);
+    }
+
+
 }

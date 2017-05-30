@@ -2,6 +2,7 @@ package com.skkk.boiledwaternote.Views.NoteEdit;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -15,7 +16,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -60,6 +63,18 @@ public class NoteEditActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     private NoteEditPresenter presenter;
 
+    //bottomBar flag
+    private int FORMAT_ALIGN_FLAG=0;            //0-左 1-中后 2-右
+    private boolean FORMAT_BLOD=false;          //加粗
+    private boolean FORMAT_ITALIC=false;        //斜体
+    private boolean FORMAT_LIST=false;          //列表
+    private boolean FORMAT_LIST_NUMBERED=false; //数字列表
+    private boolean FORMAT_QUOTE=false;         //引用
+    private int FORMAT_SIZE=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
+    private boolean FORMAT_UNDERLINED=false;    //下划线
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,13 +106,59 @@ public class NoteEditActivity extends AppCompatActivity {
         rvNoteEdit.setAdapter(adapter);
         rvNoteEdit.setItemAnimator(new DefaultItemAnimator());
 
+        rvNoteEdit.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        View childViewUnder = rvNoteEdit.findChildViewUnder(event.getX(), event.getY());
+                        if (null==childViewUnder){      //如果通过坐标获取的Item是null，说明我们点击了item的下方空白区域
+                            //获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
+                            selectLastTextItem(rvNoteEdit,layoutManager);
+                        }
+                        break;
+                }
+                return false;
+            }
+        });
 
         //设置ItemTouchHelper
         callback = new MyItemTouchHelperCallback(this, adapter);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(rvNoteEdit);
 
+
     }
+
+    /**
+     * 获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
+     * @param rvNoteEdit
+     * @param layoutManager
+     */
+    private void selectLastTextItem(RecyclerView rvNoteEdit, LinearLayoutManager layoutManager) {
+        int lastPos = layoutManager.findLastCompletelyVisibleItemPosition();
+        View lastItem = rvNoteEdit.getChildAt(lastPos);
+        if (lastItem == null) {
+            return;
+        }
+        if (null != rvNoteEdit.getChildViewHolder(lastItem)) {
+            NoteEditViewHolder viewHolder = (NoteEditViewHolder) rvNoteEdit.getChildViewHolder(lastItem);
+            if (viewHolder.etItem.getVisibility() == View.VISIBLE
+                    && mDataList.get(mDataList.size() - 1).getItemFlag() == NoteEditModel.Flag.TEXT) {
+                //首先判断文本是可见的,那么就获取焦点呼出键盘
+                String lastText = viewHolder.etItem.getText().toString();
+                viewHolder.etItem.setSelection(lastText.length());
+                viewHolder.etItem.setFocusable(true);
+                viewHolder.etItem.setFocusableInTouchMode(true);
+                viewHolder.etItem.requestFocus();
+                InputMethodManager systemService
+                        = (InputMethodManager) viewHolder.etItem.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                systemService.showSoftInput(viewHolder.etItem, 0);
+            }
+        }
+    }
+
+
 
     /**
      * 初始化各种事件
@@ -130,11 +191,21 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         });
 
+        //设置底部标签栏位点击事件
+        initBottomBarEvent();
+    }
+
+
+    /**
+     * 初始化底部标签栏位的点击事件了
+     */
+    private void initBottomBarEvent() {
 
     }
 
     /**
      * 加载数据
+     * 这里默认加载一个文本类型的空数据
      */
     private List<NoteEditModel> loadData() {
         List<NoteEditModel> dates = new ArrayList<>();
@@ -218,4 +289,5 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         }
     }
+
 }
