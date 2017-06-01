@@ -63,15 +63,6 @@ public class NoteEditActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     private NoteEditPresenter presenter;
 
-    //bottomBar flag
-    private int FORMAT_ALIGN_FLAG=0;            //0-左 1-中后 2-右
-    private boolean FORMAT_BLOD=false;          //加粗
-    private boolean FORMAT_ITALIC=false;        //斜体
-    private boolean FORMAT_LIST=false;          //列表
-    private boolean FORMAT_LIST_NUMBERED=false; //数字列表
-    private boolean FORMAT_QUOTE=false;         //引用
-    private int FORMAT_SIZE=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
-    private boolean FORMAT_UNDERLINED=false;    //下划线
 
 
 
@@ -178,7 +169,7 @@ public class NoteEditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //退出之前我们需要判断一下时候有最后一行文字没有保存的数据列表中
                 checkAndSyncItem(rvNoteEdit);
-                presenter.saveNote(presenter.analysisData2NoteStr(mDataList));
+                presenter.saveNote(mDataList);
                 onBackPressed();
             }
         });
@@ -277,6 +268,7 @@ public class NoteEditActivity extends AppCompatActivity {
             if (lastItem == null) {
                 return;
             }
+
             if (null != rvNoteEdit.getChildViewHolder(lastItem)) {
                 NoteEditViewHolder viewHolder = (NoteEditViewHolder) rvNoteEdit.getChildViewHolder(lastItem);
                 if (viewHolder.etItem.getVisibility() == View.VISIBLE

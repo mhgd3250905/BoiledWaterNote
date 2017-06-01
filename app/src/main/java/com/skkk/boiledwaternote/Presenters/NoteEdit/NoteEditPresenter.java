@@ -3,6 +3,7 @@ package com.skkk.boiledwaternote.Presenters.NoteEdit;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Modles.DBUtils;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -35,39 +36,17 @@ public class NoteEditPresenter implements NoteEditable {
         this.context = context;
     }
 
-    /**
-     * 将编辑界面中的数据分析并转化为Note
-     * @return 一串包含了所有note信息的字符串
-     */
-    @Override
-    public String analysisData2NoteStr(List<NoteEditModel> noteEditModels){
-        StringBuffer sbContent=new StringBuffer();
-
-        for (int i = 0; i < noteEditModels.size(); i++) {
-            NoteEditModel model=noteEditModels.get(i);          //获取一个条目
-            switch (model.getItemFlag()){
-                case TEXT:                                      //文本类型保存文本
-                    sbContent.append(SEPARATED_TEXT_FLAG);
-                    sbContent.append(model.getContent());
-                    sbContent.append(SEPARATED_FLAG);
-                    break;
-                case IMAGE:                                     //图片类型保存图片链接
-                    sbContent.append(SEPARATED_IMAGE_FLAG);
-                    sbContent.append(model.getImagePath());
-                    sbContent.append(SEPARATED_FLAG);
-                    break;
-            }
-        }
-        Log.i(TAG, "analysisData2NoteStr: "+sbContent.toString());
-        return sbContent.toString();
-    }
 
     /**
      * 保存Note
-     * @param contentStr    内容字符串
+     * @param noteEditModels    内容字符串
      */
     @Override
-    public void saveNote(String contentStr) {
+    public void saveNote(List<NoteEditModel> noteEditModels) {
+
+        Gson gson=new Gson();
+        String contentJson = gson.toJson(noteEditModels);
+
         //获取数据库操作类
         DaoSession session = DBUtils.getInstance(context).getSession();
         NoteDao noteDao = session.getNoteDao();
@@ -75,22 +54,17 @@ public class NoteEditPresenter implements NoteEditable {
 
         Note note=new Note();
         note.setNid(System.currentTimeMillis());
-        note.setContent(contentStr);
+        note.setContent(contentJson);
         note.setCreateTime(new Date());
         note.setUpdateTime(new Date());
         noteDao.insert(note);
         Log.i(TAG, "saveNote: "+note.toString());
 
-        String[] contentArr = contentStr.split(SEPARATED_FLAG);
-        for (int i = 0; i < contentArr.length; i++) {
-            if (contentArr[i]==null){
-                break;
-            }
-            if (contentArr[i].startsWith(SEPARATED_IMAGE_FLAG)){
-                String imagePath=contentArr[i].substring(SEPARATED_FLAG.length(),contentArr[i].length());
+        for (int i = 0; i < noteEditModels.size(); i++) {
+            if (noteEditModels.get(i).getItemFlag()==NoteEditModel.Flag.IMAGE){
                 NoteImage noteImage=new NoteImage();
                 noteImage.setNoteId(note.getNid());
-                noteImage.setPath(imagePath);
+                noteImage.setPath(noteEditModels.get(i).getImagePath());
                 noteImageDao.insert(noteImage);
                 Log.i(TAG, "saveImage: "+noteImage.toString());
             }
