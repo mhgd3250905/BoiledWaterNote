@@ -16,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -62,8 +63,9 @@ public class NoteEditActivity extends AppCompatActivity {
     private NoteEditAdapter adapter;
     private LinearLayoutManager layoutManager;
     private NoteEditPresenter presenter;
+    private InputMethodManager imm;
 
-
+    private int currentPos;     //当前光标选择的item位置
 
 
     @Override
@@ -72,13 +74,14 @@ public class NoteEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note_edit);
         ButterKnife.bind(this);
         presenter = new NoteEditPresenter(this);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         initUI();           //初始化UI
         initEvent();        //初始化各种事件
     }
 
     @Override
     protected void onStop() {
-        checkAndSyncItem(rvNoteEdit);       //同步数据
+//        checkAndSyncItem(rvNoteEdit);       //同步数据
         super.onStop();
     }
 
@@ -100,12 +103,12 @@ public class NoteEditActivity extends AppCompatActivity {
         rvNoteEdit.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         View childViewUnder = rvNoteEdit.findChildViewUnder(event.getX(), event.getY());
-                        if (null==childViewUnder){      //如果通过坐标获取的Item是null，说明我们点击了item的下方空白区域
+                        if (null == childViewUnder) {      //如果通过坐标获取的Item是null，说明我们点击了item的下方空白区域
                             //获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
-                            selectLastTextItem(rvNoteEdit,layoutManager);
+                            selectLastTextItem(rvNoteEdit, layoutManager);
                         }
                         break;
                 }
@@ -123,6 +126,7 @@ public class NoteEditActivity extends AppCompatActivity {
 
     /**
      * 获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
+     *
      * @param rvNoteEdit
      * @param layoutManager
      */
@@ -133,7 +137,7 @@ public class NoteEditActivity extends AppCompatActivity {
             return;
         }
         if (null != rvNoteEdit.getChildViewHolder(lastItem)) {
-            NoteEditViewHolder viewHolder = (NoteEditViewHolder) rvNoteEdit.getChildViewHolder(lastItem);
+            NoteEditAdapter.NoteEditViewHolder viewHolder = (NoteEditAdapter.NoteEditViewHolder) rvNoteEdit.getChildViewHolder(lastItem);
             if (viewHolder.etItem.getVisibility() == View.VISIBLE
                     && mDataList.get(mDataList.size() - 1).getItemFlag() == NoteEditModel.Flag.TEXT) {
                 //首先判断文本是可见的,那么就获取焦点呼出键盘
@@ -142,13 +146,10 @@ public class NoteEditActivity extends AppCompatActivity {
                 viewHolder.etItem.setFocusable(true);
                 viewHolder.etItem.setFocusableInTouchMode(true);
                 viewHolder.etItem.requestFocus();
-                InputMethodManager systemService
-                        = (InputMethodManager) viewHolder.etItem.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                systemService.showSoftInput(viewHolder.etItem, 0);
+                imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }
     }
-
 
 
     /**
@@ -163,13 +164,23 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         });
 
+        //获取当前被选中的Item位置
+        adapter.setOnItemEditSelectedLintener(new NoteEditAdapter.OnItemEditSelectedLintener() {
+            @Override
+            public void onItemEditSelectedLintener(View view, int pos, boolean hasFocus) {
+                if (hasFocus){
+                    currentPos=pos;
+                    Log.i(TAG, "onItemEditSelectedLintener: 当前选择的Item编号为："+currentPos);
+                }
+            }
+        });
+
         //设置返回按钮点击事件
         tbNoteEdit.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //退出之前我们需要判断一下时候有最后一行文字没有保存的数据列表中
-                checkAndSyncItem(rvNoteEdit);
-                presenter.saveNote(mDataList);
+                presenter.saveNote(adapter.getmDataList());
                 onBackPressed();
             }
         });
@@ -218,6 +229,7 @@ public class NoteEditActivity extends AppCompatActivity {
             if (requestCode == CAMERA_REQUEST_CODE) {       //保存图片样式的DataModle
                 mDataList.add(new NoteEditModel("", NoteEditModel.Flag.IMAGE, cameraPath));
                 mDataList.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+                adapter.setmDataList(mDataList);
                 adapter.notifyDataSetChanged();
             }
         }
@@ -259,27 +271,5 @@ public class NoteEditActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 检查所有的Text Item中的文本并同步
-     */
-    private void checkAndSyncItem(RecyclerView rvNoteEdit) {
-        for (int i = 0; i < layoutManager.getChildCount(); i++) {
-            View lastItem = rvNoteEdit.getChildAt(i);
-            if (lastItem == null) {
-                return;
-            }
-
-            if (null != rvNoteEdit.getChildViewHolder(lastItem)) {
-                NoteEditViewHolder viewHolder = (NoteEditViewHolder) rvNoteEdit.getChildViewHolder(lastItem);
-                if (viewHolder.etItem.getVisibility() == View.VISIBLE
-                        && mDataList.get(mDataList.size() - 1).getItemFlag() == NoteEditModel.Flag.TEXT) {
-                    //首先判断文本是可见的，然后判断这个位置是否在已有的列表中
-                    String lastText = viewHolder.etItem.getText().toString();
-                    mDataList.get(i).setContent(lastText);
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        }
-    }
 
 }
