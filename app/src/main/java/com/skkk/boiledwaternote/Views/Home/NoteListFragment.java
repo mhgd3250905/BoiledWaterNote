@@ -10,9 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Configs;
-import com.skkk.boiledwaternote.CostomViews.RefreshLayout.RefreshLayout;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
 import com.skkk.boiledwaternote.R;
@@ -29,7 +29,7 @@ public class NoteListFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
-    private RefreshLayout refreshLayout;
+    //    private RefreshLayout refreshLayout;
     private RecyclerView rvNoteList;
     private List<Note> mDataList;
     private NoteListAdapter adapter;
@@ -56,14 +56,13 @@ public class NoteListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_note_list, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        noteListPresenter=new NoteListPresenter(getContext());      //获取操作类
+        noteListPresenter = new NoteListPresenter(getContext());      //获取操作类
         initUI(view);       //初始化UI
         initEvent();        //设置各种事件
     }
@@ -72,10 +71,10 @@ public class NoteListFragment extends Fragment {
      * 初始化UI
      */
     private void initUI(View view) {
-        refreshLayout = (RefreshLayout) view.findViewById(R.id.rl_note_list);
+//      refreshLayout = (RefreshLayout) view.findViewById(R.id.rl_note_list);
         rvNoteList = (RecyclerView) view.findViewById(R.id.rv_note_list);
-        rvNoteList.setItemAnimator(new DefaultItemAnimator());
         rvNoteList.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvNoteList.setItemAnimator(new DefaultItemAnimator());
         mDataList = getDefaultData();
         adapter = new NoteListAdapter(getContext(), mDataList);
         rvNoteList.setAdapter(adapter);
@@ -83,11 +82,12 @@ public class NoteListFragment extends Fragment {
 
     /**
      * 获取数据
+     *
      * @return
      */
     public List<Note> getDefaultData() {
-        List<Note> notes=new ArrayList<>();
-        if (noteListPresenter!=null){
+        List<Note> notes = new ArrayList<>();
+        if (noteListPresenter != null) {
             notes = noteListPresenter.getNotes();
         }
         return notes;
@@ -98,44 +98,49 @@ public class NoteListFragment extends Fragment {
      */
     private void initEvent() {
         //设置下拉刷新事件
-        refreshLayout.setOnHeaderRefreshListener(new RefreshLayout.OnHeaderRefreshListener() {
-            @Override
-            public void onRefreshListener() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        refreshLayout.cancelRefresh();
-                    }
-                }).start();
-            }
-        });
+//        refreshLayout.setOnHeaderRefreshListener(new RefreshLayout.OnHeaderRefreshListener() {
+//            @Override
+//            public void onRefreshListener() {
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            Thread.sleep(3000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        refreshLayout.cancelRefresh();
+//                    }
+//                }).start();
+//            }
+//        });
 
         //设置Item点击事件以及拖拽事件
         adapter.setOnItemClickListener(new NoteListAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(View view, int pos) {
-                getContext().startActivity(new Intent(getContext(),NoteEditActivity.class));
+                Note note = mDataList.get(pos);
+                Intent intent = new Intent();
+                intent.setClass(getContext(), NoteEditActivity.class);
+                intent.putExtra(Configs.KEY_UPDATE_NOTE, note);
+                getActivity().startActivityForResult(intent, Configs.REQUEST_UPDATE_NOTE);
             }
 
             @Override
             public void onDragButtonClickListener(View view, int pos) {
-//                mDataList.remove(pos);
-//                adapter.notifyItemRemoved(pos);
-//                adapter.notifyItemRangeChanged(0,adapter.getItemCount());
+
             }
 
             @Override
             public void onItemDeleteClickListener(View view, int pos) {
                 Note note = mDataList.get(pos);
-                mDataList.remove(pos);
-                adapter.notifyItemRemoved(pos);
-                adapter.notifyItemRangeChanged(0,adapter.getItemCount());
-                noteListPresenter.deleteNote(note);
+                if (noteListPresenter.deleteNote(note)) {
+                    mDataList.remove(pos);
+                    adapter.notifyItemRemoved(pos);
+                    adapter.notifyItemRangeRemoved(pos,adapter.getItemCount());
+                }else {
+                    Toast.makeText(getContext(), "删除笔记失败", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -144,11 +149,18 @@ public class NoteListFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //请求码是新建一个Note
-        if (requestCode== Configs.START_NEW_NOTE){
-            adapter.setDataList(getDefaultData());
+        if (requestCode == Configs.REQUEST_START_NEW_NOTE) {
+            mDataList = getDefaultData();
+            adapter.setDataList(mDataList);
+            adapter.notifyDataSetChanged();
+        }
+        if (requestCode == Configs.REQUEST_UPDATE_NOTE) {
+            mDataList = getDefaultData();
+            adapter.setDataList(mDataList);
             adapter.notifyDataSetChanged();
         }
     }
+
 
     @Override
     public void onDetach() {

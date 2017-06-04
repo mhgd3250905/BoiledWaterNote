@@ -30,7 +30,9 @@ public class RefreshLayout extends ViewGroup implements pullToRefreshAble {
     public interface OnHeaderRefreshListener {
         void onRefreshListener();
     }
+
     private OnHeaderRefreshListener onHeaderRefreshListener;
+
     public void setOnHeaderRefreshListener(OnHeaderRefreshListener onHeaderRefreshListener) {
         this.onHeaderRefreshListener = onHeaderRefreshListener;
     }
@@ -55,18 +57,18 @@ public class RefreshLayout extends ViewGroup implements pullToRefreshAble {
      * 设置LinearLayout布局方向
      * 初始化viewDragHelper
      */
-    private void mInit(Context context){
+    private void mInit(Context context) {
         viewDragHelper = ViewDragHelper.create(this, callback);
         addView(setHeaderView(context), 0);
     }
 
-    public ViewGroup setHeaderView(Context context){
+    public ViewGroup setHeaderView(Context context) {
         headerView = new HeaderView(context);
         headerView.setTextPull("下拉刷新...");
         headerView.setTextReady("松开刷新...");
         headerView.setTextRelease("即将刷新...");
         headerView.setTextRefresh("正在刷新...");
-        LayoutParams layoutParams=new MarginLayoutParams(LayoutParams.MATCH_PARENT,350);
+        LayoutParams layoutParams = new MarginLayoutParams(LayoutParams.MATCH_PARENT, 350);
         headerView.setLayoutParams(layoutParams);
         return headerView;
     }
@@ -79,10 +81,13 @@ public class RefreshLayout extends ViewGroup implements pullToRefreshAble {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        recyclerView.layout(l, t, r, b);
-        headerView.layout(l, t - getChildAt(0).getMeasuredHeight(), r, t);
-        headerHeight = getChildAt(0).getMeasuredHeight();
+        if (changed) {
+            recyclerView.layout(l, t, r, b);
+            headerView.layout(l, t - getChildAt(0).getMeasuredHeight(), r, t);
+            headerHeight = getChildAt(0).getMeasuredHeight();
+        }
     }
+
 
     //完成绘制后调用
     @Override

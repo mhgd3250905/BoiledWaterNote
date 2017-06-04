@@ -23,8 +23,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
+import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.R;
@@ -66,6 +69,8 @@ public class NoteEditActivity extends AppCompatActivity {
     private InputMethodManager imm;
 
     private int currentPos;     //当前光标选择的item位置
+    private boolean isNew;      //判断是否为新的笔记
+    private Note updateNote;
 
 
     @Override
@@ -75,8 +80,21 @@ public class NoteEditActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         presenter = new NoteEditPresenter(this);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        initSetting();      //获取传入数据
         initUI();           //初始化UI
         initEvent();        //初始化各种事件
+    }
+
+    /**
+     * 获取传入数据
+     */
+    private void initSetting() {
+        Intent intent = getIntent();
+        isNew = (intent.getSerializableExtra(Configs.KEY_UPDATE_NOTE) == null);
+        if (!isNew) {
+            updateNote = (Note) intent.getSerializableExtra(Configs.KEY_UPDATE_NOTE);
+        }
     }
 
     @Override
@@ -91,8 +109,15 @@ public class NoteEditActivity extends AppCompatActivity {
     private void initUI() {
         tbNoteEdit.setTitle("");
         tbNoteEdit.setNavigationIcon(R.drawable.back_arrow);
-
-        mDataList = loadData();
+        if (isNew) {
+            mDataList = loadData();
+        } else {
+            NoteEditModel[] models = new Gson().fromJson(updateNote.getContent(), NoteEditModel[].class);
+            mDataList=new ArrayList<>();
+            for (int i = 0; i < models.length; i++) {
+               mDataList.add(models[i]);
+            }
+        }
         //设置RecyclerView...
         layoutManager = new LinearLayoutManager(this);
         rvNoteEdit.setLayoutManager(layoutManager);
@@ -168,9 +193,9 @@ public class NoteEditActivity extends AppCompatActivity {
         adapter.setOnItemEditSelectedLintener(new NoteEditAdapter.OnItemEditSelectedLintener() {
             @Override
             public void onItemEditSelectedLintener(View view, int pos, boolean hasFocus) {
-                if (hasFocus){
-                    currentPos=pos;
-                    Log.i(TAG, "onItemEditSelectedLintener: 当前选择的Item编号为："+currentPos);
+                if (hasFocus) {
+                    currentPos = pos;
+                    Log.i(TAG, "onItemEditSelectedLintener: 当前选择的Item编号为：" + currentPos);
                 }
             }
         });
@@ -179,8 +204,6 @@ public class NoteEditActivity extends AppCompatActivity {
         tbNoteEdit.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //退出之前我们需要判断一下时候有最后一行文字没有保存的数据列表中
-                presenter.saveNote(adapter.getmDataList());
                 onBackPressed();
             }
         });
@@ -197,6 +220,20 @@ public class NoteEditActivity extends AppCompatActivity {
         initBottomBarEvent();
     }
 
+    @Override
+    public void onBackPressed() {
+        //获取我们写的笔记类
+        if (isNew) {
+            if (!presenter.saveNote(adapter.getmDataList())) {
+                Toast.makeText(this, "添加笔记失败", Toast.LENGTH_SHORT).show();
+            }
+        }else {
+            if (!presenter.updateNote(adapter.getmDataList(),updateNote)){
+                Toast.makeText(this, "更新笔记失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+        super.onBackPressed();
+    }
 
     /**
      * 初始化底部标签栏位的点击事件了

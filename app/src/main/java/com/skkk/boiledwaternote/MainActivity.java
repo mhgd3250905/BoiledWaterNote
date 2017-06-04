@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(MainActivity.this, NoteEditActivity.class),Configs.START_NEW_NOTE);
+                startActivityForResult(new Intent(MainActivity.this, NoteEditActivity.class),Configs.REQUEST_START_NEW_NOTE);
             }
         });
     }

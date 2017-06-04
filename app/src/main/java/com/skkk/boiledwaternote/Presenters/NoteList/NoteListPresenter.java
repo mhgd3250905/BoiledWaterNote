@@ -30,12 +30,23 @@ public class NoteListPresenter implements NoteListable {
         return list;
     }
 
+    /**
+     * 删除笔记
+     * @param note
+     * @return
+     */
     @Override
-    public void deleteNote(Note note) {
-        DaoSession session = DBUtils.getInstance(context).getSession();
-        NoteDao noteDao = session.getNoteDao();
-        noteDao.delete(note);
+    public boolean deleteNote(Note note) {
+        boolean done = false;
+        try {
+            DaoSession session = DBUtils.getInstance(context).getSession();
+            NoteDao noteDao = session.getNoteDao();
+            noteDao.delete(note);
+            done = true;
+        } catch (Exception e) {
+            done = false;
+        }
+        return done;
     }
-
 
 }

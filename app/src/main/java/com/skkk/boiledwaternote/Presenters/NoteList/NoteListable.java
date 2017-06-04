@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface NoteListable {
     List<Note> getNotes();
-    void deleteNote(Note note);
+    boolean deleteNote(Note note);
 }

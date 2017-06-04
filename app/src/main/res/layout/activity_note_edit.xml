@@ -52,6 +52,7 @@
                     android:text="INSERT IMG" />
 
                 <include layout="@layout/layout_bottom_bar"/>
+
             </LinearLayout>
 
 

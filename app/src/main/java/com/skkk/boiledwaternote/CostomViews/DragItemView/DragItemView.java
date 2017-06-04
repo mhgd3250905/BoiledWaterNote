@@ -115,13 +115,13 @@ public class DragItemView extends ViewGroup {
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             super.onViewReleased(releasedChild, xvel, yvel);
             if (releasedChild.getLeft() < (leftBorder + maxWidth / 3)) {
-                dragHelper.smoothSlideViewTo(llShow, leftBorder, 0);
+                closeItem();
             } else if (releasedChild.getLeft() >= (leftBorder + maxWidth * 1 / 3)
                     && releasedChild.getLeft() <= (leftBorder + maxWidth)) {
                 if (dragToRight) {
                     dragHelper.smoothSlideViewTo(llShow, leftBorder + maxWidth, 0);
                 } else {
-                    dragHelper.smoothSlideViewTo(llShow, leftBorder, 0);
+                    closeItem();
                 }
             }
             ViewCompat.postInvalidateOnAnimation(DragItemView.this);
@@ -151,6 +151,13 @@ public class DragItemView extends ViewGroup {
         }
 
     };
+
+    /**
+     * 关闭Item
+     */
+    public void closeItem() {
+        dragHelper.smoothSlideViewTo(llShow, leftBorder, 0);
+    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {

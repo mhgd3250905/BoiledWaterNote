@@ -39,9 +39,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private List<Note> dataList;
     public OnItemClickListener onItemClickListener;
 
-    private String SEPARATED_FLAG = "☞";                      //用来分隔不同条目传入的不同数据
-    private String SEPARATED_TEXT_FLAG = "$|TEXT|$";          //用来分隔不同条目传入的不同数据
-    private String SEPARATED_IMAGE_FLAG = "$|IMAGE|$";        //用来分隔不同条目传入的不同数据
+//    private String SEPARATED_FLAG = "☞";                      //用来分隔不同条目传入的不同数据
+//    private String SEPARATED_TEXT_FLAG = "$|TEXT|$";          //用来分隔不同条目传入的不同数据
+//    private String SEPARATED_IMAGE_FLAG = "$|IMAGE|$";        //用来分隔不同条目传入的不同数据
 
     public interface OnItemClickListener {
         void onItemClickListener(View view, int pos);
@@ -88,6 +88,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 }
             }
         }
+
         holder.tvNoteListTitle.setText(title);
         if (onItemClickListener != null) {
             holder.llShow.setOnClickListener(new View.OnClickListener() {
@@ -106,26 +107,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 }
             });
         }
-
-        //        if (!TextUtils.isEmpty(content)){
-//            String[] split = content.split(SEPARATED_FLAG);
-//            //获取标题
-//            for (int i = 0; i < split.length; i++) {
-//                if (split[i].startsWith(SEPARATED_TEXT_FLAG)){
-//                    title=split[i].substring(SEPARATED_TEXT_FLAG.length(),split[i].length());
-//                    break;
-//                }
-//            }
-
-//            //获取图片：目前仅获取第一张图片
-//            for (int i = 0; i < split.length; i++) {
-//                if (split[i].startsWith(SEPARATED_IMAGE_FLAG)){
-//                    imagePath=split[i].substring(SEPARATED_IMAGE_FLAG.length(),split[i].length());
-//                    break;
-//                }
-//            }
-//        }
-
     }
 
     @Override
@@ -135,7 +116,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     /**
      * 数据操作
-     *
      * @return
      */
     public List<Note> getDataList() {

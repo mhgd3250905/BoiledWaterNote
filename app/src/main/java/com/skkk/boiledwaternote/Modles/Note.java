@@ -2,7 +2,13 @@ package com.skkk.boiledwaternote.Modles;
 
 import android.support.annotation.NonNull;
 
+import com.skkk.boiledwaternote.Modles.gen.DaoSession;
+import com.skkk.boiledwaternote.Modles.gen.NoteDao;
+import com.skkk.boiledwaternote.Modles.gen.NoteImageDao;
+
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinProperty;
 import org.greenrobot.greendao.annotation.NotNull;
@@ -11,13 +17,9 @@ import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.Unique;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
-import com.skkk.boiledwaternote.Modles.gen.DaoSession;
-import com.skkk.boiledwaternote.Modles.gen.NoteDao;
-import com.skkk.boiledwaternote.Modles.gen.NoteImageDao;
 
 /**
  * Created by admin on 2017/5/28.
@@ -33,7 +35,7 @@ import com.skkk.boiledwaternote.Modles.gen.NoteImageDao;
         active = true,
         nameInDb = "NOTE"
 )
-public class Note {
+public class Note implements Serializable{
     @Id(autoincrement = true)
     private Long id;                        //id
 
