@@ -5,14 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Configs;
+import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemView;
+import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
 import com.skkk.boiledwaternote.R;
@@ -20,6 +22,8 @@ import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 
 public class NoteListFragment extends Fragment {
@@ -31,8 +35,11 @@ public class NoteListFragment extends Fragment {
     private String mParam2;
     //    private RefreshLayout refreshLayout;
     private RecyclerView rvNoteList;
+    private MyLinearLayoutManager linearLayoutManager;
     private List<Note> mDataList;
     private NoteListAdapter adapter;
+
+    private DragItemView lastDragItem;
 
 
     public static NoteListFragment newInstance(String param1, String param2) {
@@ -73,7 +80,8 @@ public class NoteListFragment extends Fragment {
     private void initUI(View view) {
 //      refreshLayout = (RefreshLayout) view.findViewById(R.id.rl_note_list);
         rvNoteList = (RecyclerView) view.findViewById(R.id.rv_note_list);
-        rvNoteList.setLayoutManager(new LinearLayoutManager(getContext()));
+        linearLayoutManager=new MyLinearLayoutManager(getContext());
+        rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
         mDataList = getDefaultData();
         adapter = new NoteListAdapter(getContext(), mDataList);
@@ -141,6 +149,25 @@ public class NoteListFragment extends Fragment {
                 }else {
                     Toast.makeText(getContext(), "删除笔记失败", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        adapter.setOnDragItemStatusChange(new NoteListAdapter.OnDragItemStatusChange() {
+            @Override
+            public void onDragingListener(int pos, DragItemView item, View changedView, int left, int top, int dx, int dy) {
+                linearLayoutManager.setScroll(false);
+                if (lastDragItem!=null){
+                    lastDragItem.resetItemAnim();
+                    lastDragItem=null;
+                }
+//               Log.i(TAG, "onDragingListener: 第"+pos+"个Item正在拖拽！left--->"+left);
+            }
+
+            @Override
+            public void onDragClose(int pos, DragItemView item, View changedView, int left, int top, int dx, int dy) {
+                linearLayoutManager.setScroll(true);
+                lastDragItem=item;
+                Log.i(TAG, "onDragingListener: 第"+pos+"个Item结束！left--->"+left);
             }
         });
     }

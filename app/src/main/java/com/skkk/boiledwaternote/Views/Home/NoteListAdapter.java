@@ -11,6 +11,7 @@ package com.skkk.boiledwaternote.Views.Home;
 */
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -18,10 +19,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
@@ -38,10 +39,14 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private Context context;
     private List<Note> dataList;
     public OnItemClickListener onItemClickListener;
+    private OnDragItemStatusChange onDragItemStatusChange;
 
-//    private String SEPARATED_FLAG = "☞";                      //用来分隔不同条目传入的不同数据
-//    private String SEPARATED_TEXT_FLAG = "$|TEXT|$";          //用来分隔不同条目传入的不同数据
-//    private String SEPARATED_IMAGE_FLAG = "$|IMAGE|$";        //用来分隔不同条目传入的不同数据
+    interface OnDragItemStatusChange {
+        void onDragingListener(int pos, DragItemView item, View changedView, int left, int top, int dx, int dy);
+
+        void onDragClose(int pos, DragItemView item, View changedView, int left, int top, int dx, int dy);
+    }
+
 
     public interface OnItemClickListener {
         void onItemClickListener(View view, int pos);
@@ -49,6 +54,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         void onDragButtonClickListener(View view, int pos);
 
         void onItemDeleteClickListener(View view, int pos);
+    }
+
+    public void setOnDragItemStatusChange(OnDragItemStatusChange onDragItemStatusChange) {
+        this.onDragItemStatusChange = onDragItemStatusChange;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -68,6 +77,21 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
+        if (onDragItemStatusChange != null) {
+            holder.divItem.setOnDragPosChangeListener(new DragItemView.OnDragPosChangeListener() {
+                @Override
+                public void isDragListener(DragItemView item, View changedView, int left, int top, int dx, int dy) {
+                    onDragItemStatusChange.onDragingListener(position, item, changedView, left, top, dx, dy);
+                }
+
+                @Override
+                public void closeDragListener(DragItemView item, View changedView, int left, int top, int dx, int dy) {
+                    onDragItemStatusChange.onDragClose(position, item, changedView, left, top, dx, dy);
+                }
+            });
+        }
+        holder.divItem.resetItem();
+
         //显示距离此刻模式的时间显示方式
         CharSequence relativeDateTimeString = DateUtils
                 .getRelativeDateTimeString(context, dataList.get(position).getCreateTime().getTime(),
@@ -132,11 +156,13 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         @Bind(R.id.tv_note_list_time)
         public TextView tvNoteListTime;
         @Bind(R.id.ll_show)
-        public LinearLayout llShow;
+        public CardView llShow;
         @Bind(R.id.ll_hide)
-        public LinearLayout llHide;
+        public CardView llHide;
         @Bind(R.id.btn_delete)
         public Button btnDelete;
+        @Bind(R.id.div_item)
+        public DragItemView divItem;
 
         public MyViewHolder(View itemView) {
             super(itemView);

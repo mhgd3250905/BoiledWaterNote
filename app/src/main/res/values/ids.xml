@@ -23,4 +23,5 @@
     <item name="iv_format_quote" type="id">iv_format_quote</item>
     <item name="iv_format_size" type="id">iv_format_size</item>
     <item name="iv_format_underlined" type="id">iv_format_underlined</item>
+    <item name="div_item" type="id">div_item</item>
 </resources>

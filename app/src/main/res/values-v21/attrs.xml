@@ -22,7 +22,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="DragItemView">
+    <declare-styleable name="MyDragItemView">
         <attr name="dragStyle" format="enum">
             <enum name="dragTransparent" value="0"/>
             <enum name="dragShowButton" value="1"/>
