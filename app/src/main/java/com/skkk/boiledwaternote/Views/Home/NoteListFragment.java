@@ -105,23 +105,6 @@ public class NoteListFragment extends Fragment {
      * 初始化事件
      */
     private void initEvent() {
-        //设置下拉刷新事件
-//        refreshLayout.setOnHeaderRefreshListener(new RefreshLayout.OnHeaderRefreshListener() {
-//            @Override
-//            public void onRefreshListener() {
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            Thread.sleep(3000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                        refreshLayout.cancelRefresh();
-//                    }
-//                }).start();
-//            }
-//        });
 
         //设置Item点击事件以及拖拽事件
         adapter.setOnItemClickListener(new NoteListAdapter.OnItemClickListener() {
@@ -188,6 +171,12 @@ public class NoteListFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onDetach() {

@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -39,7 +40,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class NoteEditActivity extends AppCompatActivity {
+public class NoteEditActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String TAG = NoteEditActivity.class.getSimpleName();
 
@@ -58,6 +59,27 @@ public class NoteEditActivity extends AppCompatActivity {
     public static String SAVED_IMAGE_DIR_PATH =
             Environment.getExternalStorageDirectory().getPath()
                     + "/SKRecyclerViewDemo/camera/";// 拍照路径
+
+    @Bind(R.id.iv_format_align_left)
+    ImageView ivFormatAlignLeft;
+    @Bind(R.id.iv_format_align_center)
+    ImageView ivFormatAlignCenter;
+    @Bind(R.id.iv_format_align_right)
+    ImageView ivFormatAlignRight;
+    @Bind(R.id.iv_format_blod)
+    ImageView ivFormatBlod;
+    @Bind(R.id.iv_format_italic)
+    ImageView ivFormatItalic;
+    @Bind(R.id.iv_format_list)
+    ImageView ivFormatList;
+    @Bind(R.id.iv_format_list_numbered)
+    ImageView ivFormatListNumbered;
+    @Bind(R.id.iv_format_quote)
+    ImageView ivFormatQuote;
+    @Bind(R.id.iv_format_size)
+    ImageView ivFormatSize;
+    @Bind(R.id.iv_format_underlined)
+    ImageView ivFormatUnderlined;
     private String cameraPath;
 
     private List<NoteEditModel> mDataList;
@@ -113,9 +135,9 @@ public class NoteEditActivity extends AppCompatActivity {
             mDataList = loadData();
         } else {
             NoteEditModel[] models = new Gson().fromJson(updateNote.getContent(), NoteEditModel[].class);
-            mDataList=new ArrayList<>();
+            mDataList = new ArrayList<>();
             for (int i = 0; i < models.length; i++) {
-               mDataList.add(models[i]);
+                mDataList.add(models[i]);
             }
         }
         //设置RecyclerView...
@@ -227,8 +249,8 @@ public class NoteEditActivity extends AppCompatActivity {
             if (!presenter.saveNote(adapter.getmDataList())) {
                 Toast.makeText(this, "添加笔记失败", Toast.LENGTH_SHORT).show();
             }
-        }else {
-            if (!presenter.updateNote(adapter.getmDataList(),updateNote)){
+        } else {
+            if (!presenter.updateNote(adapter.getmDataList(), updateNote)) {
                 Toast.makeText(this, "更新笔记失败", Toast.LENGTH_SHORT).show();
             }
         }
@@ -239,7 +261,49 @@ public class NoteEditActivity extends AppCompatActivity {
      * 初始化底部标签栏位的点击事件了
      */
     private void initBottomBarEvent() {
+        ivFormatAlignCenter.setOnClickListener(NoteEditActivity.this);
+        ivFormatAlignLeft.setOnClickListener(NoteEditActivity.this);
+        ivFormatAlignRight.setOnClickListener(NoteEditActivity.this);
+        ivFormatBlod.setOnClickListener(NoteEditActivity.this);
+        ivFormatItalic.setOnClickListener(NoteEditActivity.this);
+        ivFormatList.setOnClickListener(NoteEditActivity.this);
+        ivFormatListNumbered.setOnClickListener(NoteEditActivity.this);
+        ivFormatQuote.setOnClickListener(NoteEditActivity.this);
+        ivFormatSize.setOnClickListener(NoteEditActivity.this);
+        ivFormatUnderlined.setOnClickListener(NoteEditActivity.this);
+    }
 
+    /**
+     * 专门用于处理BottomBar的事件
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.iv_format_align_left:
+
+                break;
+            case R.id.iv_format_align_center:
+                break;
+            case R.id.iv_format_align_right:
+                break;
+            case R.id.iv_format_blod:
+                NoteEditAdapter.NoteEditViewHolder currentHolder = adapter.getCurrentHolder();
+                currentHolder.etItem.append("<b>");
+                break;
+            case R.id.iv_format_italic:
+                break;
+            case R.id.iv_format_list:
+                break;
+            case R.id.iv_format_list_numbered:
+                break;
+            case R.id.iv_format_quote:
+                break;
+            case R.id.iv_format_size:
+                break;
+            case R.id.iv_format_underlined:
+                break;
+        }
     }
 
     /**
@@ -307,6 +371,7 @@ public class NoteEditActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
         }
     }
+
 
 
 }

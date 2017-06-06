@@ -41,6 +41,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private List<NoteEditModel> mDataList;
     private OnStartDragListener onStartDragListener;
     private OnItemEditSelectedLintener onItemEditSelectedLintener;
+    private NoteEditViewHolder currentHolder;
 
     interface OnItemEditSelectedLintener {
         void onItemEditSelectedLintener(View view, int pos,boolean hasFocus);
@@ -99,6 +100,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         //判断我们加载的到底是什么类型的数据
         if (itemDate.getItemFlag() == NoteEditModel.Flag.TEXT) {     //如果是文本Item
             holder.etItem.setText(mDataList.get(position).getContent());
+            holder.etItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus){
+                        currentHolder=holder;
+                    }
+                }
+            });
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
@@ -192,13 +201,64 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             super(itemView);
             ButterKnife.bind(this, itemView);
             this.myItemTextChangeListener = myItemTextChangeListener;
+            myItemTextChangeListener.setCurrentEdit(etItem);
             etItem.addTextChangedListener(myItemTextChangeListener);        //当文本发生变化的时候就保存对应的内容到dataList
+        }
+
+        public void setFormat_align_flag(int format_align_flag) {
+            myItemTextChangeListener.setFormat_align_flag(format_align_flag);
+        }
+
+        public void setFormat_blod(boolean format_blod) {
+            myItemTextChangeListener.setFormat_blod(format_blod);
+        }
+
+        public void setFormat_italic(boolean format_italic) {
+            myItemTextChangeListener.setFormat_italic(format_italic);
+        }
+
+        public void setFormat_list(boolean format_list) {
+            myItemTextChangeListener.setFormat_list(format_list);
+        }
+
+        public void setFormat_list_numbered(boolean format_list_numbered) {
+            myItemTextChangeListener.setFormat_list_numbered(format_list_numbered);
+        }
+
+        public void setFormat_quote(boolean format_quote) {
+            myItemTextChangeListener.setFormat_quote(format_quote);
+        }
+
+        public void setFormat_size(int format_size) {
+            myItemTextChangeListener.setFormat_size(format_size);
+        }
+
+        public void setFormat_underlined(boolean format_underlined) {
+            myItemTextChangeListener.setFormat_underlined(format_underlined);
         }
     }
 
 
+
     public class MyItemTextChangeListener implements TextWatcher {
         private int position;
+
+        private EditText currentEdit;
+
+        private boolean need2Html=true;
+        private CharSequence lastS;
+
+        private int format_align_flag=0;            //0-左 1-中后 2-右
+        private boolean format_blod=false;          //加粗
+        private boolean format_italic=false;        //斜体
+        private boolean format_list=false;          //列表
+        private boolean format_list_numbered=false; //数字列表
+        private boolean format_quote=false;         //引用
+        private int format_size=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
+        private boolean format_underlined=false;    //下划线
+
+
+
 
         public void updatePos(int position) {
             this.position = position;
@@ -206,7 +266,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
@@ -219,5 +278,49 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public void afterTextChanged(Editable s) {
 
         }
+
+        public void setCurrentEdit(EditText currentEdit) {
+            this.currentEdit = currentEdit;
+        }
+
+        public void setFormat_align_flag(int format_align_flag) {
+            this.format_align_flag = format_align_flag;
+        }
+
+        public void setFormat_blod(boolean format_blod) {
+            this.format_blod = format_blod;
+        }
+
+        public void setFormat_italic(boolean format_italic) {
+            this.format_italic = format_italic;
+        }
+
+        public void setFormat_list(boolean format_list) {
+            this.format_list = format_list;
+        }
+
+        public void setFormat_list_numbered(boolean format_list_numbered) {
+            this.format_list_numbered = format_list_numbered;
+        }
+
+        public void setFormat_quote(boolean format_quote) {
+            this.format_quote = format_quote;
+        }
+
+        public void setFormat_size(int format_size) {
+            this.format_size = format_size;
+        }
+
+        public void setFormat_underlined(boolean format_underlined) {
+            this.format_underlined = format_underlined;
+        }
+    }
+
+    /**
+     * 获取当前选中的ViewHolder
+     * @return
+     */
+    public NoteEditViewHolder getCurrentHolder() {
+        return currentHolder;
     }
 }

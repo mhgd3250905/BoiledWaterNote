@@ -90,6 +90,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 }
             });
         }
+        //重置Item切换状态
         holder.divItem.resetItem();
 
         //显示距离此刻模式的时间显示方式
