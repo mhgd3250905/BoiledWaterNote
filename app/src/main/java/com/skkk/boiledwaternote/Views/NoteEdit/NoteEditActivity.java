@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,8 +40,9 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class NoteEditActivity extends AppCompatActivity implements View.OnClickListener {
+public class NoteEditActivity extends AppCompatActivity{
 
     private final String TAG = NoteEditActivity.class.getSimpleName();
 
@@ -80,6 +82,8 @@ public class NoteEditActivity extends AppCompatActivity implements View.OnClickL
     ImageView ivFormatSize;
     @Bind(R.id.iv_format_underlined)
     ImageView ivFormatUnderlined;
+    @Bind(R.id.iv_format_strike_through)
+    ImageView ivFormatStrikeThrough;
     private String cameraPath;
 
     private List<NoteEditModel> mDataList;
@@ -146,23 +150,6 @@ public class NoteEditActivity extends AppCompatActivity implements View.OnClickL
         adapter = new NoteEditAdapter(this, mDataList);
         rvNoteEdit.setAdapter(adapter);
         rvNoteEdit.setItemAnimator(new DefaultItemAnimator());
-
-        rvNoteEdit.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        View childViewUnder = rvNoteEdit.findChildViewUnder(event.getX(), event.getY());
-                        if (null == childViewUnder) {      //如果通过坐标获取的Item是null，说明我们点击了item的下方空白区域
-                            //获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
-                            selectLastTextItem(rvNoteEdit, layoutManager);
-                        }
-                        break;
-                }
-                return false;
-            }
-        });
-
         //设置ItemTouchHelper
         callback = new MyItemTouchHelperCallback(this, adapter);
         itemTouchHelper = new ItemTouchHelper(callback);
@@ -203,6 +190,23 @@ public class NoteEditActivity extends AppCompatActivity implements View.OnClickL
      * 初始化各种事件
      */
     private void initEvent() {
+        //设置RecyclerView触摸如果在最下方一个text光标之外 那么就定位到最后一个ItemText
+        rvNoteEdit.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        View childViewUnder = rvNoteEdit.findChildViewUnder(event.getX(), event.getY());
+                        if (null == childViewUnder) {      //如果通过坐标获取的Item是null，说明我们点击了item的下方空白区域
+                            //获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
+                            selectLastTextItem(rvNoteEdit, layoutManager);
+                        }
+                        break;
+                }
+                return false;
+            }
+        });
+
         //设置Item拖拽监听
         adapter.setOnStartDragListener(new OnStartDragListener() {
             @Override
@@ -238,8 +242,6 @@ public class NoteEditActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        //设置底部标签栏位点击事件
-        initBottomBarEvent();
     }
 
     @Override
@@ -255,55 +257,6 @@ public class NoteEditActivity extends AppCompatActivity implements View.OnClickL
             }
         }
         super.onBackPressed();
-    }
-
-    /**
-     * 初始化底部标签栏位的点击事件了
-     */
-    private void initBottomBarEvent() {
-        ivFormatAlignCenter.setOnClickListener(NoteEditActivity.this);
-        ivFormatAlignLeft.setOnClickListener(NoteEditActivity.this);
-        ivFormatAlignRight.setOnClickListener(NoteEditActivity.this);
-        ivFormatBlod.setOnClickListener(NoteEditActivity.this);
-        ivFormatItalic.setOnClickListener(NoteEditActivity.this);
-        ivFormatList.setOnClickListener(NoteEditActivity.this);
-        ivFormatListNumbered.setOnClickListener(NoteEditActivity.this);
-        ivFormatQuote.setOnClickListener(NoteEditActivity.this);
-        ivFormatSize.setOnClickListener(NoteEditActivity.this);
-        ivFormatUnderlined.setOnClickListener(NoteEditActivity.this);
-    }
-
-    /**
-     * 专门用于处理BottomBar的事件
-     * @param v
-     */
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.iv_format_align_left:
-
-                break;
-            case R.id.iv_format_align_center:
-                break;
-            case R.id.iv_format_align_right:
-                break;
-            case R.id.iv_format_blod:
-                NoteEditAdapter.NoteEditViewHolder currentHolder = adapter.getCurrentHolder();
-                currentHolder.etItem.append("<b>");
-                break;
-            case R.id.iv_format_italic:
-                break;
-            case R.id.iv_format_list:
-                break;
-            case R.id.iv_format_list_numbered:
-                break;
-            case R.id.iv_format_quote:
-                break;
-            case R.id.iv_format_size:
-                break;
-            case R.id.iv_format_underlined:
-                break;
-        }
     }
 
     /**
@@ -372,6 +325,64 @@ public class NoteEditActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-
-
+    /**
+     * bottomBar点击事件
+     * @param v
+     */
+    @OnClick({R.id.iv_format_align_left, R.id.iv_format_align_center, R.id.iv_format_align_right, R.id.iv_format_blod, R.id.iv_format_italic, R.id.iv_format_list, R.id.iv_format_list_numbered, R.id.iv_format_quote, R.id.iv_format_size, R.id.iv_format_underlined, R.id.iv_format_strike_through})
+    public void onViewClicked(View v) {
+        NoteEditAdapter.NoteEditViewHolder currentHolder = adapter.getCurrentHolder();
+        switch (v.getId()) {
+            case R.id.iv_format_align_left:
+                break;
+            case R.id.iv_format_align_center:
+                break;
+            case R.id.iv_format_align_right:
+                break;
+            case R.id.iv_format_blod:               //设置文字Blod
+                if (currentHolder.myItemTextChangeListener.isFormat_blod()) {
+                    currentHolder.myItemTextChangeListener.setFormat_blod(false);
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    currentHolder.myItemTextChangeListener.setFormat_blod(true);
+                    v.setBackgroundColor(Color.LTGRAY);
+                }
+                break;
+            case R.id.iv_format_italic:             //设置文字斜体
+                if (currentHolder.myItemTextChangeListener.isFormat_italic()) {
+                    currentHolder.myItemTextChangeListener.setFormat_italic(false);
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    currentHolder.myItemTextChangeListener.setFormat_italic(true);
+                    v.setBackgroundColor(Color.LTGRAY);
+                }
+                break;
+            case R.id.iv_format_list:
+                break;
+            case R.id.iv_format_list_numbered:
+                break;
+            case R.id.iv_format_quote:
+                break;
+            case R.id.iv_format_size:
+                break;
+            case R.id.iv_format_underlined:         //设置文字下划线
+                if (currentHolder.myItemTextChangeListener.isFormat_underlined()) {
+                    currentHolder.myItemTextChangeListener.setFormat_underlined(false);
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    currentHolder.myItemTextChangeListener.setFormat_underlined(true);
+                    v.setBackgroundColor(Color.LTGRAY);
+                }
+                break;
+            case R.id.iv_format_strike_through:     //设置文字删除线
+                if (currentHolder.myItemTextChangeListener.isFormat_strike_through()) {
+                    currentHolder.myItemTextChangeListener.setFormat_strike_through(false);
+                    v.setBackgroundColor(Color.TRANSPARENT);
+                } else {
+                    currentHolder.myItemTextChangeListener.setFormat_strike_through(true);
+                    v.setBackgroundColor(Color.LTGRAY);
+                }
+                break;
+        }
+    }
 }
