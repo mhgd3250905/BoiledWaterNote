@@ -10,11 +10,13 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,9 +52,20 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private OnStartDragListener onStartDragListener;
     private OnItemEditSelectedLintener onItemEditSelectedLintener;
     private NoteEditViewHolder currentHolder;
+    private OnItemKeyDownListener onItemKeyDownListener;
+
+    interface OnItemKeyDownListener{
+        void onItemKeyEnterListener(NoteEditViewHolder viewHolder,int pos,int keyCode, KeyEvent event);
+        void onItemKeyBackListener(NoteEditViewHolder viewHolder,int pos,int keyCode, KeyEvent event);
+
+    }
+
+    public void setOnItemKeyDownListener(OnItemKeyDownListener onItemKeyDownListener) {
+        this.onItemKeyDownListener = onItemKeyDownListener;
+    }
 
     interface OnItemEditSelectedLintener {
-        void onItemEditSelectedLintener(View view, int pos,boolean hasFocus);
+        void onItemEditSelectedLintener(View view, int pos, boolean hasFocus);
     }
 
     public void setOnItemEditSelectedLintener(OnItemEditSelectedLintener onItemEditSelectedLintener) {
@@ -96,11 +109,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         NoteEditModel itemDate = mDataList.get(position);             //获取dateBean
 
-        if (onItemEditSelectedLintener!=null){
+        if (onItemEditSelectedLintener != null) {
             holder.etItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    onItemEditSelectedLintener.onItemEditSelectedLintener(v,position,hasFocus);
+                    onItemEditSelectedLintener.onItemEditSelectedLintener(v, position, hasFocus);
                 }
             });
         }
@@ -110,23 +123,40 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             //显示内容
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 //因为HTML转Span之后块级元素会自动换行，所以这里直接手动将块级元素P删除掉，有点暴力
-                String contentThml=mDataList.get(position).getContent()
-                        .replace("<p dir=\"ltr\" style=\"margin-top:0; margin-bottom:0;\">","")
-                        .replace("</p>","");
-                holder.etItem.setText(Html.fromHtml(contentThml,Html.FROM_HTML_MODE_COMPACT));
-                holder.etItem.setSelection(holder.etItem.length());
+                if (!TextUtils.isEmpty(mDataList.get(position).getContent())) {
+                    //
+                    String contentHtml = mDataList.get(position).getContent();
+                    holder.etItem.setText(Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_COMPACT));
+                    holder.etItem.setSelection(holder.etItem.length() - 1);
+                }
             }
 
             //设置编辑文本框的焦点变化监听，谁获得焦点我们就获取到当前获取焦点的Holder
             holder.etItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if (hasFocus){
-                        currentHolder=holder;
+                    if (hasFocus) {
+                        currentHolder = holder;
                     }
                 }
             });
-            
+
+            if (onItemKeyDownListener!=null){
+                holder.etItem.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        if (keyCode==KeyEvent.KEYCODE_ENTER){
+                            onItemKeyDownListener.onItemKeyEnterListener(holder,position,keyCode,event);
+                        }
+                        if (keyCode==KeyEvent.KEYCODE_BACK){
+                            onItemKeyDownListener.onItemKeyBackListener(holder,position,keyCode,event);
+
+                        }
+                        return false;
+                    }
+                });
+            }
+
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
@@ -141,7 +171,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 
-            layoutParams.height = 960;
+            layoutParams.height = 800;
             holder.itemView.setLayoutParams(layoutParams);
 
             //拖拽图片触摸监听
@@ -162,8 +192,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
             //压缩图片
             Bitmap bitmapFromUri = new Compressor.Builder(context)
-                    .setMaxWidth(540)
-                    .setMaxHeight(960)
+                    .setMaxHeight(800)
                     .setQuality(100)
                     .setCompressFormat(Bitmap.CompressFormat.WEBP)
                     .build()
@@ -221,6 +250,17 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public NoteEditViewHolder(View itemView, MyItemTextChangeListener myItemTextChangeListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            //设置焦点获取监听：直接抛给EditText
+            itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (etItem.getVisibility() == View.VISIBLE) {
+                        if (hasFocus) {
+                            etItem.setSelection(etItem.length());
+                        }
+                    }
+                }
+            });
             this.myItemTextChangeListener = myItemTextChangeListener;
             myItemTextChangeListener.setCurrentEdit(etItem);
             etItem.addTextChangedListener(myItemTextChangeListener);        //当文本发生变化的时候就保存对应的内容到dataList
@@ -261,25 +301,22 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
 
-
     public class MyItemTextChangeListener implements TextWatcher {
         private int position;
 
         private EditText currentEdit;
 
-        private boolean flagIsAuto=false;           //设置一个flag用来避免重新设置EditText时候触发监听
+        private boolean flagIsAuto = false;           //设置一个flag用来避免重新设置EditText时候触发监听
 
-        private int format_align_flag=0;            //0-左 1-中后 2-右
-        private boolean format_blod=false;          //加粗
-        private boolean format_italic=false;        //斜体
-        private boolean format_list=false;          //列表
-        private boolean format_list_numbered=false; //数字列表
-        private boolean format_quote=false;         //引用
-        private int format_size=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
-        private boolean format_underlined=false;    //下划线
-        private boolean format_strike_through=false;//删除线
-
-
+        private int format_align_flag = 0;            //0-左 1-中后 2-右
+        private boolean format_blod = false;          //加粗
+        private boolean format_italic = false;        //斜体
+        private boolean format_list = false;          //列表
+        private boolean format_list_numbered = false; //数字列表
+        private boolean format_quote = false;         //引用
+        private int format_size = 1;                  //字体大小：0-p 1-h1 2-h2 3-h3
+        private boolean format_underlined = false;    //下划线
+        private boolean format_strike_through = false;//删除线
 
 
         public void updatePos(int position) {
@@ -292,36 +329,49 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (!flagIsAuto){
-                SpannableString ss=new SpannableString(s);
-                flagIsAuto=true;
+            if (!flagIsAuto) {
+                SpannableString ss = new SpannableString(s);
+                flagIsAuto = true;
                 //设置斜体和粗体
-                if (format_blod&&format_italic){
-                    ss.setSpan(new StyleSpan(Typeface.BOLD_ITALIC),start,start+count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }else if (format_blod){
-                    ss.setSpan(new StyleSpan(Typeface.BOLD),start,start+count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }else if (format_italic){
-                    ss.setSpan(new StyleSpan(Typeface.ITALIC),start,start+count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (format_blod && format_italic) {
+                    for (int i = start; i < start + count; i++) {
+                        ss.setSpan(new StyleSpan(Typeface.BOLD), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ss.setSpan(new StyleSpan(Typeface.ITALIC), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                } else if (format_blod) {
+                    for (int i = start; i < start + count; i++) {
+                        ss.setSpan(new StyleSpan(Typeface.BOLD), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                } else if (format_italic) {
+                    for (int i = start; i < start + count; i++) {
+                        ss.setSpan(new StyleSpan(Typeface.ITALIC), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
 
                 //设置下划线
-                if (format_underlined){
-                    ss.setSpan(new UnderlineSpan(),start,start+count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (format_underlined) {
+                    for (int i = start; i < start + count; i++) {
+                        ss.setSpan(new UnderlineSpan(), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
 
                 //设置删除线
-                if (format_strike_through){
-                    ss.setSpan(new StrikethroughSpan(),start,start+count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (format_strike_through) {
+                    for (int i = start; i < start + count; i++) {
+                        ss.setSpan(new StrikethroughSpan(), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
+
                 currentEdit.setText(ss);
                 currentEdit.setSelection(currentEdit.length());
-            }else {
-                flagIsAuto=false;
+
+            } else {
+                flagIsAuto = false;
             }
 
             NoteEditModel model = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                model = new NoteEditModel(Html.toHtml(currentEdit.getText(),Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL), NoteEditModel.Flag.TEXT, null);
+                model = new NoteEditModel(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL), NoteEditModel.Flag.TEXT, null);
             }
             mDataList.set(position, model);
         }
@@ -410,6 +460,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     /**
      * 获取当前选中的ViewHolder
+     *
      * @return
      */
     public NoteEditViewHolder getCurrentHolder() {

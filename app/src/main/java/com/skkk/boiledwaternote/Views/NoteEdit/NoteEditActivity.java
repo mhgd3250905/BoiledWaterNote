@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -42,7 +43,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NoteEditActivity extends AppCompatActivity{
+public class NoteEditActivity extends AppCompatActivity {
 
     private final String TAG = NoteEditActivity.class.getSimpleName();
 
@@ -61,13 +62,8 @@ public class NoteEditActivity extends AppCompatActivity{
     public static String SAVED_IMAGE_DIR_PATH =
             Environment.getExternalStorageDirectory().getPath()
                     + "/SKRecyclerViewDemo/camera/";// 拍照路径
-
-    @Bind(R.id.iv_format_align_left)
-    ImageView ivFormatAlignLeft;
     @Bind(R.id.iv_format_align_center)
     ImageView ivFormatAlignCenter;
-    @Bind(R.id.iv_format_align_right)
-    ImageView ivFormatAlignRight;
     @Bind(R.id.iv_format_blod)
     ImageView ivFormatBlod;
     @Bind(R.id.iv_format_italic)
@@ -84,6 +80,8 @@ public class NoteEditActivity extends AppCompatActivity{
     ImageView ivFormatUnderlined;
     @Bind(R.id.iv_format_strike_through)
     ImageView ivFormatStrikeThrough;
+
+
     private String cameraPath;
 
     private List<NoteEditModel> mDataList;
@@ -242,6 +240,17 @@ public class NoteEditActivity extends AppCompatActivity{
             }
         });
 
+        adapter.setOnItemKeyDownListener(new NoteEditAdapter.OnItemKeyDownListener() {
+            @Override
+            public void onItemKeyEnterListener(NoteEditAdapter.NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event) {
+                Log.i(TAG, "onItemKeyEnterListener: 按下了回车");
+            }
+
+            @Override
+            public void onItemKeyBackListener(NoteEditAdapter.NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event) {
+                Log.i(TAG, "onItemKeyEnterListener: 按下了返回");
+            }
+        });
     }
 
     @Override
@@ -325,13 +334,13 @@ public class NoteEditActivity extends AppCompatActivity{
         }
     }
 
-    /**
-     * bottomBar点击事件
-     * @param v
-     */
-    @OnClick({R.id.iv_format_align_left, R.id.iv_format_align_center, R.id.iv_format_align_right, R.id.iv_format_blod, R.id.iv_format_italic, R.id.iv_format_list, R.id.iv_format_list_numbered, R.id.iv_format_quote, R.id.iv_format_size, R.id.iv_format_underlined, R.id.iv_format_strike_through})
+    @OnClick({R.id.iv_format_align_center, R.id.iv_format_blod, R.id.iv_format_italic, R.id.iv_format_list, R.id.iv_format_list_numbered, R.id.iv_format_quote, R.id.iv_format_size, R.id.iv_format_underlined, R.id.iv_format_strike_through})
     public void onViewClicked(View v) {
         NoteEditAdapter.NoteEditViewHolder currentHolder = adapter.getCurrentHolder();
+        boolean isSelected = currentHolder.etItem.hasSelection();
+        int start = currentHolder.etItem.getSelectionStart();
+        int end = currentHolder.etItem.getSelectionEnd();
+
         switch (v.getId()) {
             case R.id.iv_format_align_left:
                 break;
@@ -340,12 +349,17 @@ public class NoteEditActivity extends AppCompatActivity{
             case R.id.iv_format_align_right:
                 break;
             case R.id.iv_format_blod:               //设置文字Blod
-                if (currentHolder.myItemTextChangeListener.isFormat_blod()) {
-                    currentHolder.myItemTextChangeListener.setFormat_blod(false);
-                    v.setBackgroundColor(Color.TRANSPARENT);
-                } else {
-                    currentHolder.myItemTextChangeListener.setFormat_blod(true);
-                    v.setBackgroundColor(Color.LTGRAY);
+
+                if (!isSelected) {                  //如果没有选择
+                    if (currentHolder.myItemTextChangeListener.isFormat_blod()) {
+                        currentHolder.myItemTextChangeListener.setFormat_blod(false);
+                        v.setBackgroundColor(Color.TRANSPARENT);
+                    } else {
+                        currentHolder.myItemTextChangeListener.setFormat_blod(true);
+                        v.setBackgroundColor(Color.LTGRAY);
+                    }
+                }else {                             //如果选择
+
                 }
                 break;
             case R.id.iv_format_italic:             //设置文字斜体

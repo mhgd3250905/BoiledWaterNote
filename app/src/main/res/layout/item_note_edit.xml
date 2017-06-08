@@ -1,39 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditText
-        android:background="@null"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:id="@id/tv_item_recylcer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@null"
         android:gravity="left|top"
         android:text=""
-        android:textSize="30dp"
-        android:layout_alignParentEnd="true" />
+        android:textSize="30dp" />
 
 
-    <ImageView
-        android:visibility="visible"
-        android:id="@id/iv_item_move"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@mipmap/ic_launcher"
-        android:layout_alignTop="@+id/iv_item_img"
-        android:layout_alignRight="@+id/iv_item_img" />
-
-    <ImageView
-        android:scaleType="fitCenter"
-        android:visibility="visible"
-        android:src="@mipmap/ic_launcher"
-        android:id="@id/iv_item_img"
-        android:layout_width="540px"
-        android:layout_height="960px"
-        android:gravity="center"
+    <android.support.v7.widget.CardView
+        app:cardBackgroundColor="@color/colorGray"
+        app:cardElevation="10dp"
+        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="5dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:id="@id/cv_item_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@id/iv_item_move"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignRight="@+id/iv_item_img"
+                android:layout_alignTop="@+id/iv_item_img"
+                android:elevation="1dp"
+                android:src="@mipmap/ic_launcher"
+                android:visibility="visible" />
+            <ImageView
+                android:id="@id/iv_item_img"
+                android:layout_width="540px"
+                android:layout_height="800px"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:scaleType="fitXY"
+                android:src="@mipmap/ic_launcher"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
 </RelativeLayout>
