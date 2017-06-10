@@ -47,27 +47,36 @@ import id.zelory.compressor.Compressor;
 * 时    间：2017/4/22$ 22:34$.
 */
 public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEditViewHolder> implements ItemTouchHelperAdapter {
-    private Context context;
-    private List<NoteEditModel> mDataList;
-    private OnStartDragListener onStartDragListener;
-    private OnItemEditSelectedLintener onItemEditSelectedLintener;
-    private NoteEditViewHolder currentHolder;
-    private OnItemKeyDownListener onItemKeyDownListener;
+    private Context context;                                                    //上下文
+    private List<NoteEditModel> mDataList;                                      //数据
+    private OnStartDragListener onStartDragListener;                            //拖拽监听
+    private OnItemEditSelectedLintener onItemEditSelectedLintener;              //Item编辑焦点监听
+    private NoteEditViewHolder currentHolder;                                   //当前ViewHolder
+    private OnItemKeyDownListener onItemKeyDownListener;                        //针对ItemEdit的按键监听
+    private boolean alignCenterText=false;                                      //ItemEdit文字是否居中对齐
 
-    interface OnItemKeyDownListener{
-        void onItemKeyEnterListener(NoteEditViewHolder viewHolder,int pos,int keyCode, KeyEvent event);
-        void onItemKeyBackListener(NoteEditViewHolder viewHolder,int pos,int keyCode, KeyEvent event);
-
-    }
-
-    public void setOnItemKeyDownListener(OnItemKeyDownListener onItemKeyDownListener) {
-        this.onItemKeyDownListener = onItemKeyDownListener;
+    interface OnItemKeyDownListener {
+        void onItemKeyEnterListener(NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event);
+        void onItemKeyBackListener(NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event);
     }
 
     interface OnItemEditSelectedLintener {
         void onItemEditSelectedLintener(View view, int pos, boolean hasFocus);
     }
 
+    /**
+     * 设置按键监听
+     * @param onItemKeyDownListener
+     */
+    public void setOnItemKeyDownListener(OnItemKeyDownListener onItemKeyDownListener) {
+        this.onItemKeyDownListener = onItemKeyDownListener;
+    }
+
+
+    /**
+     * 设置Item编辑器焦点获取监听
+     * @param onItemEditSelectedLintener
+     */
     public void setOnItemEditSelectedLintener(OnItemEditSelectedLintener onItemEditSelectedLintener) {
         this.onItemEditSelectedLintener = onItemEditSelectedLintener;
     }
@@ -81,6 +90,22 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         this.onStartDragListener = onStartDragListener;
     }
 
+    /**
+     * 获取Item编辑器是否居中
+     * @return
+     */
+    public boolean isAlignCenterText() {
+        return alignCenterText;
+    }
+
+    /**
+     * 设置Item编辑器是否居中对齐
+     * @param alignCenterText
+     */
+    public void setTextAligentCenter(boolean alignCenterText) {
+        this.alignCenterText = alignCenterText;
+        notifyDataSetChanged();
+    }
 
     public NoteEditAdapter(Context context, List<NoteEditModel> mDataList) {
         this.context = context;
@@ -121,14 +146,18 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         //判断我们加载的到底是什么类型的数据
         if (itemDate.getItemFlag() == NoteEditModel.Flag.TEXT) {     //如果是文本Item
             //显示内容
+
+            //因为HTML转Span之后块级元素会自动换行，所以这里直接手动将块级元素P删除掉，有点暴力
+
+            String contentHtml = mDataList.get(position).getContent();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                //因为HTML转Span之后块级元素会自动换行，所以这里直接手动将块级元素P删除掉，有点暴力
-                if (!TextUtils.isEmpty(mDataList.get(position).getContent())) {
-                    //
-                    String contentHtml = mDataList.get(position).getContent();
-                    holder.etItem.setText(Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_COMPACT));
-                    holder.etItem.setSelection(holder.etItem.length() - 1);
-                }
+                holder.etItem.setText(Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_COMPACT));
+            } else {
+                holder.etItem.setText(Html.fromHtml(contentHtml));
+
+            }
+            if (!TextUtils.isEmpty(mDataList.get(position).getContent())) {
+                holder.etItem.setSelection(holder.etItem.length() - 1);
             }
 
             //设置编辑文本框的焦点变化监听，谁获得焦点我们就获取到当前获取焦点的Holder
@@ -141,20 +170,30 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
             });
 
-            if (onItemKeyDownListener!=null){
+            if (onItemKeyDownListener != null) {
                 holder.etItem.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if (keyCode==KeyEvent.KEYCODE_ENTER){
-                            onItemKeyDownListener.onItemKeyEnterListener(holder,position,keyCode,event);
+                        if (keyCode == KeyEvent.KEYCODE_ENTER&&event.getAction()==KeyEvent.ACTION_DOWN) {
+                            if (holder.myItemTextChangeListener.isFormat_list()){
+                                
+                            }
+                            onItemKeyDownListener.onItemKeyEnterListener(holder, position, keyCode, event);
                         }
-                        if (keyCode==KeyEvent.KEYCODE_BACK){
-                            onItemKeyDownListener.onItemKeyBackListener(holder,position,keyCode,event);
+                        if (keyCode == KeyEvent.KEYCODE_DEL&&event.getAction()==KeyEvent.ACTION_DOWN) {
+                            onItemKeyDownListener.onItemKeyBackListener(holder, position, keyCode, event);
 
                         }
                         return false;
                     }
                 });
+            }
+
+            //设置文字对齐方式
+            if (alignCenterText) {
+                holder.setEditItemAlignCenter(View.TEXT_ALIGNMENT_CENTER);
+            }else {
+                holder.setEditItemAlignCenter(View.TEXT_ALIGNMENT_TEXT_START);
             }
 
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
@@ -266,6 +305,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             etItem.addTextChangedListener(myItemTextChangeListener);        //当文本发生变化的时候就保存对应的内容到dataList
         }
 
+        public void setEditItemAlignCenter(int textAligment){
+            etItem.setTextAlignment(textAligment);
+        }
+
 
         public void setFormat_align_flag(int format_align_flag) {
             myItemTextChangeListener.setFormat_align_flag(format_align_flag);
@@ -372,6 +415,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             NoteEditModel model = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 model = new NoteEditModel(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL), NoteEditModel.Flag.TEXT, null);
+            }else {
+                model = new NoteEditModel(Html.toHtml(currentEdit.getText()), NoteEditModel.Flag.TEXT, null);
+
             }
             mDataList.set(position, model);
         }

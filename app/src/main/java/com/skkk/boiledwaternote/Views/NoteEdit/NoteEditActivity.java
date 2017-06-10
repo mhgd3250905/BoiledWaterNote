@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -244,11 +250,32 @@ public class NoteEditActivity extends AppCompatActivity {
             @Override
             public void onItemKeyEnterListener(NoteEditAdapter.NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event) {
                 Log.i(TAG, "onItemKeyEnterListener: 按下了回车");
+
             }
 
             @Override
             public void onItemKeyBackListener(NoteEditAdapter.NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event) {
                 Log.i(TAG, "onItemKeyEnterListener: 按下了返回");
+                if (pos == 0) {
+                    return;
+                }
+                if (TextUtils.isEmpty(viewHolder.etItem.getText())) {
+                    //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
+                    mDataList.remove(pos);
+                    adapter.notifyItemRemoved(pos);
+                    adapter.notifyItemRangeChanged(pos, adapter.getItemCount() - pos);
+                    //获取上一个Holder
+                    NoteEditAdapter.NoteEditViewHolder prevHolder =
+                            (NoteEditAdapter.NoteEditViewHolder) rvNoteEdit.findViewHolderForAdapterPosition(pos);
+                    if (prevHolder == null) {
+                        return;
+                    }
+                    if (prevHolder.etItem.getVisibility() == View.VISIBLE) {
+                        //如果EditText可见，说明是TEXT类型，那么其中的EditText直接获得焦点，光标定位在最后一个字符之后
+                        prevHolder.etItem.requestFocus();
+                        prevHolder.etItem.setSelection(prevHolder.etItem.length());
+                    }
+                }
             }
         });
     }
@@ -342,15 +369,13 @@ public class NoteEditActivity extends AppCompatActivity {
         int end = currentHolder.etItem.getSelectionEnd();
 
         switch (v.getId()) {
-            case R.id.iv_format_align_left:
-                break;
-            case R.id.iv_format_align_center:
-                break;
-            case R.id.iv_format_align_right:
-                break;
-            case R.id.iv_format_blod:               //设置文字Blod
 
-                if (!isSelected) {                  //如果没有选择
+            case R.id.iv_format_align_center:
+                adapter.setTextAligentCenter(!adapter.isAlignCenterText());
+                v.setBackgroundColor(adapter.isAlignCenterText()?Color.LTGRAY:Color.TRANSPARENT);
+                break;
+            case R.id.iv_format_blod:                //设置文字Blod
+                if (!isSelected) {                   //如果没有选择
                     if (currentHolder.myItemTextChangeListener.isFormat_blod()) {
                         currentHolder.myItemTextChangeListener.setFormat_blod(false);
                         v.setBackgroundColor(Color.TRANSPARENT);
@@ -358,20 +383,49 @@ public class NoteEditActivity extends AppCompatActivity {
                         currentHolder.myItemTextChangeListener.setFormat_blod(true);
                         v.setBackgroundColor(Color.LTGRAY);
                     }
-                }else {                             //如果选择
-
+                } else {                             //如果选择
+                    //获取选择区域内所有的StyleSpan
+                    StyleSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StyleSpan.class);
+                    StyleSpan hasSpan = null;
+                    for (int i = 0; i < spans.length; i++) {
+                        if (spans[i].getStyle() == Typeface.BOLD) {
+                            hasSpan = spans[i];
+                        }
+                    }
+                    if (hasSpan != null) {   //如果有Bold则设置为正常
+                        currentHolder.etItem.getText().removeSpan(hasSpan);
+                    } else {               //如果不包含Bold那么就设置粗体
+                        currentHolder.etItem.getText().setSpan(new StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
                 break;
             case R.id.iv_format_italic:             //设置文字斜体
-                if (currentHolder.myItemTextChangeListener.isFormat_italic()) {
-                    currentHolder.myItemTextChangeListener.setFormat_italic(false);
-                    v.setBackgroundColor(Color.TRANSPARENT);
+                if (!isSelected) {
+                    if (currentHolder.myItemTextChangeListener.isFormat_italic()) {
+                        currentHolder.myItemTextChangeListener.setFormat_italic(false);
+                        v.setBackgroundColor(Color.TRANSPARENT);
+                    } else {
+                        currentHolder.myItemTextChangeListener.setFormat_italic(true);
+                        v.setBackgroundColor(Color.LTGRAY);
+                    }
                 } else {
-                    currentHolder.myItemTextChangeListener.setFormat_italic(true);
-                    v.setBackgroundColor(Color.LTGRAY);
+                    //获取选择区域内所有的StyleSpan
+                    StyleSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StyleSpan.class);
+                    StyleSpan hasSpan = null;
+                    for (int i = 0; i < spans.length; i++) {
+                        if (spans[i].getStyle() == Typeface.ITALIC) {
+                            hasSpan = spans[i];
+                        }
+                    }
+                    if (hasSpan != null) {   //如果有ITALIC则设置为正常
+                        currentHolder.etItem.getText().removeSpan(hasSpan);
+                    } else {               //如果不包含ITALIC那么就设置粗体
+                        currentHolder.etItem.getText().setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
                 break;
-            case R.id.iv_format_list:
+            case R.id.iv_format_list:               //列表
+                currentHolder.setFormat_list(true);
                 break;
             case R.id.iv_format_list_numbered:
                 break;
@@ -380,21 +434,59 @@ public class NoteEditActivity extends AppCompatActivity {
             case R.id.iv_format_size:
                 break;
             case R.id.iv_format_underlined:         //设置文字下划线
-                if (currentHolder.myItemTextChangeListener.isFormat_underlined()) {
-                    currentHolder.myItemTextChangeListener.setFormat_underlined(false);
-                    v.setBackgroundColor(Color.TRANSPARENT);
+                if (!isSelected) {
+                    if (currentHolder.myItemTextChangeListener.isFormat_underlined()) {
+                        currentHolder.myItemTextChangeListener.setFormat_underlined(false);
+                        v.setBackgroundColor(Color.TRANSPARENT);
+                    } else {
+                        currentHolder.myItemTextChangeListener.setFormat_underlined(true);
+                        v.setBackgroundColor(Color.LTGRAY);
+                    }
                 } else {
-                    currentHolder.myItemTextChangeListener.setFormat_underlined(true);
-                    v.setBackgroundColor(Color.LTGRAY);
+                    //获取选择区域内所有的StyleSpan
+                    UnderlineSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, UnderlineSpan.class);
+                    boolean hasSpan = false;
+                    for (int i = 0; i < spans.length; i++) {
+                        if (spans.length > 0) {
+                            hasSpan = true;
+                        }
+                    }
+                    //清除区域内所有的UnderLineSpan
+                    for (int i = 0; i < spans.length; i++) {
+                        currentHolder.etItem.getText().removeSpan(spans[i]);
+                    }
+                    //如果本身没有Span，这里需要设置
+                    if (!hasSpan) {
+                        currentHolder.etItem.getText().setSpan(new UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
                 break;
             case R.id.iv_format_strike_through:     //设置文字删除线
-                if (currentHolder.myItemTextChangeListener.isFormat_strike_through()) {
-                    currentHolder.myItemTextChangeListener.setFormat_strike_through(false);
-                    v.setBackgroundColor(Color.TRANSPARENT);
+                if (!isSelected) {
+                    if (currentHolder.myItemTextChangeListener.isFormat_strike_through()) {
+                        currentHolder.myItemTextChangeListener.setFormat_strike_through(false);
+                        v.setBackgroundColor(Color.TRANSPARENT);
+                    } else {
+                        currentHolder.myItemTextChangeListener.setFormat_strike_through(true);
+                        v.setBackgroundColor(Color.LTGRAY);
+                    }
                 } else {
-                    currentHolder.myItemTextChangeListener.setFormat_strike_through(true);
-                    v.setBackgroundColor(Color.LTGRAY);
+                    //获取选择区域内所有的StyleSpan
+                    StrikethroughSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StrikethroughSpan.class);
+                    boolean hasSpan = false;
+                    for (int i = 0; i < spans.length; i++) {
+                        if (spans.length > 0) {
+                            hasSpan = true;
+                        }
+                    }
+                    //清除区域内所有的UnderLineSpan
+                    for (int i = 0; i < spans.length; i++) {
+                        currentHolder.etItem.getText().removeSpan(spans[i]);
+                    }
+                    //如果本身没有Span，这里需要设置
+                    if (!hasSpan) {
+                        currentHolder.etItem.getText().setSpan(new StrikethroughSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
                 break;
         }

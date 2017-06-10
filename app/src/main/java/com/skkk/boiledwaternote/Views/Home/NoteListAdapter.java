@@ -115,7 +115,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             }
         }
 
-        holder.tvNoteListTitle.setText(Html.fromHtml(title).toString());
+        if (!TextUtils.isEmpty(title)) {
+            holder.tvNoteListTitle.setText(Html.fromHtml(title).toString());
+        }
+
         if (onItemClickListener != null) {
             holder.llShow.setOnClickListener(new View.OnClickListener() {
                 @Override
