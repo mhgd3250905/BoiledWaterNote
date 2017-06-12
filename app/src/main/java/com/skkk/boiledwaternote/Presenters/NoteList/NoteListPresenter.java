@@ -1,11 +1,13 @@
 package com.skkk.boiledwaternote.Presenters.NoteList;
 
-import android.content.Context;
-
 import com.skkk.boiledwaternote.Modles.DBUtils;
 import com.skkk.boiledwaternote.Modles.Note;
+import com.skkk.boiledwaternote.Modles.NoteModle;
 import com.skkk.boiledwaternote.Modles.gen.DaoSession;
 import com.skkk.boiledwaternote.Modles.gen.NoteDao;
+import com.skkk.boiledwaternote.MyApplication;
+import com.skkk.boiledwaternote.Presenters.BasePersenter;
+import com.skkk.boiledwaternote.Views.Home.NoteListImpl;
 
 import java.util.List;
 
@@ -15,19 +17,37 @@ import java.util.List;
 * 作    者：ksheng
 * 时    间：2017/5/28$ 19:02$.
 */
-public class NoteListPresenter implements NoteListable {
-    private Context context;
+public class NoteListPresenter extends BasePersenter<NoteListImpl> implements NoteListable{
+    private NoteListImpl noteListImpl;
+    private NoteModle noteModle=new NoteModle(MyApplication.getInstance().getApplicationContext());
 
-    public NoteListPresenter(Context context) {
-        this.context = context;
+    public NoteListPresenter(NoteListImpl noteListImpl) {
+        this.noteListImpl = noteListImpl;
+    }
+
+    /**
+     * 展示数据
+     */
+    @Override
+    public void fectch() {
+        List<Note> noteList = noteModle.queryAll();
+        if (noteList!=null){
+            noteListImpl.showList(noteList);
+        }
     }
 
     @Override
     public List<Note> getNotes() {
-        DaoSession session = DBUtils.getInstance(context).getSession();
-        NoteDao noteDao = session.getNoteDao();
-        List<Note> list = noteDao.queryBuilder().orderDesc(NoteDao.Properties.CreateTime).list();
-        return list;
+//        DaoSession session = DBUtils.getInstance(MyApplication.getInstance().getApplicationContext()).getSession();
+//        NoteDao noteDao = session.getNoteDao();
+//        List<Note> list = noteDao.queryBuilder().orderDesc(NoteDao.Properties.CreateTime).list();
+        return null;
+    }
+
+    @Override
+    public void showNoteList() {
+        List<Note> noteList = noteModle.queryAll();
+        noteListImpl.showList(noteList);
     }
 
     /**
@@ -39,7 +59,7 @@ public class NoteListPresenter implements NoteListable {
     public boolean deleteNote(Note note) {
         boolean done = false;
         try {
-            DaoSession session = DBUtils.getInstance(context).getSession();
+            DaoSession session = DBUtils.getInstance(MyApplication.getInstance().getApplicationContext()).getSession();
             NoteDao noteDao = session.getNoteDao();
             noteDao.delete(note);
             done = true;

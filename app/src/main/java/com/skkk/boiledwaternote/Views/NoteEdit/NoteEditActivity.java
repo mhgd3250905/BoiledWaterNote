@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -101,6 +102,7 @@ public class NoteEditActivity extends AppCompatActivity {
     private int currentPos;     //当前光标选择的item位置
     private boolean isNew;      //判断是否为新的笔记
     private Note updateNote;
+    private Handler handler;
 
 
     @Override
@@ -108,6 +110,7 @@ public class NoteEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_edit);
         ButterKnife.bind(this);
+        handler = new Handler();
         presenter = new NoteEditPresenter(this);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -248,22 +251,27 @@ public class NoteEditActivity extends AppCompatActivity {
 
         adapter.setOnItemKeyDownListener(new NoteEditAdapter.OnItemKeyDownListener() {
             @Override
-            public void onItemKeyEnterListener(NoteEditAdapter.NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event) {
+            public void onItemKeyEnterListener(NoteEditAdapter.NoteEditViewHolder viewHolder, final int pos, int keyCode, KeyEvent event) {
                 Log.i(TAG, "onItemKeyEnterListener: 按下了回车");
-
+                mDataList.add(pos+1,new NoteEditModel("", NoteEditModel.Flag.TEXT,null));
+                adapter.setFocusItemPos(pos+1);
+                adapter.notifyItemInserted(pos+1);
+                adapter.notifyItemRangeChanged(pos+1,adapter.getItemCount()-pos-1);
             }
 
             @Override
             public void onItemKeyBackListener(NoteEditAdapter.NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event) {
+                adapter.setFocusItemPos(-1);
                 Log.i(TAG, "onItemKeyEnterListener: 按下了返回");
                 if (pos == 0) {
                     return;
                 }
                 if (TextUtils.isEmpty(viewHolder.etItem.getText())) {
                     //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
+                    Log.i(TAG, "onItemKeyBackListener: pos----->"+pos);
                     mDataList.remove(pos);
                     adapter.notifyItemRemoved(pos);
-                    adapter.notifyItemRangeChanged(pos, adapter.getItemCount() - pos);
+                    adapter.notifyItemRangeChanged(pos, adapter.getItemCount());
                     //获取上一个Holder
                     NoteEditAdapter.NoteEditViewHolder prevHolder =
                             (NoteEditAdapter.NoteEditViewHolder) rvNoteEdit.findViewHolderForAdapterPosition(pos);
@@ -394,7 +402,7 @@ public class NoteEditActivity extends AppCompatActivity {
                     }
                     if (hasSpan != null) {   //如果有Bold则设置为正常
                         currentHolder.etItem.getText().removeSpan(hasSpan);
-                    } else {               //如果不包含Bold那么就设置粗体
+                    } else {                //如果不包含Bold那么就设置粗体
                         currentHolder.etItem.getText().setSpan(new StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
@@ -426,6 +434,7 @@ public class NoteEditActivity extends AppCompatActivity {
                 break;
             case R.id.iv_format_list:               //列表
                 currentHolder.setFormat_list(true);
+                v.setBackgroundColor(currentHolder.myItemTextChangeListener.isFormat_list()?Color.LTGRAY:Color.TRANSPARENT);
                 break;
             case R.id.iv_format_list_numbered:
                 break;

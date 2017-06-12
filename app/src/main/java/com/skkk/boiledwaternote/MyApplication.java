@@ -12,11 +12,18 @@ import android.app.Application;
 * 时    间：2017/5/28$ 15:50$.
 */
 public class MyApplication extends Application{
+    private static MyApplication instance;
+
+
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance=this;
+    }
 
+    public static MyApplication getInstance() {
+        return instance;
     }
 
 }

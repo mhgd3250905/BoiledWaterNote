@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface NoteListable {
     List<Note> getNotes();
+    void showNoteList();
     boolean deleteNote(Note note);
 }

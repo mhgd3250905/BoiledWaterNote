@@ -83,7 +83,6 @@ public class NoteEditPresenter implements NoteEditable {
             //获取数据库操作类
             DaoSession session = DBUtils.getInstance(context).getSession();
             NoteDao noteDao = session.getNoteDao();
-            NoteImageDao noteImageDao = session.getNoteImageDao();
 
 
             note.setContent(contentJson);

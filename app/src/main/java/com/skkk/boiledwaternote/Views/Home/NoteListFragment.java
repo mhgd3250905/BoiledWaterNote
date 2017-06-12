@@ -26,7 +26,7 @@ import java.util.List;
 import static android.content.ContentValues.TAG;
 
 
-public class NoteListFragment extends Fragment {
+public class NoteListFragment extends Fragment implements NoteListImpl {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private NoteListPresenter noteListPresenter;
@@ -69,9 +69,11 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        noteListPresenter = new NoteListPresenter(getContext());      //获取操作类
+        noteListPresenter = new NoteListPresenter(this);                //获取操作类
+        mDataList=new ArrayList<>();                                  //初始化数据集
         initUI(view);       //初始化UI
         initEvent();        //设置各种事件
+        noteListPresenter.fectch();
     }
 
     /**
@@ -83,7 +85,7 @@ public class NoteListFragment extends Fragment {
         linearLayoutManager=new MyLinearLayoutManager(getContext());
         rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
-        mDataList = getDefaultData();
+//        mDataList = getDefaultData();
         adapter = new NoteListAdapter(getContext(), mDataList);
         rvNoteList.setAdapter(adapter);
     }
@@ -93,13 +95,13 @@ public class NoteListFragment extends Fragment {
      *
      * @return
      */
-    public List<Note> getDefaultData() {
-        List<Note> notes = new ArrayList<>();
-        if (noteListPresenter != null) {
-            notes = noteListPresenter.getNotes();
-        }
-        return notes;
-    }
+//    public List<Note> getDefaultData() {
+//        List<Note> notes = new ArrayList<>();
+//        if (noteListPresenter != null) {
+//            notes = noteListPresenter.getNotes();
+//        }
+//        return notes;
+//    }
 
     /**
      * 初始化事件
@@ -160,14 +162,10 @@ public class NoteListFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         //请求码是新建一个Note
         if (requestCode == Configs.REQUEST_START_NEW_NOTE) {
-            mDataList = getDefaultData();
-            adapter.setDataList(mDataList);
-            adapter.notifyDataSetChanged();
+            noteListPresenter.showNoteList();
         }
         if (requestCode == Configs.REQUEST_UPDATE_NOTE) {
-            mDataList = getDefaultData();
-            adapter.setDataList(mDataList);
-            adapter.notifyDataSetChanged();
+            noteListPresenter.showNoteList();
         }
     }
 
@@ -181,6 +179,26 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+
+    @Override
+    public void showList(List<Note> noteList) {
+        mDataList=noteList;
+        adapter.setDataList(mDataList);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void deleteNote(int pos) {
+        mDataList.remove(pos);
+        adapter.notifyItemRemoved(pos);
+        adapter.notifyItemRangeChanged(pos,adapter.getItemCount()-pos);
+    }
+
+    @Override
+    public void deletelist(List<Note> noteList) {
+
     }
 
 }
