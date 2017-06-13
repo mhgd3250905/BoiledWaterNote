@@ -7,6 +7,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.DensityUtil;
 
 
@@ -74,16 +75,16 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
         //如果当前是拖拽状态
         if (actionState== ItemTouchHelper.ACTION_STATE_DRAG){
             if (isCurrentlyActive){//正在拖动
-                if (layoutParams.height> DensityUtil.dip2px(context,100)){
+                if (layoutParams.height> DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_min_height))){
                     layoutParams.height-=50;
                 }else {
-                    layoutParams.height=DensityUtil.dip2px(context,100);
+                    layoutParams.height=DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_min_height));
                 }
             }else {
-                if (layoutParams.height<DensityUtil.dip2px(context,300)){
+                if (layoutParams.height<DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height))){
                     layoutParams.height+=50;
                 }else {
-                    layoutParams.height=DensityUtil.dip2px(context,300);
+                    layoutParams.height=DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height));
                 }
             }
             item.setLayoutParams(layoutParams);

@@ -1,10 +1,10 @@
 package com.skkk.boiledwaternote.Views.NoteEdit;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
@@ -24,18 +24,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.target.Target;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdapter;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
+import com.skkk.boiledwaternote.Utils.Utils.DensityUtil;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import id.zelory.compressor.Compressor;
 
 /**
  * Created by admin on 2017/4/22.
@@ -52,31 +54,18 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private OnStartDragListener onStartDragListener;                            //拖拽监听
     private OnItemEditSelectedLintener onItemEditSelectedLintener;              //Item编辑焦点监听
     private NoteEditViewHolder currentHolder;                                   //当前ViewHolder
-    private OnItemKeyDownListener onItemKeyDownListener;                        //针对ItemEdit的按键监听
     private boolean alignCenterText = false;                                    //ItemEdit文字是否居中对齐
-    private int focusItemPos=-1;                                                //需要获得焦点的Item
+    private int focusItemPos = -1;                                              //需要获得焦点的Item
+
+    private boolean itemFormatList = false;            //设置List格式为List
+
 
     public void setFocusItemPos(int focusItemPos) {
         this.focusItemPos = focusItemPos;
     }
 
-    interface OnItemKeyDownListener {
-        void onItemKeyEnterListener(NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event);
-
-        void onItemKeyBackListener(NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event);
-    }
-
     interface OnItemEditSelectedLintener {
         void onItemEditSelectedLintener(View view, int pos, boolean hasFocus);
-    }
-
-    /**
-     * 设置按键监听
-     *
-     * @param onItemKeyDownListener
-     */
-    public void setOnItemKeyDownListener(OnItemKeyDownListener onItemKeyDownListener) {
-        this.onItemKeyDownListener = onItemKeyDownListener;
     }
 
 
@@ -143,6 +132,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     public void onBindViewHolder(final NoteEditViewHolder holder, final int position) {
         holder.myItemTextChangeListener.updatePos(position);        //更新文本变化监听pos
 
+        holder.setCurrentPos(position);
+
         NoteEditModel itemDate = mDataList.get(position);             //获取dateBean
 
         if (onItemEditSelectedLintener != null) {
@@ -184,30 +175,39 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
             });
 
-            if (onItemKeyDownListener != null) {
-                holder.etItem.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if (keyCode == KeyEvent.KEYCODE_ENTER&&event.getAction()==KeyEvent.ACTION_DOWN) {
-                            onItemKeyDownListener.onItemKeyEnterListener(holder, position, keyCode, event);
-                        }
-                        if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
-                            onItemKeyDownListener.onItemKeyBackListener(holder, position, keyCode, event);
+//            /**
+//             * 设置按键监听
+//             */
+//            holder.etItem.setOnKeyListener(new View.OnKeyListener() {
+//                @Override
+//                public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                    if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+//                        mDataList.add(position + 1, new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+//                        notifyItemInserted(position + 1);
+//                        setFocusItemPos(position + 1);
+//                        notifyDataSetChanged();
+//                    }
+//                    if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
+//                        if (position != 0) {
+//                            if (TextUtils.isEmpty(holder.etItem.getText())) {
+//                                //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
+//                                Log.i(TAG, "onItemKeyBackListener: pos----->" + position);
+//                                mDataList.remove(position);
+//                                notifyItemRemoved(position);
+//                                setFocusItemPos(position - 1);
+//                                notifyDataSetChanged();
+//                            }
+//                        }
+//                    }
+//                    return false;
+//                }
+//            });
 
-                        }
-                        return false;
-                    }
-                });
-            }
-
+            //屏蔽回车按键
             holder.etItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (event.getKeyCode()==KeyEvent.KEYCODE_ENTER&&actionId==KeyEvent.ACTION_DOWN){
-                        return true;
-                    }
-
-                    return false;
+                    return event.getKeyCode() == KeyEvent.KEYCODE_ENTER && actionId == KeyEvent.ACTION_DOWN;
                 }
             });
 
@@ -223,23 +223,24 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
             holder.etItem.setVisibility(View.VISIBLE);          //文本显示 图片隐藏
-            holder.ivItemImage.setVisibility(View.GONE);
-            holder.ivItemMove.setVisibility(View.GONE);
+            holder.cvItemImg.setVisibility(View.GONE);
 
             //设置指定的Item获取焦点
-            if (focusItemPos==position) {
+            if (focusItemPos == position) {
                 holder.etItem.requestFocus();
                 holder.etItem.setSelection(holder.etItem.length());
             }
 
+            //同步Holder中的List格式
+            holder.myItemTextChangeListener.setFormat_list(itemFormatList);
+
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
-            holder.ivItemImage.setVisibility(View.VISIBLE);     //图片显示 文本隐藏
-            holder.ivItemMove.setVisibility(View.VISIBLE);
+            holder.cvItemImg.setVisibility(View.VISIBLE);
             holder.etItem.setVisibility(View.GONE);
 
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 
-            layoutParams.height = 800;
+            layoutParams.height = DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height));
             holder.itemView.setLayoutParams(layoutParams);
 
             //拖拽图片触摸监听
@@ -258,16 +259,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 return;
             }
 
-            //压缩图片
-            Bitmap bitmapFromUri = new Compressor.Builder(context)
-                    .setMaxHeight(800)
-                    .setQuality(100)
-                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                    .build()
-                    .compressToBitmap(new File(itemDate.getImagePath()));
+            //
+            Target<GlideDrawable> into = Glide.with(context)
+                    .load(itemDate.getImagePath())
+                    .into(holder.ivItemImage);
 
-//            Bitmap bitmapFromUri = BitmapFactory.decodeFile(itemDate.getImagePath());
-            holder.ivItemImage.setImageBitmap(bitmapFromUri);
         }
 
 //        Log.d("NoteEditAdapter", "holder.itemView.getLayoutParams().height:" + holder.itemView.getLayoutParams().height);
@@ -288,6 +284,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     public void onItemMove(int fromPos, int toPos) {
         Collections.swap(mDataList, fromPos, toPos);
         notifyItemMoved(fromPos, toPos);
+        notifyItemRangeChanged(toPos + 1, getItemCount());
     }
 
     /**
@@ -299,8 +296,17 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     public void onitemSwipe(int pos) {
         mDataList.remove(pos);
         notifyItemRemoved(pos);
+        notifyItemRangeChanged(pos, getItemCount());
     }
 
+    public boolean isItemFormatList() {
+        return itemFormatList;
+    }
+
+    public void setItemFormatList(boolean itemFormatList) {
+        this.itemFormatList = itemFormatList;
+        notifyDataSetChanged();
+    }
 
     /**
      * ViewHolder
@@ -312,10 +318,20 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public ImageView ivItemMove;        //拖拽移动按钮
         @Bind(R.id.iv_item_img)
         public ImageView ivItemImage;       //图片框
+        @Bind(R.id.cv_item_img)
+        public CardView cvItemImg;          //图片容器
+        @Bind(R.id.iv_text_quote)
+        public ImageView ivTextQuote;       //编辑栏位引用图标
+
+        private int currentPos;             //当前的position
+
+        public void setCurrentPos(int currentPos) {
+            this.currentPos = currentPos;
+        }
 
         public MyItemTextChangeListener myItemTextChangeListener;
 
-        public NoteEditViewHolder(View itemView, MyItemTextChangeListener myItemTextChangeListener) {
+        public NoteEditViewHolder(View itemView, final MyItemTextChangeListener myItemTextChangeListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             //设置焦点获取监听：直接抛给EditText
@@ -332,6 +348,41 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             this.myItemTextChangeListener = myItemTextChangeListener;
             myItemTextChangeListener.setCurrentEdit(etItem);
             etItem.addTextChangedListener(myItemTextChangeListener);        //当文本发生变化的时候就保存对应的内容到dataList
+
+            /**
+             * 设置Edit按键监听
+             */
+            etItem.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                        NoteEditModel model = new NoteEditModel();
+                        model.setItemFlag(NoteEditModel.Flag.TEXT);
+                        model.setImagePath(null);
+                        if (myItemTextChangeListener.isFormat_list()) {
+                            model.setContent("● ");
+                        } else {
+                            model.setContent("");
+                        }
+                        mDataList.add(currentPos + 1, model);
+                        notifyItemInserted(currentPos + 1);
+                        setFocusItemPos(currentPos + 1);
+                        notifyDataSetChanged();
+                    }
+                    if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
+                        if (currentPos != 0) {
+                            if (TextUtils.isEmpty(etItem.getText())) {
+                                //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
+                                mDataList.remove(currentPos);
+                                notifyItemRemoved(currentPos);
+                                setFocusItemPos(currentPos - 1);
+                                notifyDataSetChanged();
+                            }
+                        }
+                    }
+                    return false;
+                }
+            });
         }
 
         public void setEditItemAlignCenter(int textAligment) {
@@ -360,7 +411,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         }
 
         public void setFormat_quote(boolean format_quote) {
-            myItemTextChangeListener.setFormat_quote(format_quote);
+//            myItemTextChangeListener.setFormat_quote(format_quote);
+//            ivTextQuote.setVisibility(format_quote?View.VISIBLE:View.GONE);
+//            etItem.setTextColor(format_quote? ContextCompat.getColor(context,R.color.colorGray)
+//                    :ContextCompat.getColor(context,R.color.colorBlackBody));
         }
 
         public void setFormat_size(int format_size) {

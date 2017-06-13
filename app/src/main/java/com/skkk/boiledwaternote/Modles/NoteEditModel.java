@@ -22,6 +22,9 @@ public class NoteEditModel {
     public int format_size=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
     public boolean format_underlined=false;    //下划线
 
+    public NoteEditModel() {
+    }
+
     public NoteEditModel(String content, Flag itemFlag, String imagePath) {
         this.content = content;
         this.itemFlag = itemFlag;

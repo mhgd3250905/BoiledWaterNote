@@ -7,7 +7,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -133,7 +132,7 @@ public class DragItemView extends FrameLayout {
                     llShow.setScaleY(1);
                     isMenuShow = !isMenuShow;
                     d = 1;
-                    Log.w(TAG, "onViewPositionChanged: 当前是否为菜单在上" + isMenuShow);
+//                    Log.w(TAG, "onViewPositionChanged: 当前是否为菜单在上" + isMenuShow);
                 }
                 onDragPosChangeListener.closeDragListener(DragItemView.this, changedView, left, top, dx, dy);
             } else if (left > 0 && left <= centerWidth) {
@@ -157,7 +156,7 @@ public class DragItemView extends FrameLayout {
                 llShow.setScaleX(scaleShow);
                 llShow.setScaleY(scaleShow);
 //                Log.i(TAG, "onViewPositionChanged: scaleHide---> " + scaleHide + " , scaleShow---> " + scaleShow);
-                Log.i(TAG, "onViewPositionChanged: left--->"+left+" , centerWidth--->"+centerWidth);
+//                Log.i(TAG, "onViewPositionChanged: left--->"+left+" , centerWidth--->"+centerWidth);
                 if (left >= centerWidth) {
                     d = -1;
                     bringChildToFront(llHide);

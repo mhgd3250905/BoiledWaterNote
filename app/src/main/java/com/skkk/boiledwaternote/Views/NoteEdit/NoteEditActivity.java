@@ -20,12 +20,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -249,43 +247,6 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         });
 
-        adapter.setOnItemKeyDownListener(new NoteEditAdapter.OnItemKeyDownListener() {
-            @Override
-            public void onItemKeyEnterListener(NoteEditAdapter.NoteEditViewHolder viewHolder, final int pos, int keyCode, KeyEvent event) {
-                Log.i(TAG, "onItemKeyEnterListener: 按下了回车");
-                mDataList.add(pos+1,new NoteEditModel("", NoteEditModel.Flag.TEXT,null));
-                adapter.setFocusItemPos(pos+1);
-                adapter.notifyItemInserted(pos+1);
-                adapter.notifyItemRangeChanged(pos+1,adapter.getItemCount()-pos-1);
-            }
-
-            @Override
-            public void onItemKeyBackListener(NoteEditAdapter.NoteEditViewHolder viewHolder, int pos, int keyCode, KeyEvent event) {
-                adapter.setFocusItemPos(-1);
-                Log.i(TAG, "onItemKeyEnterListener: 按下了返回");
-                if (pos == 0) {
-                    return;
-                }
-                if (TextUtils.isEmpty(viewHolder.etItem.getText())) {
-                    //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
-                    Log.i(TAG, "onItemKeyBackListener: pos----->"+pos);
-                    mDataList.remove(pos);
-                    adapter.notifyItemRemoved(pos);
-                    adapter.notifyItemRangeChanged(pos, adapter.getItemCount());
-                    //获取上一个Holder
-                    NoteEditAdapter.NoteEditViewHolder prevHolder =
-                            (NoteEditAdapter.NoteEditViewHolder) rvNoteEdit.findViewHolderForAdapterPosition(pos);
-                    if (prevHolder == null) {
-                        return;
-                    }
-                    if (prevHolder.etItem.getVisibility() == View.VISIBLE) {
-                        //如果EditText可见，说明是TEXT类型，那么其中的EditText直接获得焦点，光标定位在最后一个字符之后
-                        prevHolder.etItem.requestFocus();
-                        prevHolder.etItem.setSelection(prevHolder.etItem.length());
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -433,12 +394,24 @@ public class NoteEditActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.iv_format_list:               //列表
-                currentHolder.setFormat_list(true);
-                v.setBackgroundColor(currentHolder.myItemTextChangeListener.isFormat_list()?Color.LTGRAY:Color.TRANSPARENT);
+                if (adapter.isItemFormatList()){
+                    adapter.setItemFormatList(false);
+                }else {
+                    adapter.setItemFormatList(true);
+                }
+//                adapter.setItemFormatList(!adapter.isItemFormatList());
+                v.setBackgroundColor(adapter.isItemFormatList()?Color.LTGRAY:Color.TRANSPARENT);
                 break;
             case R.id.iv_format_list_numbered:
                 break;
-            case R.id.iv_format_quote:
+            case R.id.iv_format_quote:              //设置引用
+//                if (currentHolder.myItemTextChangeListener.isFormat_quote()){
+//                    currentHolder.setFormat_quote(false);
+//                }else {
+//                    currentHolder.setFormat_quote(true);
+//                }
+//                v.setBackgroundColor(currentHolder.myItemTextChangeListener.isFormat_quote()?Color.LTGRAY:Color.TRANSPARENT);
+
                 break;
             case R.id.iv_format_size:
                 break;

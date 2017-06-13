@@ -27,4 +27,5 @@
     <item name="iv_format_strike_through" type="id">iv_format_strike_through</item>
     <item name="cv_item_img" type="id">cv_item_img</item>
     <item name="toolbar" type="id">toolbar</item>
+    <item name="iv_text_quote" type="id">iv_text_quote</item>
 </resources>
