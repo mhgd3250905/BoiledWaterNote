@@ -498,12 +498,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
             NoteEditModel model = null;
             if (android.os.Build.VERSION.SDK_INT >= N) {
-                model = new NoteEditModel(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL), NoteEditModel.Flag.TEXT, null);
+                mDataList.get(position).setContent(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+//                model = new NoteEditModel(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL), NoteEditModel.Flag.TEXT, null);
             } else {
-                model = new NoteEditModel(Html.toHtml(currentEdit.getText()), NoteEditModel.Flag.TEXT, null);
+                mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
+//                model = new NoteEditModel(Html.toHtml(currentEdit.getText()), NoteEditModel.Flag.TEXT, null);
             }
 
-            mDataList.set(position, model);
+//            mDataList.set(position, model);
         }
 
         @Override
