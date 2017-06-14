@@ -3,6 +3,7 @@ package com.skkk.boiledwaternote.Views.NoteEdit;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -25,8 +26,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.target.Target;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdapter;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -38,6 +37,8 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static android.os.Build.VERSION_CODES.N;
 
 /**
  * Created by admin on 2017/4/22.
@@ -103,7 +104,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
      */
     public void setTextAligentCenter(boolean alignCenterText) {
         this.alignCenterText = alignCenterText;
-        notifyDataSetChanged();
+        currentHolder.setFormat_align_flag(this.alignCenterText);
+        mDataList.get(currentHolder.getCurrentPos()).setFormat_align_center(this.alignCenterText);
+        notifyItemChanged(currentHolder.getCurrentPos());
     }
 
 
@@ -129,21 +132,12 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
     @Override
-    public void onBindViewHolder(final NoteEditViewHolder holder, final int position) {
+    public void onBindViewHolder(NoteEditViewHolder holder, int position) {
+        final NoteEditViewHolder viewHolder=holder;
+        holder.setCurrentPos(position);
         holder.myItemTextChangeListener.updatePos(position);        //更新文本变化监听pos
 
-        holder.setCurrentPos(position);
-
         NoteEditModel itemDate = mDataList.get(position);             //获取dateBean
-
-        if (onItemEditSelectedLintener != null) {
-            holder.etItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    onItemEditSelectedLintener.onItemEditSelectedLintener(v, position, hasFocus);
-                }
-            });
-        }
 
         //判断我们加载的到底是什么类型的数据
         if (itemDate.getItemFlag() == NoteEditModel.Flag.TEXT) {     //如果是文本Item
@@ -154,7 +148,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             String contentHtml = mDataList.get(position).getContent();
             contentHtml = contentHtml.replace("<p", "<span").replace("/p>", "/span>");
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (Build.VERSION.SDK_INT >= N) {
                 holder.etItem.setText(Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_LEGACY));
             } else {
                 holder.etItem.setText(Html.fromHtml(contentHtml));
@@ -170,7 +164,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        currentHolder = holder;
+                        currentHolder = viewHolder;
                     }
                 }
             });
@@ -212,13 +206,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             });
 
 
-            //设置文字对齐方式
-            if (alignCenterText) {
-                holder.setEditItemAlignCenter(View.TEXT_ALIGNMENT_CENTER);
-            } else {
-                holder.setEditItemAlignCenter(View.TEXT_ALIGNMENT_TEXT_START);
-            }
-
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
@@ -231,16 +218,21 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 holder.etItem.setSelection(holder.etItem.length());
             }
 
+            holder.setFormat_quote(itemDate.isFormat_quote());
+
+            holder.setFormat_align_flag(itemDate.format_align_center);
+
             //同步Holder中的List格式
             holder.myItemTextChangeListener.setFormat_list(itemFormatList);
 
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
             holder.cvItemImg.setVisibility(View.VISIBLE);
             holder.etItem.setVisibility(View.GONE);
+            holder.ivTextQuote.setVisibility(View.GONE);
 
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 
-            layoutParams.height = DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height));
+            layoutParams.height = DensityUtil.dip2px(context, context.getResources().getDimension(R.dimen.edit_item_image_max_height));
             holder.itemView.setLayoutParams(layoutParams);
 
             //拖拽图片触摸监听
@@ -249,7 +241,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 public boolean onTouch(View v, MotionEvent event) {
                     if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN
                             && onStartDragListener != null) {
-                        onStartDragListener.onStartDragListener(holder);
+                        onStartDragListener.onStartDragListener(viewHolder);
                     }
                     return false;
                 }
@@ -259,11 +251,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 return;
             }
 
-            //
-            Target<GlideDrawable> into = Glide.with(context)
+            Glide.with(context)
                     .load(itemDate.getImagePath())
                     .into(holder.ivItemImage);
-
         }
 
 //        Log.d("NoteEditAdapter", "holder.itemView.getLayoutParams().height:" + holder.itemView.getLayoutParams().height);
@@ -325,6 +315,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         private int currentPos;             //当前的position
 
+        public int getCurrentPos() {
+            return currentPos;
+        }
+
         public void setCurrentPos(int currentPos) {
             this.currentPos = currentPos;
         }
@@ -385,13 +379,19 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             });
         }
 
-        public void setEditItemAlignCenter(int textAligment) {
-            etItem.setTextAlignment(textAligment);
-        }
+        /**
+         * 设置文本对齐方式
+         *
+         * @param isTextCenter
+         */
 
-
-        public void setFormat_align_flag(int format_align_flag) {
-            myItemTextChangeListener.setFormat_align_flag(format_align_flag);
+        public void setFormat_align_flag(boolean isTextCenter) {
+            if (isTextCenter) {
+                etItem.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            } else {
+                etItem.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            }
+            myItemTextChangeListener.setFormat_align_center(isTextCenter);
         }
 
         public void setFormat_blod(boolean format_blod) {
@@ -411,10 +411,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         }
 
         public void setFormat_quote(boolean format_quote) {
-//            myItemTextChangeListener.setFormat_quote(format_quote);
-//            ivTextQuote.setVisibility(format_quote?View.VISIBLE:View.GONE);
-//            etItem.setTextColor(format_quote? ContextCompat.getColor(context,R.color.colorGray)
-//                    :ContextCompat.getColor(context,R.color.colorBlackBody));
+            myItemTextChangeListener.setFormat_quote(format_quote);
+            ivTextQuote.setVisibility(format_quote ? View.VISIBLE : View.GONE);
+            etItem.setTextColor(format_quote ? ContextCompat.getColor(context, R.color.colorGray)
+                    : ContextCompat.getColor(context, R.color.colorBlackBody));
+
         }
 
         public void setFormat_size(int format_size) {
@@ -434,7 +435,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         private boolean flagIsAuto = false;           //设置一个flag用来避免重新设置EditText时候触发监听
 
-        private int format_align_flag = 0;            //0-左 1-中后 2-右
+        private boolean format_align_center =false;   //0-左 1-中后 2-右
         private boolean format_blod = false;          //加粗
         private boolean format_italic = false;        //斜体
         private boolean format_list = false;          //列表
@@ -496,7 +497,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             }
 
             NoteEditModel model = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            if (android.os.Build.VERSION.SDK_INT >= N) {
                 model = new NoteEditModel(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL), NoteEditModel.Flag.TEXT, null);
             } else {
                 model = new NoteEditModel(Html.toHtml(currentEdit.getText()), NoteEditModel.Flag.TEXT, null);
@@ -513,8 +514,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             this.currentEdit = currentEdit;
         }
 
-        public void setFormat_align_flag(int format_align_flag) {
-            this.format_align_flag = format_align_flag;
+        public void setFormat_align_center(boolean format_align_center) {
+            this.format_align_center = format_align_center;
         }
 
         public void setFormat_blod(boolean format_blod) {
@@ -535,6 +536,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         public void setFormat_quote(boolean format_quote) {
             this.format_quote = format_quote;
+            mDataList.get(position).setFormat_quote(format_quote);
         }
 
         public void setFormat_size(int format_size) {
@@ -549,8 +551,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             this.format_strike_through = format_strike_through;
         }
 
-        public int getFormat_align_flag() {
-            return format_align_flag;
+        public boolean isFormat_align_center() {
+            return format_align_center;
         }
 
         public boolean isFormat_blod() {

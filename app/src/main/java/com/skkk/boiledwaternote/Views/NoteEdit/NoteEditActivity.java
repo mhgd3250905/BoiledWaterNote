@@ -23,7 +23,6 @@ import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -220,16 +219,6 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         });
 
-        //获取当前被选中的Item位置
-        adapter.setOnItemEditSelectedLintener(new NoteEditAdapter.OnItemEditSelectedLintener() {
-            @Override
-            public void onItemEditSelectedLintener(View view, int pos, boolean hasFocus) {
-                if (hasFocus) {
-                    currentPos = pos;
-                    Log.i(TAG, "onItemEditSelectedLintener: 当前选择的Item编号为：" + currentPos);
-                }
-            }
-        });
 
         //设置返回按钮点击事件
         tbNoteEdit.setNavigationOnClickListener(new View.OnClickListener() {
@@ -332,15 +321,22 @@ public class NoteEditActivity extends AppCompatActivity {
 
     @OnClick({R.id.iv_format_align_center, R.id.iv_format_blod, R.id.iv_format_italic, R.id.iv_format_list, R.id.iv_format_list_numbered, R.id.iv_format_quote, R.id.iv_format_size, R.id.iv_format_underlined, R.id.iv_format_strike_through})
     public void onViewClicked(View v) {
-        NoteEditAdapter.NoteEditViewHolder currentHolder = adapter.getCurrentHolder();
+        NoteEditAdapter.NoteEditViewHolder currentHolder=
+                (NoteEditAdapter.NoteEditViewHolder) rvNoteEdit.findContainingViewHolder(getCurrentFocus());
+        if (currentHolder==null){
+            return;
+        }
         boolean isSelected = currentHolder.etItem.hasSelection();
         int start = currentHolder.etItem.getSelectionStart();
         int end = currentHolder.etItem.getSelectionEnd();
 
-        switch (v.getId()) {
+        startBottomViewAnim(v);
 
+        switch (v.getId()) {
+            /*
+            * 设置文字居中
+            * */
             case R.id.iv_format_align_center:
-                adapter.setTextAligentCenter(!adapter.isAlignCenterText());
                 v.setBackgroundColor(adapter.isAlignCenterText()?Color.LTGRAY:Color.TRANSPARENT);
                 break;
             case R.id.iv_format_blod:                //设置文字Blod
@@ -399,17 +395,16 @@ public class NoteEditActivity extends AppCompatActivity {
                 }else {
                     adapter.setItemFormatList(true);
                 }
-//                adapter.setItemFormatList(!adapter.isItemFormatList());
                 v.setBackgroundColor(adapter.isItemFormatList()?Color.LTGRAY:Color.TRANSPARENT);
                 break;
             case R.id.iv_format_list_numbered:
                 break;
             case R.id.iv_format_quote:              //设置引用
-//                if (currentHolder.myItemTextChangeListener.isFormat_quote()){
-//                    currentHolder.setFormat_quote(false);
-//                }else {
-//                    currentHolder.setFormat_quote(true);
-//                }
+                if (currentHolder.myItemTextChangeListener.isFormat_quote()){
+                    currentHolder.setFormat_quote(false);
+                }else {
+                    currentHolder.setFormat_quote(true);
+                }
 //                v.setBackgroundColor(currentHolder.myItemTextChangeListener.isFormat_quote()?Color.LTGRAY:Color.TRANSPARENT);
 
                 break;
@@ -472,5 +467,13 @@ public class NoteEditActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    /**
+     * bottomBar的按键动画
+     * @param v
+     */
+    private void startBottomViewAnim(View v) {
+
     }
 }

@@ -13,7 +13,7 @@ public class NoteEditModel {
     private String content;
     public Flag itemFlag;
     public String imagePath;
-    public int format_align_flag=0;            //0-左 1-中后 2-右
+    public boolean format_align_center=false;  //居中
     public boolean format_blod=false;          //加粗
     public boolean format_italic=false;        //斜体
     public boolean format_list=false;          //列表
@@ -61,12 +61,12 @@ public class NoteEditModel {
         this.imagePath = imagePath;
     }
 
-    public int getFormat_align_flag() {
-        return format_align_flag;
+    public boolean isFormat_align_center() {
+        return format_align_center;
     }
 
-    public void setFormat_align_flag(int format_align_flag) {
-        this.format_align_flag = format_align_flag;
+    public void setFormat_align_center(boolean format_align_center) {
+        this.format_align_center = format_align_center;
     }
 
     public boolean isFormat_blod() {

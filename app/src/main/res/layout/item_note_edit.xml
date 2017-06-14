@@ -4,35 +4,37 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <RelativeLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
+            android:layout_alignTop="@+id/tv_item_recylcer"
             android:id="@id/iv_text_quote"
-            android:visibility="gone"
+            android:visibility="visible"
             android:padding="5dp"
             android:src="@drawable/vector_drawable_quote"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
             android:id="@id/tv_item_recylcer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@null"
             android:gravity="left|top"
             android:text=""
-            android:textSize="30dp" />
-    </LinearLayout>
+            android:textSize="25dp"
+            android:layout_toEndOf="@+id/iv_text_quote" />
+    </RelativeLayout>
 
 
 
 
 
     <android.support.v7.widget.CardView
+        android:visibility="gone"
         app:cardBackgroundColor="@color/colorWhite"
         app:cardElevation="10dp"
         app:cardUseCompatPadding="true"
