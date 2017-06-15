@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -38,6 +39,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION_CODES.N;
 
 /**
@@ -378,6 +380,35 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             });
         }
 
+        /**
+         * 设置Holder中的编辑栏span特效并同步保存数据样式
+         * @param what
+         * @param start
+         * @param end
+         * @param flags
+         */
+        public void setSpan(Object what, int start, int end, int flags){
+            etItem.getText().setSpan(what,start,end,flags);
+            if (android.os.Build.VERSION.SDK_INT >= N) {
+                mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+            } else {
+                mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText()));
+            }
+        }
+
+        /**
+         * 删除Holder中的编辑框的富文本特效并同步保存数据
+         * @param what
+         */
+        public void removeSpan(Object what){
+            etItem.getText().removeSpan(what);
+            if (android.os.Build.VERSION.SDK_INT >= N) {
+                mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+            } else {
+                mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText()));
+            }
+        }
+
 
 
         public void setOnKeyDownFinishListener(OnKeyDownFinishListener onKeyDownFinishListener) {
@@ -495,18 +526,20 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
 
                 currentEdit.setText(ss);
-                currentEdit.setSelection(currentEdit.length());
+                currentEdit.setSelection(start);
+
+                if (android.os.Build.VERSION.SDK_INT >= N) {
+                    mDataList.get(position).setContent(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                } else {
+                    mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
+                }
+
+                Log.i(TAG, "onTextChanged: --->"+mDataList.get(position).getContent());
 
             } else {
                 flagIsAuto = false;
             }
 
-            NoteEditModel model = null;
-            if (android.os.Build.VERSION.SDK_INT >= N) {
-                mDataList.get(position).setContent(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
-            } else {
-                mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
-            }
 
 //            mDataList.set(position, model);
         }

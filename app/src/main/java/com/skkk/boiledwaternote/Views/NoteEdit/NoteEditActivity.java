@@ -377,9 +377,9 @@ public class NoteEditActivity extends AppCompatActivity {
                         }
                     }
                     if (hasSpan != null) {   //如果有Bold则设置为正常
-                        currentHolder.etItem.getText().removeSpan(hasSpan);
+                        currentHolder.removeSpan(hasSpan);
                     } else {                //如果不包含Bold那么就设置粗体
-                        currentHolder.etItem.getText().setSpan(new StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        currentHolder.setSpan(new StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
                 break;
@@ -402,9 +402,9 @@ public class NoteEditActivity extends AppCompatActivity {
                         }
                     }
                     if (hasSpan != null) {   //如果有ITALIC则设置为正常
-                        currentHolder.etItem.getText().removeSpan(hasSpan);
+                        currentHolder.removeSpan(hasSpan);
                     } else {               //如果不包含ITALIC那么就设置粗体
-                        currentHolder.etItem.getText().setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        currentHolder.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
                 break;
@@ -449,11 +449,11 @@ public class NoteEditActivity extends AppCompatActivity {
                     }
                     //清除区域内所有的UnderLineSpan
                     for (int i = 0; i < spans.length; i++) {
-                        currentHolder.etItem.getText().removeSpan(spans[i]);
+                        currentHolder.removeSpan(spans[i]);
                     }
                     //如果本身没有Span，这里需要设置
                     if (!hasSpan) {
-                        currentHolder.etItem.getText().setSpan(new UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        currentHolder.setSpan(new UnderlineSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
                 break;
@@ -477,11 +477,11 @@ public class NoteEditActivity extends AppCompatActivity {
                     }
                     //清除区域内所有的UnderLineSpan
                     for (int i = 0; i < spans.length; i++) {
-                        currentHolder.etItem.getText().removeSpan(spans[i]);
+                        currentHolder.removeSpan(spans[i]);
                     }
                     //如果本身没有Span，这里需要设置
                     if (!hasSpan) {
-                        currentHolder.etItem.getText().setSpan(new StrikethroughSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        currentHolder.setSpan(new StrikethroughSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
                 break;
