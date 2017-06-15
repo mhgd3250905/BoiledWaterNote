@@ -12,20 +12,21 @@
             android:layout_alignTop="@+id/tv_item_recylcer"
             android:id="@id/iv_text_quote"
             android:visibility="visible"
-            android:padding="5dp"
+            android:padding="@dimen/item_edit_quote_padding"
             android:src="@drawable/vector_drawable_quote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
+            android:minHeight="@dimen/item_edit_min_height"
             android:id="@id/tv_item_recylcer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="@dimen/item_edit_text_margin_horization"
+            android:layout_marginRight="@dimen/item_edit_text_margin_horization"
             android:background="@null"
             android:gravity="left|top"
             android:text=""
-            android:textSize="25dp"
+            android:textSize="@dimen/iedit_text_size"
             android:layout_toEndOf="@+id/iv_text_quote" />
     </RelativeLayout>
 

@@ -28,4 +28,5 @@
     <item name="cv_item_img" type="id">cv_item_img</item>
     <item name="toolbar" type="id">toolbar</item>
     <item name="iv_text_quote" type="id">iv_text_quote</item>
+    <item name="activity_edit_container" type="id">activity_edit_container</item>
 </resources>

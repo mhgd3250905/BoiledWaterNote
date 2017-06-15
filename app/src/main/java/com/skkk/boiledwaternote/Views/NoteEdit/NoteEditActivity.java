@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -84,6 +85,8 @@ public class NoteEditActivity extends AppCompatActivity {
     ImageView ivFormatUnderlined;
     @Bind(R.id.iv_format_strike_through)
     ImageView ivFormatStrikeThrough;
+    @Bind(R.id.activity_edit_container)
+    CoordinatorLayout activityEditContainer;
 
 
     private String cameraPath;
@@ -150,6 +153,7 @@ public class NoteEditActivity extends AppCompatActivity {
         }
         //设置RecyclerView...
         layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rvNoteEdit.setLayoutManager(layoutManager);
         adapter = new NoteEditAdapter(this, mDataList);
         rvNoteEdit.setAdapter(adapter);
@@ -161,6 +165,7 @@ public class NoteEditActivity extends AppCompatActivity {
 
 
     }
+
 
     /**
      * 获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
@@ -236,7 +241,19 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         });
 
+        adapter.setOnKeyDownFinishListener(new NoteEditAdapter.OnKeyDownFinishListener() {
+            @Override
+            public void onEnterFinishListner(int pos) {
+
+            }
+
+            @Override
+            public void onDelFinishListner(int pos) {
+            }
+        });
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -321,9 +338,9 @@ public class NoteEditActivity extends AppCompatActivity {
 
     @OnClick({R.id.iv_format_align_center, R.id.iv_format_blod, R.id.iv_format_italic, R.id.iv_format_list, R.id.iv_format_list_numbered, R.id.iv_format_quote, R.id.iv_format_size, R.id.iv_format_underlined, R.id.iv_format_strike_through})
     public void onViewClicked(View v) {
-        NoteEditAdapter.NoteEditViewHolder currentHolder=
+        NoteEditAdapter.NoteEditViewHolder currentHolder =
                 (NoteEditAdapter.NoteEditViewHolder) rvNoteEdit.findContainingViewHolder(getCurrentFocus());
-        if (currentHolder==null){
+        if (currentHolder == null) {
             return;
         }
         boolean isSelected = currentHolder.etItem.hasSelection();
@@ -337,7 +354,7 @@ public class NoteEditActivity extends AppCompatActivity {
             * 设置文字居中
             * */
             case R.id.iv_format_align_center:
-                v.setBackgroundColor(adapter.isAlignCenterText()?Color.LTGRAY:Color.TRANSPARENT);
+                v.setBackgroundColor(adapter.isAlignCenterText() ? Color.LTGRAY : Color.TRANSPARENT);
                 break;
             case R.id.iv_format_blod:                //设置文字Blod
                 if (!isSelected) {                   //如果没有选择
@@ -390,19 +407,19 @@ public class NoteEditActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.iv_format_list:               //列表
-                if (adapter.isItemFormatList()){
+                if (adapter.isItemFormatList()) {
                     adapter.setItemFormatList(false);
-                }else {
+                } else {
                     adapter.setItemFormatList(true);
                 }
-                v.setBackgroundColor(adapter.isItemFormatList()?Color.LTGRAY:Color.TRANSPARENT);
+                v.setBackgroundColor(adapter.isItemFormatList() ? Color.LTGRAY : Color.TRANSPARENT);
                 break;
             case R.id.iv_format_list_numbered:
                 break;
             case R.id.iv_format_quote:              //设置引用
-                if (currentHolder.myItemTextChangeListener.isFormat_quote()){
+                if (currentHolder.myItemTextChangeListener.isFormat_quote()) {
                     currentHolder.setFormat_quote(false);
-                }else {
+                } else {
                     currentHolder.setFormat_quote(true);
                 }
 //                v.setBackgroundColor(currentHolder.myItemTextChangeListener.isFormat_quote()?Color.LTGRAY:Color.TRANSPARENT);
@@ -471,6 +488,7 @@ public class NoteEditActivity extends AppCompatActivity {
 
     /**
      * bottomBar的按键动画
+     *
      * @param v
      */
     private void startBottomViewAnim(View v) {
