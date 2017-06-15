@@ -1,16 +1,20 @@
 package com.skkk.boiledwaternote.Views.NoteEdit;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.FileProvider;
@@ -87,7 +91,8 @@ public class NoteEditActivity extends AppCompatActivity {
     ImageView ivFormatStrikeThrough;
     @Bind(R.id.activity_edit_container)
     CoordinatorLayout activityEditContainer;
-
+    @Bind(R.id.iv_edit_format_notice)
+    ImageView ivEditFormatNotice;
 
     private String cameraPath;
 
@@ -102,15 +107,12 @@ public class NoteEditActivity extends AppCompatActivity {
     private int currentPos;     //当前光标选择的item位置
     private boolean isNew;      //判断是否为新的笔记
     private Note updateNote;
-    private Handler handler;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_edit);
         ButterKnife.bind(this);
-        handler = new Handler();
         presenter = new NoteEditPresenter(this);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -484,6 +486,7 @@ public class NoteEditActivity extends AppCompatActivity {
                 }
                 break;
         }
+        startBottomViewAnim(v);
     }
 
     /**
@@ -492,6 +495,29 @@ public class NoteEditActivity extends AppCompatActivity {
      * @param v
      */
     private void startBottomViewAnim(View v) {
+        ivEditFormatNotice.setVisibility(View.VISIBLE);
+        if (v instanceof ImageView){
+            Drawable drawable = ((ImageView) v).getDrawable();
+            ivEditFormatNotice.setImageDrawable(drawable);
+        }
+        ObjectAnimator scaleXAnim=ObjectAnimator.ofFloat(ivEditFormatNotice,
+                "scaleX",1f,1.5f);
+        ObjectAnimator scaleYAnim=ObjectAnimator.ofFloat(ivEditFormatNotice,
+                "scaleY",1f,1.5f);
+        ObjectAnimator alphaAnim=ObjectAnimator.ofFloat(ivEditFormatNotice,
+                "alpha",1f,0);
+        AnimatorSet set = new AnimatorSet();
+        set.play(scaleXAnim).with(scaleYAnim).with(alphaAnim);
+        set.setDuration(500);
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                ivEditFormatNotice.setVisibility(View.GONE);
+            }
+        });
+        set.start();
 
     }
+
+
 }
