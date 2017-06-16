@@ -30,6 +30,7 @@
         <!--Note编辑界面-->
         <activity
             android:name=".Views.NoteEdit.NoteEditActivity"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme">
         </activity>
 

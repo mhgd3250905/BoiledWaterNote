@@ -24,10 +24,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Html;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -164,8 +166,6 @@ public class NoteEditActivity extends AppCompatActivity {
         callback = new MyItemTouchHelperCallback(this, adapter);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(rvNoteEdit);
-
-
     }
 
 
@@ -368,16 +368,19 @@ public class NoteEditActivity extends AppCompatActivity {
                         v.setBackgroundColor(Color.LTGRAY);
                     }
                 } else {                             //如果选择
+                    Log.i(TAG, "onViewClicked: --->"+ Html.toHtml(currentHolder.etItem.getText(),Html.FROM_HTML_MODE_LEGACY));
                     //获取选择区域内所有的StyleSpan
                     StyleSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StyleSpan.class);
-                    StyleSpan hasSpan = null;
+                    List<StyleSpan> hasSpans=new ArrayList<>();
                     for (int i = 0; i < spans.length; i++) {
                         if (spans[i].getStyle() == Typeface.BOLD) {
-                            hasSpan = spans[i];
+                            hasSpans.add(spans[i]);
                         }
                     }
-                    if (hasSpan != null) {   //如果有Bold则设置为正常
-                        currentHolder.removeSpan(hasSpan);
+                    if (hasSpans.size()!=0) {   //如果有Bold则设置为正常
+                        for (StyleSpan span:hasSpans) {
+                            currentHolder.removeSpan(span);
+                        }
                     } else {                //如果不包含Bold那么就设置粗体
                         currentHolder.setSpan(new StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
@@ -395,15 +398,17 @@ public class NoteEditActivity extends AppCompatActivity {
                 } else {
                     //获取选择区域内所有的StyleSpan
                     StyleSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StyleSpan.class);
-                    StyleSpan hasSpan = null;
+                    List<StyleSpan> hasSpans=new ArrayList<>();
                     for (int i = 0; i < spans.length; i++) {
                         if (spans[i].getStyle() == Typeface.ITALIC) {
-                            hasSpan = spans[i];
+                            hasSpans.add(spans[i]);
                         }
                     }
-                    if (hasSpan != null) {   //如果有ITALIC则设置为正常
-                        currentHolder.removeSpan(hasSpan);
-                    } else {               //如果不包含ITALIC那么就设置粗体
+                    if (hasSpans.size()!=0) {   //如果有ITALIC则设置为正常
+                        for (StyleSpan span:hasSpans) {
+                            currentHolder.removeSpan(span);
+                        }
+                    } else {               //如果不包含ITALIC那么就设置斜体
                         currentHolder.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }

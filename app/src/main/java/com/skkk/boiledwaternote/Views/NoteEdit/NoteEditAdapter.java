@@ -498,35 +498,36 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 //设置斜体和粗体
                 if (format_blod && format_italic) {
                     for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new StyleSpan(Typeface.BOLD), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        ss.setSpan(new StyleSpan(Typeface.ITALIC), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ss.setSpan(new StyleSpan(Typeface.BOLD),i, i+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ss.setSpan(new StyleSpan(Typeface.ITALIC),i, i+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 } else if (format_blod) {
                     for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new StyleSpan(Typeface.BOLD), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ss.setSpan(new StyleSpan(Typeface.BOLD), i, i+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 } else if (format_italic) {
                     for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new StyleSpan(Typeface.ITALIC), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ss.setSpan(new StyleSpan(Typeface.ITALIC), i, i+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
 
                 //设置下划线
                 if (format_underlined) {
                     for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new UnderlineSpan(), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ss.setSpan(new UnderlineSpan(),i, i+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
 
                 //设置删除线
                 if (format_strike_through) {
                     for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new StrikethroughSpan(), start, start + count, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ss.setSpan(new StrikethroughSpan(),i, i+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
 
                 currentEdit.setText(ss);
-                currentEdit.setSelection(start);
+                Log.i(TAG, "onTextChanged: start-->"+start+",count-->"+count+",before-->"+before);
+                currentEdit.setSelection(start+count);
 
                 if (android.os.Build.VERSION.SDK_INT >= N) {
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
