@@ -281,7 +281,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     /**
      * ViewHolder
      */
-    class NoteEditViewHolder extends RecyclerView.ViewHolder {
+    public class NoteEditViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tv_item_recylcer)
         public EditText etItem;             //编辑文本框
         @Bind(R.id.iv_item_move)

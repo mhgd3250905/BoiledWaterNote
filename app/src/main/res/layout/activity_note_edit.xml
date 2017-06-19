@@ -27,49 +27,63 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
+
+        <com.skkk.boiledwaternote.CostomViews.RichEditView
+            android:id="@id/rev_note_edit"
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+        </com.skkk.boiledwaternote.CostomViews.RichEditView>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@id/rv_note_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-                <ImageView
-                    android:visibility="gone"
-                    android:src="@mipmap/ic_launcher"
-                    android:id="@id/iv_edit_format_notice"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp" />
-            </RelativeLayout>
+        <Button
+        android:id="@+id/btn_insert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="INSERT IMG" />
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            <!--<RelativeLayout-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content">-->
 
-                <Button
-                    android:id="@+id/btn_insert"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="INSERT IMG" />
+            <!--<android.support.v7.widget.RecyclerView-->
+                <!--android:id="@id/rv_note_edit"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"/>-->
+                <!--<ImageView-->
+                    <!--android:visibility="gone"-->
+                    <!--android:src="@mipmap/ic_launcher"-->
+                    <!--android:id="@id/iv_edit_format_notice"-->
+                    <!--android:layout_width="50dp"-->
+                    <!--android:layout_height="50dp"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_alignParentEnd="true"-->
+                    <!--android:layout_marginEnd="20dp"-->
+                    <!--android:layout_marginBottom="20dp" />-->
+            <!--</RelativeLayout>-->
 
-                <include layout="@layout/layout_bottom_bar"/>
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical">-->
 
-            </LinearLayout>
+                <!--<Button-->
+                    <!--android:id="@+id/btn_insert"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="INSERT IMG" />-->
+
+                <!--<include layout="@layout/layout_bottom_bar"/>-->
+
+            <!--</LinearLayout>-->
 
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
     </LinearLayout>
 

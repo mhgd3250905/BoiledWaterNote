@@ -30,4 +30,6 @@
     <item name="iv_text_quote" type="id">iv_text_quote</item>
     <item name="activity_edit_container" type="id">activity_edit_container</item>
     <item name="iv_edit_format_notice" type="id">iv_edit_format_notice</item>
+    <item name="rv_rich_edit" type="id">rv_rich_edit</item>
+    <item name="rev_note_edit" type="id">rev_note_edit</item>
 </resources>
