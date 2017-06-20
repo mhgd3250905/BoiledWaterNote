@@ -132,15 +132,16 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     /**
      * 根据是否为新笔记加载内容
      *
-     * @param isNew
-     * @param note
+     * @param isNew 是否为新建笔记
+     * @param datas  如果不是新建笔记那么给出笔记数据集
      */
-    private void startNewEdit(boolean isNew, List<NoteEditModel> note) {
-        if (isNew && note != null) {     //新笔记
+    public void startNewEdit(boolean isNew, List<NoteEditModel> datas) {
+        if (isNew && datas == null) {     //新笔记
             adapter.setmDataList(loadData());
             adapter.notifyDataSetChanged();
         } else {                     //加载旧笔记
-            adapter.setmDataList(note);
+            adapter.getmDataList().addAll(datas);        //同步数据
+            adapter.setmDataList(datas);
             adapter.notifyDataSetChanged();
         }
     }
@@ -157,7 +158,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
 
     /**
-     * 设施按键听事件
+     * 设置按键听事件
      *
      * @param v
      */
@@ -342,14 +343,27 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     }
 
+
+    /**
+     * 在指定位置添加Item
+     * @param itemDatas Items
+     * @param pos       指定位置，如果设置为-1，那么默认最后
+     */
     public void insertItems(List<NoteEditModel> itemDatas,int pos){
         if (pos==-1) {
-            mDataList.addAll(adapter.getCurrentHolder().getCurrentPos()+1, itemDatas);
+            adapter.getmDataList().addAll(itemDatas);
         }else {
-            mDataList.addAll(pos+1, itemDatas);
+            adapter.getmDataList().addAll(pos, itemDatas);
         }
-        adapter.setmDataList(mDataList);
+//        adapter.setmDataList(mDataList);
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * 获取此时的富文本数据内容
+     * @return 数据内容
+     */
+    public List<NoteEditModel> getRichTextDatas(){
+        return adapter.getmDataList();
+    }
 }

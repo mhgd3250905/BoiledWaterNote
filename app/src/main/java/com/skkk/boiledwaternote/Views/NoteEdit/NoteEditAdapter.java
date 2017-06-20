@@ -16,7 +16,6 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,20 +32,20 @@ import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.DensityUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION_CODES.N;
 
 /**
  * Created by admin on 2017/4/22.
  */
 /*
-* 
+*
 * 描    述：数据适配器
 * 作    者：ksheng
 * 时    间：2017/4/22$ 22:34$.
@@ -161,7 +160,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             //因为HTML转Span之后块级元素会自动换行，所以这里直接手动将块级元素P删除掉，有点暴力
             //通过将<p>元素替换为<span>元素来避免以为块级元素自动添加换号引起的麻烦
             String contentHtml = mDataList.get(position).getContent();
-            contentHtml = contentHtml.replace("<p", "<span").replace("/p>", "/span>");
+            contentHtml = contentHtml.replace("<p", "<span").replace("/p>", "/span>").replace("\n","");
 
             if (Build.VERSION.SDK_INT >= N) {
                 holder.etItem.setText(Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_LEGACY));
@@ -169,6 +168,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 holder.etItem.setText(Html.fromHtml(contentHtml));
 
             }
+
             //设置光标在最后一个字符后面，默认会多出一个空格
             if (!TextUtils.isEmpty(mDataList.get(position).getContent())) {
                 holder.etItem.setSelection(holder.etItem.length() - 1);
@@ -332,7 +332,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                        if (myItemTextChangeListener.isFormat_list()||myItemTextChangeListener.isFormat_quote()) {
+//                        if (myItemTextChangeListener.isFormat_list()||myItemTextChangeListener.isFormat_quote()) {
                             NoteEditModel model = new NoteEditModel();
                             model.setItemFlag(NoteEditModel.Flag.TEXT);
                             model.setImagePath(null);
@@ -343,12 +343,12 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                             }
                             mDataList.add(currentPos + 1, model);
                             setFocusItemPos(currentPos + 1);
-                            notifyItemInserted(currentPos + 1);
+//                            notifyItemInserted(currentPos + 1);
                             notifyDataSetChanged();
                             if (onKeyDownFinishListener != null) {
                                 onKeyDownFinishListener.onEnterFinishListner(currentPos + 1);
                             }
-                        }
+//                        }
                     }
                     if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
                         if (currentPos != 0) {
@@ -372,10 +372,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             etItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (myItemTextChangeListener.isFormat_list()||myItemTextChangeListener.isFormat_quote()) {
-                        return event.getKeyCode() == KeyEvent.KEYCODE_ENTER && actionId == KeyEvent.ACTION_DOWN;
-                    }
-                    return false;
+                    return true;
                 }
             });
         }
@@ -409,6 +406,36 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             }
         }
 
+        /**
+         * 合并文字Item
+         * @param datas
+         */
+        public void mergeItems(List<NoteEditModel> datas){
+            List<NoteEditModel> newDatas=new ArrayList<>();
+            NoteEditModel tempModel=new NoteEditModel();
+            StringBuffer contentSb=new StringBuffer();
+            for (int i = 0; i < datas.size(); i++) {
+                NoteEditModel itemModel = datas.get(i);
+                if (itemModel.getItemFlag()!= NoteEditModel.Flag.TEXT){
+                    //如果不是TEXT类型，先把之前累积的TEXT保存
+                    // 再把非TEXT直接加入到数据列表中
+                    tempModel.setContent(contentSb.toString());
+                    newDatas.add(tempModel);
+                    //添加非TEXT类型
+                    newDatas.add(itemModel);
+                }else if(i==(datas.size()-1)){
+                    //如果是最后一个，而且contentSb不为空，那么保存最后的TEXT
+                    if (!TextUtils.isEmpty(contentSb)) {
+                        tempModel.setContent(contentSb.toString());
+                        newDatas.add(tempModel);
+                    }
+                }else {
+                    //如果是TEXT类型
+                    contentSb.append(itemModel.getContent());
+                }
+
+            }
+        }
 
 
         public void setOnKeyDownFinishListener(OnKeyDownFinishListener onKeyDownFinishListener) {
@@ -526,7 +553,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
 
                 currentEdit.setText(ss);
-                Log.i(TAG, "onTextChanged: start-->"+start+",count-->"+count+",before-->"+before);
                 currentEdit.setSelection(start+count);
 
                 if (android.os.Build.VERSION.SDK_INT >= N) {
@@ -534,8 +560,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 } else {
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
                 }
-
-                Log.i(TAG, "onTextChanged: --->"+mDataList.get(position).getContent());
 
             } else {
                 flagIsAuto = false;

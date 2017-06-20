@@ -112,28 +112,19 @@ public class NoteEditActivity extends AppCompatActivity {
     private void initUI() {
         tbNoteEdit.setTitle("");
         tbNoteEdit.setNavigationIcon(R.drawable.back_arrow);
+        /*
+        * 判断是否为新笔记，加载数据
+        * */
         if (isNew) {
-            mDataList = loadData();
+            revEdit.startNewEdit(true,null);
         } else {
             NoteEditModel[] models = new Gson().fromJson(updateNote.getContent(), NoteEditModel[].class);
             mDataList = new ArrayList<>();
             for (int i = 0; i < models.length; i++) {
                 mDataList.add(models[i]);
             }
+            revEdit.startNewEdit(false,mDataList);
         }
-
-
-//        //设置RecyclerView...
-//        layoutManager = new LinearLayoutManager(this);
-//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        rvNoteEdit.setLayoutManager(layoutManager);
-//        adapter = new NoteEditAdapter(this, mDataList);
-//        rvNoteEdit.setAdapter(adapter);
-//        rvNoteEdit.setItemAnimator(new DefaultItemAnimator());
-//        //设置ItemTouchHelper
-//        callback = new MyItemTouchHelperCallback(this, adapter);
-//        itemTouchHelper = new ItemTouchHelper(callback);
-//        itemTouchHelper.attachToRecyclerView(rvNoteEdit);
     }
 
 
@@ -194,11 +185,11 @@ public class NoteEditActivity extends AppCompatActivity {
     public void onBackPressed() {
         //获取我们写的笔记类
         if (isNew) {
-            if (!presenter.saveNote(adapter.getmDataList())) {
+            if (!presenter.saveNote(revEdit.getRichTextDatas())) {
                 Toast.makeText(this, "添加笔记失败", Toast.LENGTH_SHORT).show();
             }
         } else {
-            if (!presenter.updateNote(adapter.getmDataList(), updateNote)) {
+            if (!presenter.updateNote(revEdit.getRichTextDatas(), updateNote)) {
                 Toast.makeText(this, "更新笔记失败", Toast.LENGTH_SHORT).show();
             }
         }
