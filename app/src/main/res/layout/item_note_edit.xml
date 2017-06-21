@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -14,6 +14,14 @@
             android:visibility="visible"
             android:padding="@dimen/item_edit_quote_padding"
             android:src="@drawable/vector_drawable_quote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_alignTop="@+id/tv_item_recylcer"
+            android:id="@id/iv_text_point"
+            android:visibility="visible"
+            android:padding="@dimen/item_edit_quote_padding"
+            android:src="@drawable/vector_drawable_point"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
@@ -28,7 +36,7 @@
             android:text=""
             android:textSize="@dimen/iedit_text_size"
             android:layout_toEndOf="@+id/iv_text_quote" />
-    </RelativeLayout>
+    </LinearLayout>
 
 
 

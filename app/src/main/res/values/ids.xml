@@ -32,4 +32,5 @@
     <item name="iv_edit_format_notice" type="id">iv_edit_format_notice</item>
     <item name="rv_rich_edit" type="id">rv_rich_edit</item>
     <item name="rev_note_edit" type="id">rev_note_edit</item>
+    <item name="iv_text_point" type="id">iv_text_point</item>
 </resources>

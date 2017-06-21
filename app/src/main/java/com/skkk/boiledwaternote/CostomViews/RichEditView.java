@@ -17,6 +17,7 @@ import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -127,6 +128,18 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 itemTouchHelper.startDrag(viewHolder);
             }
         });
+
+        adapter.setOnKeyDownFinishListener(new NoteEditAdapter.OnKeyDownFinishListener() {
+            @Override
+            public void onEnterFinishListner(int pos) {
+                Log.i(TAG, "onEnterFinishListner: Enter完毕");
+            }
+
+            @Override
+            public void onDelFinishListner(int pos) {
+
+            }
+        });
     }
 
     /**
@@ -235,14 +248,15 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 }
                 break;
             case R.id.iv_format_list:               //列表
-                if (adapter.isItemFormatList()) {
-                    adapter.setItemFormatList(false);
+                if (currentHolder.myItemTextChangeListener.isFormat_list()) {
+                    currentHolder.setFormat_list(false);
                 } else {
-                    adapter.setItemFormatList(true);
+                    currentHolder.setFormat_list(true);
                 }
                 v.setBackgroundColor(adapter.isItemFormatList() ? Color.LTGRAY : Color.TRANSPARENT);
                 break;
             case R.id.iv_format_list_numbered:
+
                 break;
             case R.id.iv_format_size:
                 break;
