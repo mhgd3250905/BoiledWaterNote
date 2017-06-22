@@ -33,4 +33,7 @@
     <item name="rv_rich_edit" type="id">rv_rich_edit</item>
     <item name="rev_note_edit" type="id">rev_note_edit</item>
     <item name="iv_text_point" type="id">iv_text_point</item>
+    <item name="iv_item_img" type="id">iv_item_img</item>
+    <item name="rl_item_img" type="id">rl_item_img</item>
+    <item name="iv_swipe_notice" type="id">iv_swipe_notice</item>
 </resources>

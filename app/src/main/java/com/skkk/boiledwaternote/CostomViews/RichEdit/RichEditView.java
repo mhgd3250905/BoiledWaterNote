@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Spanned;
@@ -256,7 +257,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
                 break;
             case R.id.iv_format_size:
-
+                ListPopupWindow listPw=new ListPopupWindow(getContext());
                 break;
             case R.id.iv_format_quote:
                 if (currentHolder.myItemTextChangeListener.isFormat_quote()) {

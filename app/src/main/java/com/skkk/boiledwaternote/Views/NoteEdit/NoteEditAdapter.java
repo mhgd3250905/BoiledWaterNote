@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -192,7 +193,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
             holder.etItem.setVisibility(View.VISIBLE);          //文本显示 图片隐藏
-            holder.cvItemImg.setVisibility(View.GONE);
+            holder.rlItemImg.setVisibility(View.GONE);
 
             //设置指定的Item获取焦点
             if (focusItemPos == position) {
@@ -209,7 +210,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
 
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
-            holder.cvItemImg.setVisibility(View.VISIBLE);
+            holder.rlItemImg.setVisibility(View.VISIBLE);
             holder.etItem.setVisibility(View.GONE);
             holder.ivTextQuote.setVisibility(View.GONE);
             holder.ivTextPonit.setVisibility(View.GONE);
@@ -303,6 +304,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public ImageView ivTextQuote;       //编辑栏位引用图标
         @Bind(R.id.iv_text_point)
         public ImageView ivTextPonit;       //编辑栏位列表图标
+        @Bind(R.id.rl_item_img)
+        public RelativeLayout rlItemImg;    //Image区域容器
+        @Bind(R.id.iv_swipe_notice)
+        public View ivSwipeNotice;          //拖拽切换的时候的提示图标
 
         private OnKeyDownFinishListener onKeyDownFinishListener;
 
