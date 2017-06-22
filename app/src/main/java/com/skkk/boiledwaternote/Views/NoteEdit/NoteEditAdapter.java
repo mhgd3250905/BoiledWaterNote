@@ -368,8 +368,17 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                         }
                     }
                     if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
-                        if (currentPos != 0) {
-                            if (TextUtils.isEmpty(etItem.getText())) {
+                        if (TextUtils.isEmpty(etItem.getText())) {
+                            if (myItemTextChangeListener.isFormat_list()) {
+                                //如果该item富文本为list那么就取消其状态
+                                setFormat_list(!myItemTextChangeListener.isFormat_list());
+                                return false;
+                            } else if (myItemTextChangeListener.isFormat_quote()) {
+                                //如果该item富文本为quote那么就取消其状态
+                                setFormat_quote(!myItemTextChangeListener.isFormat_quote());
+                                return false;
+                            }
+                            if (currentPos != 0) {
                                 //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
                                 mDataList.remove(currentPos);
                                 setFocusItemPos(currentPos - 1);

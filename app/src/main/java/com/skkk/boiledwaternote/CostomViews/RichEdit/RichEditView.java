@@ -256,6 +256,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
                 break;
             case R.id.iv_format_size:
+
                 break;
             case R.id.iv_format_quote:
                 if (currentHolder.myItemTextChangeListener.isFormat_quote()) {
