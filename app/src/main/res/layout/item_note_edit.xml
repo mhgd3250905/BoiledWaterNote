@@ -28,7 +28,7 @@
             android:minHeight="@dimen/item_edit_min_height"
             android:id="@id/tv_item_recylcer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/item_edit_text_margin_horization"
             android:layout_marginRight="@dimen/item_edit_text_margin_horization"
             android:background="@null"
@@ -37,10 +37,6 @@
             android:textSize="@dimen/iedit_text_size"
             android:layout_toEndOf="@+id/iv_text_quote" />
     </LinearLayout>
-
-
-
-
 
     <android.support.v7.widget.CardView
         android:visibility="gone"

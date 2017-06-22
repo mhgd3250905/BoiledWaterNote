@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.CostomViews;
+package com.skkk.boiledwaternote.CostomViews.RichEdit;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -41,7 +41,7 @@ import java.util.List;
 * 作    者：ksheng
 * 时    间：2017/6/17$ 23:41$.
 */
-public class RichEditView extends RelativeLayout implements View.OnClickListener {
+public class RichEditView extends RelativeLayout implements View.OnClickListener,RichEditable {
     private String TAG = RichEditView.class.getSimpleName();
     private RecyclerView rvRichEdit;
     private LinearLayoutManager linearLayoutManager;
@@ -149,13 +149,10 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
      * @param datas  如果不是新建笔记那么给出笔记数据集
      */
     public void startNewEdit(boolean isNew, List<NoteEditModel> datas) {
-        if (isNew && datas == null) {     //新笔记
-            adapter.setmDataList(loadData());
-            adapter.notifyDataSetChanged();
-        } else {                     //加载旧笔记
-            adapter.getmDataList().addAll(datas);        //同步数据
-            adapter.setmDataList(datas);
-            adapter.notifyDataSetChanged();
+        if (isNew && datas == null) {       //新笔记
+            resetRichText();
+        } else {                            //加载旧笔记
+            loadRichText(datas);
         }
     }
 
@@ -369,7 +366,27 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         }else {
             adapter.getmDataList().addAll(pos, itemDatas);
         }
-//        adapter.setmDataList(mDataList);
+        adapter.setmDataList(mDataList);
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 重置（开始新的）数据
+     */
+    @Override
+    public void resetRichText() {
+        adapter.setmDataList(loadData());
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 加载数据
+     * @param richTexts
+     */
+    @Override
+    public void loadRichText(List<NoteEditModel> richTexts) {
+        adapter.getmDataList().addAll(richTexts);        //同步数据
+        adapter.setmDataList(richTexts);
         adapter.notifyDataSetChanged();
     }
 
@@ -377,7 +394,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
      * 获取此时的富文本数据内容
      * @return 数据内容
      */
-    public List<NoteEditModel> getRichTextDatas(){
+    @Override
+    public List<NoteEditModel> getRichText() {
         return adapter.getmDataList();
     }
 }

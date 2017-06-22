@@ -28,13 +28,13 @@
         </android.support.design.widget.AppBarLayout>
 
 
-        <com.skkk.boiledwaternote.CostomViews.RichEditView
+        <com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView
             android:id="@id/rev_note_edit"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </com.skkk.boiledwaternote.CostomViews.RichEditView>
+        </com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView>
 
         <Button
         android:id="@+id/btn_insert"

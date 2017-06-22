@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
-import com.skkk.boiledwaternote.CostomViews.RichEditView;
+import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
@@ -185,11 +185,11 @@ public class NoteEditActivity extends AppCompatActivity {
     public void onBackPressed() {
         //获取我们写的笔记类
         if (isNew) {
-            if (!presenter.saveNote(revEdit.getRichTextDatas())) {
+            if (!presenter.saveNote(revEdit.getRichText())) {
                 Toast.makeText(this, "添加笔记失败", Toast.LENGTH_SHORT).show();
             }
         } else {
-            if (!presenter.updateNote(revEdit.getRichTextDatas(), updateNote)) {
+            if (!presenter.updateNote(revEdit.getRichText(), updateNote)) {
                 Toast.makeText(this, "更新笔记失败", Toast.LENGTH_SHORT).show();
             }
         }

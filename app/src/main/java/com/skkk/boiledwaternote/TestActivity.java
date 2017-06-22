@@ -3,7 +3,7 @@ package com.skkk.boiledwaternote;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.skkk.boiledwaternote.CostomViews.RichEditView;
+import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
 
 public class TestActivity extends AppCompatActivity {
     private RichEditView richEditView;

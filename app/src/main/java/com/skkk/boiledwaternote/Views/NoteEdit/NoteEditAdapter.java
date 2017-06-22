@@ -33,7 +33,6 @@ import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.DensityUtil;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -201,14 +200,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 holder.etItem.setSelection(holder.etItem.length());
             }
 
+            //设置引用格式
             holder.setFormat_quote(itemDate.isFormat_quote());
-
+            //设置列表格式
             holder.setFormat_list(itemDate.isFormat_list());
-
+            //设置对齐方式
             holder.setFormat_align_flag(itemDate.format_align_center);
 
-            //同步Holder中的List格式
-            holder.myItemTextChangeListener.setFormat_list(itemFormatList);
 
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
             holder.cvItemImg.setVisibility(View.VISIBLE);
@@ -244,8 +242,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         Log.i(TAG, "onBindViewHolder: --->刷新Item" + position);
 
-//        Log.d("NoteEditAdapter", "holder.itemView.getLayoutParams().height:" + holder.itemView.getLayoutParams().height);
     }
+
 
     @Override
     public int getItemCount() {
@@ -277,9 +275,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         notifyItemRangeChanged(pos, getItemCount());
     }
 
+
     public boolean isItemFormatList() {
         return itemFormatList;
     }
+
 
     public void setItemFormatList(boolean itemFormatList) {
         this.itemFormatList = itemFormatList;
@@ -302,7 +302,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         @Bind(R.id.iv_text_quote)
         public ImageView ivTextQuote;       //编辑栏位引用图标
         @Bind(R.id.iv_text_point)
-        public ImageView ivTextPonit;
+        public ImageView ivTextPonit;       //编辑栏位列表图标
 
         private OnKeyDownFinishListener onKeyDownFinishListener;
 
@@ -343,20 +343,29 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-//                        if (myItemTextChangeListener.isFormat_list()||myItemTextChangeListener.isFormat_quote()) {
-                        NoteEditModel model = new NoteEditModel();
-                        model.setItemFlag(NoteEditModel.Flag.TEXT);
-                        model.setImagePath(null);
-                        model.setContent("");
-                        mDataList.add(currentPos + 1, model);
-                        setFocusItemPos(currentPos + 1);
-//                            notifyItemInserted(currentPos + 1);
-                        notifyDataSetChanged();
+                        if (myItemTextChangeListener.isFormat_list() || myItemTextChangeListener.isFormat_quote()) {
+                            //将要插入的行数据
+                            NoteEditModel model = new NoteEditModel();
+                            model.setItemFlag(NoteEditModel.Flag.TEXT);
+                            model.setImagePath(null);
+                            model.setContent("");
+                            //根据富文本格式不同设置不同的样式
+                            if (myItemTextChangeListener.isFormat_list()) {    //如果是列表格式
+                                if (etItem.length() > 0) {
+                                    //当这个列表中有内容的时候，换行下一个才会是列表格式
+                                    //否则下一个就不是列表格式
+                                    model.setFormat_list(myItemTextChangeListener.isFormat_list());
+                                    model.setFormat_quote(!myItemTextChangeListener.isFormat_list());
+                                }
+                            }
+                            mDataList.add(currentPos + 1, model);
+                            setFocusItemPos(currentPos + 1);
+                            notifyDataSetChanged();
 
-                        if (onKeyDownFinishListener != null) {
-                            onKeyDownFinishListener.onEnterFinishListner(currentPos + 1);
+                            if (onKeyDownFinishListener != null) {
+                                onKeyDownFinishListener.onEnterFinishListner(currentPos + 1);
+                            }
                         }
-//                        }
                     }
                     if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
                         if (currentPos != 0) {
@@ -366,6 +375,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 setFocusItemPos(currentPos - 1);
                                 notifyItemRemoved(currentPos);
                                 notifyDataSetChanged();
+
                                 if (onKeyDownFinishListener != null) {
                                     onKeyDownFinishListener.onDelFinishListner(currentPos - 1);
                                 }
@@ -376,11 +386,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
             });
 
-            //屏蔽回车按键
             etItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    return true;
+                    return myItemTextChangeListener.isFormat_list() || myItemTextChangeListener.isFormat_quote();
                 }
             });
         }
@@ -413,38 +422,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
             } else {
                 mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText()));
-            }
-        }
-
-        /**
-         * 合并文字Item
-         *
-         * @param datas
-         */
-        public void mergeItems(List<NoteEditModel> datas) {
-            List<NoteEditModel> newDatas = new ArrayList<>();
-            NoteEditModel tempModel = new NoteEditModel();
-            StringBuffer contentSb = new StringBuffer();
-            for (int i = 0; i < datas.size(); i++) {
-                NoteEditModel itemModel = datas.get(i);
-                if (itemModel.getItemFlag() != NoteEditModel.Flag.TEXT) {
-                    //如果不是TEXT类型，先把之前累积的TEXT保存
-                    // 再把非TEXT直接加入到数据列表中
-                    tempModel.setContent(contentSb.toString());
-                    newDatas.add(tempModel);
-                    //添加非TEXT类型
-                    newDatas.add(itemModel);
-                } else if (i == (datas.size() - 1)) {
-                    //如果是最后一个，而且contentSb不为空，那么保存最后的TEXT
-                    if (!TextUtils.isEmpty(contentSb)) {
-                        tempModel.setContent(contentSb.toString());
-                        newDatas.add(tempModel);
-                    }
-                } else {
-                    //如果是TEXT类型
-                    contentSb.append(itemModel.getContent());
-                }
-
             }
         }
 

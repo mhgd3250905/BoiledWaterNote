@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.skkk.boiledwaternote.TestActivity">
-    <com.skkk.boiledwaternote.CostomViews.RichEditView
+    <com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView
         android:id="@+id/rev_edit"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.skkk.boiledwaternote.CostomViews.RichEditView>
+    </com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView>
 
 </RelativeLayout>
