@@ -9,4 +9,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_format_list_front_icon">"● "</string>
+    <string name="insert_img">插入图片</string>
+    <string name="dialog_insert_image_camera">拍摄</string>
+    <string name="dialog_insert_image_album">相册</string>
 </resources>

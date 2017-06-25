@@ -84,9 +84,28 @@
         android:id="@id/iv_swipe_notice"
         android:visibility="gone"
         android:layout_alignParentBottom="true"
+        android:layout_width="100dp"
+        android:layout_height="1dp"
+        android:background="@color/colorBlackBody"/>
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@id/rl_item_separated"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginRight="100dp"
-        android:background="@color/colorPrimary"/>
+        android:layout_height="20dp">
+        <View
+            android:layout_toLeftOf="@+id/iv_item_separated"
+            android:background="@color/colorBlackBody"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"/>
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:src="@drawable/vector_drawable_pen"
+            android:id="@id/iv_item_separated"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+    </RelativeLayout>
 
 </RelativeLayout>

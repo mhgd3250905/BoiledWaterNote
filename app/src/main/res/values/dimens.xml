@@ -13,4 +13,7 @@
     <dimen name="item_edit_quote_padding">5dp</dimen>
     <dimen name="item_edit_text_margin_horization">10dp</dimen>
     <dimen name="iedit_text_size">25sp</dimen>
+    <dimen name="text_size_item_popwindow">18sp</dimen>
+    <dimen name="text_dialog_item">16sp</dimen>
+    <dimen name="dialog_item_padding">15dp</dimen>
 </resources>

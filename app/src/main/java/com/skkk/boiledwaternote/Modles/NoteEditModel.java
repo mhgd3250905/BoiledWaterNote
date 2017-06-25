@@ -33,7 +33,8 @@ public class NoteEditModel {
 
     public enum Flag {
         TEXT,
-        IMAGE
+        IMAGE,
+        SEPARATED
     }
 
 

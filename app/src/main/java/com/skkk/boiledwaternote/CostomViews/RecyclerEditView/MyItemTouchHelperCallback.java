@@ -5,15 +5,15 @@ import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.skkk.boiledwaternote.R;
-import com.skkk.boiledwaternote.Utils.Utils.DensityUtil;
+import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditAdapter;
 
 
 /**
  * Created by admin on 2017/4/22.
  */
+
+//TODO:解决ItemTouchHelper的Move识别问题
 /*
 * 
 * 描    述：
@@ -23,6 +23,7 @@ import com.skkk.boiledwaternote.Utils.Utils.DensityUtil;
 public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
     private Context context;
     private ItemTouchHelperAdapter itemTouchHelperAdapter;
+    private NoteEditAdapter.NoteEditViewHolder lastHolder;
 
     public MyItemTouchHelperCallback(Context context,ItemTouchHelperAdapter itemTouchHelperAdapter) {
         this.context=context;
@@ -39,6 +40,15 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         //拖拽移动的时候处理
+        if (lastHolder==null){
+            lastHolder= (NoteEditAdapter.NoteEditViewHolder) target;
+        }else if (lastHolder.getAdapterPosition()!=target.getAdapterPosition()){
+            lastHolder.ivSwipeNotice.setVisibility(View.GONE);
+            lastHolder= (NoteEditAdapter.NoteEditViewHolder) target;
+        }
+
+        lastHolder.ivSwipeNotice.setVisibility(View.VISIBLE);
+
         if (itemTouchHelperAdapter !=null){
             itemTouchHelperAdapter.onItemMove(viewHolder.getAdapterPosition(),target.getAdapterPosition());
         }
@@ -46,8 +56,17 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
     }
 
     @Override
+    public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        super.clearView(recyclerView, viewHolder);
+        if (lastHolder!=null) {
+            lastHolder.ivSwipeNotice.setVisibility(View.GONE);
+        }
+        itemTouchHelperAdapter.onItemMoveDone();
+    }
+
+    @Override
     public float getMoveThreshold(RecyclerView.ViewHolder viewHolder) {
-        return 0.1f;
+        return 0f;
     }
 
     @Override
@@ -75,25 +94,29 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         View item = viewHolder.itemView;
-        ViewGroup.LayoutParams layoutParams = item.getLayoutParams();
-        //如果当前是拖拽状态
-        if (actionState== ItemTouchHelper.ACTION_STATE_DRAG){
-            if (isCurrentlyActive){//正在拖动
-                if (layoutParams.height> DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_min_height))){
-                    layoutParams.height-=50;
-                }else {
-                    layoutParams.height=DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_min_height));
-                }
-            }else {
-                if (layoutParams.height<DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height))){
-                    layoutParams.height+=50;
-                }else {
-                    layoutParams.height=DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height));
-                }
-            }
-            item.setLayoutParams(layoutParams);
-        }
+//        ViewGroup.LayoutParams layoutParams = item.getLayoutParams();
+//        //如果当前是拖拽状态
+//        if (actionState== ItemTouchHelper.ACTION_STATE_DRAG){
+//            if (isCurrentlyActive){//正在拖动
+//                if (layoutParams.height> DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_min_height))){
+//                    layoutParams.height-=50;
+//                }else {
+//                    layoutParams.height=DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_min_height));
+//                }
+//            }else {
+//                if (layoutParams.height<DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height))){
+//                    layoutParams.height+=50;
+//                }else {
+//                    layoutParams.height=DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height));
+//                }
+//            }
+//            item.setLayoutParams(layoutParams);
+//        }
     }
+
+
+
+
 
     /**
      * 是否可以长按触发拖拽

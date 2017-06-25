@@ -16,7 +16,6 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,8 +39,8 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION_CODES.N;
+import static android.view.View.GONE;
 
 /**
  * Created by admin on 2017/4/22.
@@ -159,6 +158,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         //判断我们加载的到底是什么类型的数据
         if (itemDate.getItemFlag() == NoteEditModel.Flag.TEXT) {     //如果是文本Item
+            /*
+            * 文本
+            * */
             //显示内容
 
             //因为HTML转Span之后块级元素会自动换行，所以这里直接手动将块级元素P删除掉，有点暴力
@@ -193,7 +195,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
             holder.etItem.setVisibility(View.VISIBLE);          //文本显示 图片隐藏
-            holder.rlItemImg.setVisibility(View.GONE);
+            holder.rlItemImg.setVisibility(GONE);
+            holder.rlItemSeparated.setVisibility(GONE);
 
             //设置指定的Item获取焦点
             if (focusItemPos == position) {
@@ -210,10 +213,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
 
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
+            /*
+            * 图片
+            * */
             holder.rlItemImg.setVisibility(View.VISIBLE);
-            holder.etItem.setVisibility(View.GONE);
-            holder.ivTextQuote.setVisibility(View.GONE);
-            holder.ivTextPonit.setVisibility(View.GONE);
+            holder.etItem.setVisibility(GONE);
+            holder.ivTextQuote.setVisibility(GONE);
+            holder.ivTextPonit.setVisibility(GONE);
+            holder.rlItemSeparated.setVisibility(GONE);
 
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 
@@ -239,9 +246,17 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             Glide.with(context)
                     .load(itemDate.getImagePath())
                     .into(holder.ivItemImage);
-        }
 
-        Log.i(TAG, "onBindViewHolder: --->刷新Item" + position);
+        }else if (itemDate.getItemFlag()== NoteEditModel.Flag.SEPARATED){
+            /*
+            * 分隔线
+            * */
+            holder.rlItemImg.setVisibility(GONE);
+            holder.etItem.setVisibility(GONE);
+            holder.ivTextQuote.setVisibility(GONE);
+            holder.ivTextPonit.setVisibility(GONE);
+            holder.rlItemSeparated.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -261,7 +276,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     public void onItemMove(int fromPos, int toPos) {
         Collections.swap(mDataList, fromPos, toPos);
         notifyItemMoved(fromPos, toPos);
-        notifyItemRangeChanged(toPos + 1, getItemCount());
+    }
+
+    /**
+     * 替换Item位置完毕
+     */
+    @Override
+    public void onItemMoveDone() {
+        notifyDataSetChanged();
     }
 
     /**
@@ -275,6 +297,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, getItemCount());
     }
+
+
 
 
     public boolean isItemFormatList() {
@@ -293,21 +317,23 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
      */
     public class NoteEditViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tv_item_recylcer)
-        public EditText etItem;             //编辑文本框
+        public EditText etItem;                 //编辑文本框
         @Bind(R.id.iv_item_move)
-        public ImageView ivItemMove;        //拖拽移动按钮
+        public ImageView ivItemMove;            //拖拽移动按钮
         @Bind(R.id.iv_item_img)
-        public ImageView ivItemImage;       //图片框
+        public ImageView ivItemImage;           //图片框
         @Bind(R.id.cv_item_img)
-        public CardView cvItemImg;          //图片容器
+        public CardView cvItemImg;              //图片容器
         @Bind(R.id.iv_text_quote)
-        public ImageView ivTextQuote;       //编辑栏位引用图标
+        public ImageView ivTextQuote;           //编辑栏位引用图标
         @Bind(R.id.iv_text_point)
-        public ImageView ivTextPonit;       //编辑栏位列表图标
+        public ImageView ivTextPonit;           //编辑栏位列表图标
         @Bind(R.id.rl_item_img)
-        public RelativeLayout rlItemImg;    //Image区域容器
+        public RelativeLayout rlItemImg;        //Image区域容器
         @Bind(R.id.iv_swipe_notice)
-        public View ivSwipeNotice;          //拖拽切换的时候的提示图标
+        public View ivSwipeNotice;              //拖拽切换的时候的提示图标
+        @Bind(R.id.rl_item_separated)
+        public RelativeLayout rlItemSeparated;  //分割线容器
 
         private OnKeyDownFinishListener onKeyDownFinishListener;
 
@@ -472,7 +498,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 setFormat_quote(!format_list);
             }
             myItemTextChangeListener.setFormat_list(format_list);
-            ivTextPonit.setVisibility(format_list ? View.VISIBLE : View.GONE);
+            ivTextPonit.setVisibility(format_list ? View.VISIBLE : GONE);
         }
 
         public void setFormat_list_numbered(boolean format_list_numbered) {
@@ -484,7 +510,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 setFormat_list(!format_quote);
             }
             myItemTextChangeListener.setFormat_quote(format_quote);
-            ivTextQuote.setVisibility(format_quote ? View.VISIBLE : View.GONE);
+            ivTextQuote.setVisibility(format_quote ? View.VISIBLE : GONE);
             etItem.setTextColor(format_quote ? ContextCompat.getColor(context, R.color.colorGray)
                     : ContextCompat.getColor(context, R.color.colorBlackBody));
         }

@@ -36,4 +36,10 @@
     <item name="iv_item_img" type="id">iv_item_img</item>
     <item name="rl_item_img" type="id">rl_item_img</item>
     <item name="iv_swipe_notice" type="id">iv_swipe_notice</item>
+    <item name="menu_edit_insert_img" type="id">menu_edit_insert_img</item>
+    <item name="ll_edit_container" type="id">ll_edit_container</item>
+    <item name="tv_dialog_item_camera" type="id">tv_dialog_item_camera</item>
+    <item name="tv_dialog_item_album" type="id">tv_dialog_item_album</item>
+    <item name="iv_item_separated" type="id">iv_item_separated</item>
+    <item name="rl_item_separated" type="id">rl_item_separated</item>
 </resources>

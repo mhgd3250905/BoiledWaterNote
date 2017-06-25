@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:background="@drawable/shape_dialog"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@id/tv_dialog_item_camera"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="@string/dialog_insert_image_camera"
+        android:drawableStart="@drawable/dialog_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dialog_item_padding"
+        android:gravity="center"
+        android:textSize="@dimen/text_dialog_item" />
+
+    <View
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="@color/colorBlackBody" />
+
+    <TextView
+        android:id="@id/tv_dialog_item_album"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="@string/dialog_insert_image_album"
+        android:drawableStart="@drawable/dialog_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dialog_item_padding"
+        android:gravity="center"
+        android:textSize="@dimen/text_dialog_item" />
+
+</LinearLayout>
