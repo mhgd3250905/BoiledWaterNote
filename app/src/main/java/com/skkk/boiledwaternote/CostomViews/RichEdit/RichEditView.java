@@ -189,9 +189,11 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             * 设置文字居中
             * */
             case R.id.iv_format_align_center:
-                List<NoteEditModel> cameraItems2 = new ArrayList<>();
-                cameraItems2.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
-                insertItems(cameraItems2, -1);
+                List<NoteEditModel> cameraItems = new ArrayList<>();
+                cameraItems.add(new NoteEditModel(null, NoteEditModel.Flag.SEPARATED, null));
+                cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+                insertItems(cameraItems, -1);
+                adapter.setFocusItemPos(adapter.getItemCount());
                 break;
             case R.id.iv_format_blod:                //设置文字Blod
                 if (!isSelected) {                   //如果没有选择
@@ -256,9 +258,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 v.setBackgroundColor(adapter.isItemFormatList() ? Color.LTGRAY : Color.TRANSPARENT);
                 break;
             case R.id.iv_format_list_numbered:
-                List<NoteEditModel> cameraItems = new ArrayList<>();
-                cameraItems.add(new NoteEditModel(null, NoteEditModel.Flag.SEPARATED, null));
-                insertItems(cameraItems, -1);
+
                 break;
             case R.id.iv_format_size:
 

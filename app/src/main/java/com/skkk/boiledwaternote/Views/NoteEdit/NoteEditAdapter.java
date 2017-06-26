@@ -16,7 +16,6 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,7 +40,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION_CODES.N;
 import static android.view.View.GONE;
 
@@ -63,26 +61,15 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private NoteEditViewHolder currentHolder;                                   //当前ViewHolder
     private boolean alignCenterText = false;                                    //ItemEdit文字是否居中对齐
     private int focusItemPos = -1;                                              //需要获得焦点的Item
-    private boolean itemFormatList = false;            //设置List格式为List
-
-
-    public void setFocusItemPos(int focusItemPos) {
-        this.focusItemPos = focusItemPos;
-    }
+    private boolean itemFormatList = false;                                     //设置List格式为List
+    private int separatedImageResouseId;
 
 
     interface OnItemEditSelectedLintener {
         void onItemEditSelectedLintener(View view, int pos, boolean hasFocus);
     }
 
-    /**
-     * 设置Item编辑器焦点获取监听
-     *
-     * @param onItemEditSelectedLintener
-     */
-    public void setOnItemEditSelectedLintener(OnItemEditSelectedLintener onItemEditSelectedLintener) {
-        this.onItemEditSelectedLintener = onItemEditSelectedLintener;
-    }
+
 
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
@@ -90,40 +77,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         void onDelFinishListner(int pos);
     }
 
-    public void setOnKeyDownFinishListener(OnKeyDownFinishListener onKeyDownFinishListener) {
-        this.onKeyDownFinishListener = onKeyDownFinishListener;
-    }
 
-
-    /**
-     * 设置滑动拖拽监听
-     *
-     * @param onStartDragListener
-     */
-    public void setOnStartDragListener(OnStartDragListener onStartDragListener) {
-        this.onStartDragListener = onStartDragListener;
-    }
-
-    /**
-     * 获取Item编辑器是否居中
-     *
-     * @return
-     */
-    public boolean isAlignCenterText() {
-        return alignCenterText;
-    }
-
-    /**
-     * 设置Item编辑器是否居中对齐
-     *
-     * @param alignCenterText
-     */
-    public void setTextAligentCenter(boolean alignCenterText) {
-        this.alignCenterText = alignCenterText;
-        currentHolder.setFormat_align_flag(this.alignCenterText);
-        mDataList.get(currentHolder.getCurrentPos()).setFormat_align_center(this.alignCenterText);
-        notifyItemChanged(currentHolder.getCurrentPos());
-    }
 
 
     public NoteEditAdapter(Context context, List<NoteEditModel> mDataList) {
@@ -204,6 +158,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
             //设置指定的Item获取焦点
             if (focusItemPos == position) {
+                holder.etItem.setFocusable(true);
+                holder.etItem.setFocusableInTouchMode(true);
                 holder.etItem.requestFocus();
                 holder.etItem.setSelection(holder.etItem.length());
             }
@@ -260,8 +216,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.ivTextQuote.setVisibility(GONE);
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(View.VISIBLE);
-            Log.i(TAG, "onBindViewHolder: "+holder.rlItemImg.getVisibility()+holder.etItem.getVisibility()
-                    +holder.rlItemSeparated.getVisibility());
+
         }
 
     }
@@ -302,6 +257,59 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         mDataList.remove(pos);
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, getItemCount());
+    }
+
+    /**
+     * 设置哪个位置的Item获取焦点
+     * @param focusItemPos
+     */
+    public void setFocusItemPos(int focusItemPos) {
+        this.focusItemPos = focusItemPos;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 设置Item编辑器焦点获取监听
+     *
+     * @param onItemEditSelectedLintener
+     */
+    public void setOnItemEditSelectedLintener(OnItemEditSelectedLintener onItemEditSelectedLintener) {
+        this.onItemEditSelectedLintener = onItemEditSelectedLintener;
+    }
+
+    public void setOnKeyDownFinishListener(OnKeyDownFinishListener onKeyDownFinishListener) {
+        this.onKeyDownFinishListener = onKeyDownFinishListener;
+    }
+
+
+    /**
+     * 设置滑动拖拽监听
+     *
+     * @param onStartDragListener
+     */
+    public void setOnStartDragListener(OnStartDragListener onStartDragListener) {
+        this.onStartDragListener = onStartDragListener;
+    }
+
+    /**
+     * 获取Item编辑器是否居中
+     *
+     * @return
+     */
+    public boolean isAlignCenterText() {
+        return alignCenterText;
+    }
+
+    /**
+     * 设置Item编辑器是否居中对齐
+     *
+     * @param alignCenterText
+     */
+    public void setTextAligentCenter(boolean alignCenterText) {
+        this.alignCenterText = alignCenterText;
+        currentHolder.setFormat_align_flag(this.alignCenterText);
+        mDataList.get(currentHolder.getCurrentPos()).setFormat_align_center(this.alignCenterText);
+        notifyItemChanged(currentHolder.getCurrentPos());
     }
 
 
@@ -424,8 +432,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                             if (currentPos != 0) {
                                 //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
                                 mDataList.remove(currentPos);
-                                setFocusItemPos(currentPos - 1);
+                                if (mDataList.get(currentPos-1).getItemFlag()== NoteEditModel.Flag.SEPARATED){
+                                    mDataList.remove(currentPos-1);
+                                    setFocusItemPos(currentPos - 2);
+                                }else {
+                                    setFocusItemPos(currentPos - 1);
+                                }
                                 notifyItemRemoved(currentPos);
+                                notifyItemRemoved(currentPos-1);
                                 notifyDataSetChanged();
 
                                 if (onKeyDownFinishListener != null) {

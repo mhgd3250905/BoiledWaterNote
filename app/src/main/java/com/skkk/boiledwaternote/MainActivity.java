@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity
     /* @描述 菜单、返回键响应 */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
