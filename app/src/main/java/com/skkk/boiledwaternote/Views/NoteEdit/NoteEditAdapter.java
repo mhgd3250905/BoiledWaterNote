@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,6 +41,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION_CODES.N;
 import static android.view.View.GONE;
 
@@ -194,9 +197,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
-            holder.etItem.setVisibility(View.VISIBLE);          //文本显示 图片隐藏
+            holder.llEditContainer.setVisibility(View.VISIBLE);          //文本显示 图片隐藏
             holder.rlItemImg.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
+
 
             //设置指定的Item获取焦点
             if (focusItemPos == position) {
@@ -217,7 +221,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             * 图片
             * */
             holder.rlItemImg.setVisibility(View.VISIBLE);
-            holder.etItem.setVisibility(GONE);
+            holder.llEditContainer.setVisibility(GONE);
             holder.ivTextQuote.setVisibility(GONE);
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
@@ -252,10 +256,12 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             * 分隔线
             * */
             holder.rlItemImg.setVisibility(GONE);
-            holder.etItem.setVisibility(GONE);
+            holder.llEditContainer.setVisibility(GONE);
             holder.ivTextQuote.setVisibility(GONE);
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(View.VISIBLE);
+            Log.i(TAG, "onBindViewHolder: "+holder.rlItemImg.getVisibility()+holder.etItem.getVisibility()
+                    +holder.rlItemSeparated.getVisibility());
         }
 
     }
@@ -316,24 +322,30 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
      * ViewHolder
      */
     public class NoteEditViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.ll_edit_container)
+        public LinearLayout llEditContainer;    //edit文本区域
         @Bind(R.id.tv_item_recylcer)
         public EditText etItem;                 //编辑文本框
+        @Bind(R.id.iv_text_quote)
+        public ImageView ivTextQuote;           //编辑栏位引用图标
+        @Bind(R.id.iv_text_point)
+        public ImageView ivTextPonit;           //编辑栏位列表图标
+
+        @Bind(R.id.rl_item_img)
+        public RelativeLayout rlItemImg;        //Image区域容器
         @Bind(R.id.iv_item_move)
         public ImageView ivItemMove;            //拖拽移动按钮
         @Bind(R.id.iv_item_img)
         public ImageView ivItemImage;           //图片框
         @Bind(R.id.cv_item_img)
         public CardView cvItemImg;              //图片容器
-        @Bind(R.id.iv_text_quote)
-        public ImageView ivTextQuote;           //编辑栏位引用图标
-        @Bind(R.id.iv_text_point)
-        public ImageView ivTextPonit;           //编辑栏位列表图标
-        @Bind(R.id.rl_item_img)
-        public RelativeLayout rlItemImg;        //Image区域容器
+
         @Bind(R.id.iv_swipe_notice)
         public View ivSwipeNotice;              //拖拽切换的时候的提示图标
+
         @Bind(R.id.rl_item_separated)
         public RelativeLayout rlItemSeparated;  //分割线容器
+
 
         private OnKeyDownFinishListener onKeyDownFinishListener;
 
