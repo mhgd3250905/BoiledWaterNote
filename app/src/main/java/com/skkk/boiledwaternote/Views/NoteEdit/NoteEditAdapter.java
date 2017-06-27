@@ -358,6 +358,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         private OnKeyDownFinishListener onKeyDownFinishListener;
 
         private int currentPos;             //当前的position
+        private NoteEditModel model;        //用来操作的模板
 
         public int getCurrentPos() {
             return currentPos;
@@ -396,7 +397,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
                         if (myItemTextChangeListener.isFormat_list() || myItemTextChangeListener.isFormat_quote()) {
                             //将要插入的行数据
-                            NoteEditModel model = new NoteEditModel();
+                            model = new NoteEditModel();
                             model.setItemFlag(NoteEditModel.Flag.TEXT);
                             model.setImagePath(null);
                             model.setContent("");

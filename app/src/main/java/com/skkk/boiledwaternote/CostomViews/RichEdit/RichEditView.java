@@ -17,7 +17,6 @@ import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -132,7 +131,14 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         adapter.setOnKeyDownFinishListener(new NoteEditAdapter.OnKeyDownFinishListener() {
             @Override
             public void onEnterFinishListner(int pos) {
-                Log.i(TAG, "onEnterFinishListner: Enter完毕");
+                /*
+                * 锁定光标
+                * */
+                if (pos<adapter.getItemCount()-1) {
+                    rvRichEdit.smoothScrollToPosition(pos);
+                }else {
+                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+                }
             }
 
             @Override
@@ -258,7 +264,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 v.setBackgroundColor(adapter.isItemFormatList() ? Color.LTGRAY : Color.TRANSPARENT);
                 break;
             case R.id.iv_format_list_numbered:
-
+                rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
                 break;
             case R.id.iv_format_size:
 

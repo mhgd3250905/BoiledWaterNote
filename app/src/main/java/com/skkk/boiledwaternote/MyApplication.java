@@ -3,7 +3,9 @@ package com.skkk.boiledwaternote;
 import android.app.Application;
 
 // TODO: 2017/6/25 1.笔记编辑界面点击进入时设置为展示状态，手动点击编辑的时候就进入编辑状态
-// TODO: 2017/6/25 2.富文本中添加分隔线
+// TODO: 2017/6/25 2.富文本中添加分隔线 ---> done
+// TODO: 2017/6/26 3.编辑中焦点的跳转
+// TODO: 2017/6/26 4.根据bitmap的不同添加不同宽高比的相框
 /*
 * 
 * 描    述：
