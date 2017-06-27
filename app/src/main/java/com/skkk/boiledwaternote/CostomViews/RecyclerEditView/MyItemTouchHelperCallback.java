@@ -37,6 +37,13 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
         return makeMovementFlags(dragFlag,0);
     }
 
+    /**
+     * 开始移动
+     * @param recyclerView
+     * @param viewHolder
+     * @param target
+     * @return
+     */
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
         //拖拽移动的时候处理
@@ -55,6 +62,27 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
         return true;
     }
 
+    /**
+     * 开始移动返回true
+     * @param recyclerView
+     * @param viewHolder
+     * @param fromPos
+     * @param target
+     * @param toPos
+     * @param x
+     * @param y
+     */
+    @Override
+    public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
+        super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+    }
+
+
+    /**
+     * 结束拖拽
+     * @param recyclerView
+     * @param viewHolder
+     */
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
@@ -64,11 +92,21 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
         itemTouchHelperAdapter.onItemMoveDone();
     }
 
+    /**
+     * 获取拖拽识别范围
+     * @param viewHolder
+     * @return
+     */
     @Override
     public float getMoveThreshold(RecyclerView.ViewHolder viewHolder) {
         return 0f;
     }
 
+    /**
+     * 左右拖拽的时候发生
+     * @param viewHolder
+     * @param direction
+     */
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         //左右滑动的时候处理
@@ -94,28 +132,7 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback{
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         View item = viewHolder.itemView;
-//        ViewGroup.LayoutParams layoutParams = item.getLayoutParams();
-//        //如果当前是拖拽状态
-//        if (actionState== ItemTouchHelper.ACTION_STATE_DRAG){
-//            if (isCurrentlyActive){//正在拖动
-//                if (layoutParams.height> DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_min_height))){
-//                    layoutParams.height-=50;
-//                }else {
-//                    layoutParams.height=DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_min_height));
-//                }
-//            }else {
-//                if (layoutParams.height<DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height))){
-//                    layoutParams.height+=50;
-//                }else {
-//                    layoutParams.height=DensityUtil.dip2px(context,context.getResources().getDimension(R.dimen.edit_item_image_max_height));
-//                }
-//            }
-//            item.setLayoutParams(layoutParams);
-//        }
     }
-
-
-
 
 
     /**

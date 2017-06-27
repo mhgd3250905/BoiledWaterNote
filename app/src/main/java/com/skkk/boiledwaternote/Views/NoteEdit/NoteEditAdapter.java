@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -18,7 +17,6 @@ import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -102,7 +100,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
     @Override
-    public void onBindViewHolder(NoteEditViewHolder holder, int position) {
+    public void onBindViewHolder(final NoteEditViewHolder holder, int position) {
         final NoteEditViewHolder viewHolder = holder;
         holder.setCurrentPos(holder.getAdapterPosition());          //设置当前Item位置
         holder.myItemTextChangeListener.updatePos(position);        //更新文本变化监听pos
@@ -187,14 +185,31 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             layoutParams.height = DensityUtil.dip2px(context, context.getResources().getDimension(R.dimen.edit_item_image_max_height));
             holder.itemView.setLayoutParams(layoutParams);
 
-            //拖拽图片触摸监听
-            holder.ivItemMove.setOnTouchListener(new View.OnTouchListener() {
+//            //拖拽图片触摸监听
+//            holder.ivItemMove.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN
+//                            && onStartDragListener != null) {
+//                        onStartDragListener.onStartDragListener(viewHolder);
+//                    }
+//                    return false;
+//                }
+//            });
+
+            holder.ivItemMove.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN
-                            && onStartDragListener != null) {
-                        onStartDragListener.onStartDragListener(viewHolder);
-                    }
+                public void onClick(View v) {
+                    holder.setMoveMenuIsHide(!holder.getMoveMenuIsHide());
+                }
+            });
+
+            holder.setMoveMenuIsHide(true);
+
+            holder.ivItemMove.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    onStartDragListener.onStartDragListener(viewHolder);
                     return false;
                 }
             });
@@ -202,6 +217,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (itemDate.getImagePath() == null) {
                 return;
             }
+
+
 
             Glide.with(context)
                     .load(itemDate.getImagePath())
@@ -341,12 +358,18 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         @Bind(R.id.rl_item_img)
         public RelativeLayout rlItemImg;        //Image区域容器
-        @Bind(R.id.iv_item_move)
-        public ImageView ivItemMove;            //拖拽移动按钮
         @Bind(R.id.iv_item_img)
         public ImageView ivItemImage;           //图片框
         @Bind(R.id.cv_item_img)
         public CardView cvItemImg;              //图片容器
+        @Bind(R.id.iv_item_move)
+        public ImageView ivItemMove;            //拖拽移动按钮
+        @Bind(R.id.iv_item_move_delete)
+        public ImageView ivItemMoveDelete;      //图片删除按钮
+        @Bind(R.id.iv_item_move_edit)
+        public ImageView ivItemMoveEdit;        //图片编辑按钮
+
+        private Boolean moveMenuIsHide=true;
 
         @Bind(R.id.iv_swipe_notice)
         public View ivSwipeNotice;              //拖拽切换的时候的提示图标
@@ -459,6 +482,19 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     return myItemTextChangeListener.isFormat_list() || myItemTextChangeListener.isFormat_quote();
                 }
             });
+
+            if (moveMenuIsHide){
+                ivItemMoveDelete.setVisibility(View.GONE);
+                ivItemMoveEdit.setVisibility(View.GONE);
+            }
+            ivItemMoveDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDataList.remove(currentPos);
+                    notifyItemRemoved(currentPos);
+                    notifyItemRangeChanged(currentPos,getItemCount());
+                }
+            });
         }
 
         /**
@@ -549,6 +585,20 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         public void setFormat_underlined(boolean format_underlined) {
             myItemTextChangeListener.setFormat_underlined(format_underlined);
+        }
+
+        public Boolean getMoveMenuIsHide() {
+            return moveMenuIsHide;
+        }
+
+        /**
+         * 设置MoveItemMenu是否隐藏
+         * @param moveMenuIsHide
+         */
+        public void setMoveMenuIsHide(Boolean moveMenuIsHide) {
+            this.moveMenuIsHide = moveMenuIsHide;
+            ivItemMoveDelete.setVisibility(moveMenuIsHide?View.GONE:View.VISIBLE);
+            ivItemMoveEdit.setVisibility(moveMenuIsHide?View.GONE:View.VISIBLE);
         }
     }
 
