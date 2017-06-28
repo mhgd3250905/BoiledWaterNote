@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-        <declare-styleable name="BombMenuButton">
-            <attr name="itemCount" format="integer"/>
-            <attr name="orientation" format="enum">
-                <enum name="horizontal" value="0"/>
-                <enum name="vertical" value="1"/>
+        <declare-styleable name="BombMenu">
+            <attr name="direction" format="enum">
+                <enum name="DIRECTION_HORIZONTAL" value="0"/>
+                <enum name="DIRECTION_VERTICAL" value="1"/>
+            </attr>
+            <attr name="position" format="enum">
+                <enum name="POS_LEFT_TOP" value="0"/>
+                <enum name="POS_LEFT_BUTTOM" value="1"/>
+                <enum name="POS_RIGHT_TOP" value="2"/>
+                <enum name="POS_RIGHT_BUTTOM" value="3"/>
+            </attr>
+            <attr name="menyStatus" format="enum">
+                <enum name="STATUS_CLOSE" value="0"/>
+                <enum name="STATUS_OPEN" value="1"/>
             </attr>
         </declare-styleable>
 
