@@ -26,6 +26,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.skkk.boiledwaternote.CostomViews.BombMenu;
+import com.skkk.boiledwaternote.CostomViews.OnMenuItemClickListener;
+import com.skkk.boiledwaternote.CostomViews.OnMenuItemTouchListener;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdapter;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -100,7 +103,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
     @Override
-    public void onBindViewHolder(final NoteEditViewHolder holder, int position) {
+    public void onBindViewHolder(final NoteEditViewHolder holder, final int position) {
         final NoteEditViewHolder viewHolder = holder;
         holder.setCurrentPos(holder.getAdapterPosition());          //设置当前Item位置
         holder.myItemTextChangeListener.updatePos(position);        //更新文本变化监听pos
@@ -180,39 +183,37 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
 
+            holder.bmItemImage.setmMenuItemClickListener(new OnMenuItemClickListener() {
+                @Override
+                public void onItemClickListener(int pos, View v) {
+                    switch (pos){
+                        case 0:
+                            break;
+                        case 1:
+                            mDataList.remove(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position,getItemCount());
+                            break;
+                    }
+                }
+            });
+
+            holder.bmItemImage.setmMenuItemTouchListener(new OnMenuItemTouchListener() {
+                @Override
+                public void onItemTouchListener(int pos, View v) {
+                    onStartDragListener.onStartDragListener(viewHolder);
+                }
+            });
+
+
+
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 
             layoutParams.height = DensityUtil.dip2px(context, context.getResources().getDimension(R.dimen.edit_item_image_max_height));
             holder.itemView.setLayoutParams(layoutParams);
 
-//            //拖拽图片触摸监听
-//            holder.ivItemMove.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN
-//                            && onStartDragListener != null) {
-//                        onStartDragListener.onStartDragListener(viewHolder);
-//                    }
-//                    return false;
-//                }
-//            });
 
-            holder.ivItemMove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    holder.setMoveMenuIsHide(!holder.getMoveMenuIsHide());
-                }
-            });
 
-            holder.setMoveMenuIsHide(true);
-
-            holder.ivItemMove.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    onStartDragListener.onStartDragListener(viewHolder);
-                    return false;
-                }
-            });
 
             if (itemDate.getImagePath() == null) {
                 return;
@@ -362,12 +363,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public ImageView ivItemImage;           //图片框
         @Bind(R.id.cv_item_img)
         public CardView cvItemImg;              //图片容器
-        @Bind(R.id.iv_item_move)
-        public ImageView ivItemMove;            //拖拽移动按钮
-        @Bind(R.id.iv_item_move_delete)
-        public ImageView ivItemMoveDelete;      //图片删除按钮
-        @Bind(R.id.iv_item_move_edit)
-        public ImageView ivItemMoveEdit;        //图片编辑按钮
+        @Bind(R.id.bm_item_image)
+        public BombMenu bmItemImage;            //弹射菜单
 
         private Boolean moveMenuIsHide=true;
 
@@ -483,18 +480,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
             });
 
-            if (moveMenuIsHide){
-                ivItemMoveDelete.setVisibility(View.GONE);
-                ivItemMoveEdit.setVisibility(View.GONE);
-            }
-            ivItemMoveDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mDataList.remove(currentPos);
-                    notifyItemRemoved(currentPos);
-                    notifyItemRangeChanged(currentPos,getItemCount());
-                }
-            });
         }
 
         /**
@@ -591,15 +576,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             return moveMenuIsHide;
         }
 
-        /**
-         * 设置MoveItemMenu是否隐藏
-         * @param moveMenuIsHide
-         */
-        public void setMoveMenuIsHide(Boolean moveMenuIsHide) {
-            this.moveMenuIsHide = moveMenuIsHide;
-            ivItemMoveDelete.setVisibility(moveMenuIsHide?View.GONE:View.VISIBLE);
-            ivItemMoveEdit.setVisibility(moveMenuIsHide?View.GONE:View.VISIBLE);
-        }
     }
 
 

@@ -42,6 +42,8 @@
     <item name="tv_dialog_item_album" type="id">tv_dialog_item_album</item>
     <item name="iv_item_separated" type="id">iv_item_separated</item>
     <item name="rl_item_separated" type="id">rl_item_separated</item>
+    <item name="bm_item_image" type="id">bm_item_image</item>
     <item name="iv_item_move_delete" type="id">iv_item_move_delete</item>
     <item name="iv_item_move_edit" type="id">iv_item_move_edit</item>
+    <item name="iv_item_menu" type="id">iv_item_menu</item>
 </resources>

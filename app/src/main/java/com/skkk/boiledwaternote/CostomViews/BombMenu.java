@@ -17,6 +17,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -53,12 +54,17 @@ public class BombMenu  extends ViewGroup implements View.OnClickListener {
     private View mainButton;
 
     private OnMenuItemClickListener mMenuItemClickListener;
+    private OnMenuItemTouchListener mMenuItemTouchListener;
     private int width;
     private int height;
     private long animDuration=300;
 
     public void setmMenuItemClickListener(OnMenuItemClickListener mMenuItemClickListener) {
         this.mMenuItemClickListener = mMenuItemClickListener;
+    }
+
+    public void setmMenuItemTouchListener(OnMenuItemTouchListener mMenuItemTouchListener) {
+        this.mMenuItemTouchListener = mMenuItemTouchListener;
     }
 
     public BombMenu(Context context) {
@@ -141,17 +147,60 @@ public class BombMenu  extends ViewGroup implements View.OnClickListener {
             childView.layout(l,t,l+ width,t+ height);
             childView.setVisibility(GONE);
             final int pos=i;
-            childView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    clickItemAnim(pos);
-                    changeStatus();
-                    mMenuItemClickListener.onItemClickListener(pos,v);
-                }
-            });
+            if (i==count-2){        //给最后一个Item设置为触摸监听
+                childView.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction()==MotionEvent.ACTION_DOWN){
+                            if (mMenuItemTouchListener!=null){
+                                mMenuItemTouchListener.onItemTouchListener(pos,v);
+                            }
+                        }
+                        return false;
+                    }
+                });
+            }else {
+                childView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        clickItemAnim(pos);
+                        startItemClickAnim(v);
+                        if (mMenuItemClickListener != null) {
+                            mMenuItemClickListener.onItemClickListener(pos, v);
+                        }
+                    }
+                });
+            }
         }
+    }
 
-
+    /**
+     * 点击Item的动画
+     * @param v
+     */
+    private void startItemClickAnim(View v) {
+        ObjectAnimator scaleXAnim=ObjectAnimator.ofFloat(v,"scaleX",1f,1.5f);
+        ObjectAnimator scaleYAnim=ObjectAnimator.ofFloat(v,"scaleY",1f,1.5f);
+        ObjectAnimator alphaAnim=ObjectAnimator.ofFloat(v,"Alpha",1f,0f);
+        AnimatorSet animSet=new AnimatorSet();
+        animSet.play(scaleXAnim).with(scaleYAnim).with(alphaAnim);
+        animSet.setDuration(200);
+        animSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        final View animView=v;
+        animSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                toggleMenu();
+                ObjectAnimator scaleXAnimBack=ObjectAnimator.ofFloat(animView,"scaleX",1.5f,1f);
+                ObjectAnimator scaleYAnimBack=ObjectAnimator.ofFloat(animView,"scaleY",1.5f,1f);
+                ObjectAnimator alphaAnimBack=ObjectAnimator.ofFloat(animView,"Alpha",0f,1f);
+                AnimatorSet animSetBack=new AnimatorSet();
+                animSetBack.play(scaleXAnimBack).with(scaleYAnimBack).with(alphaAnimBack);
+                animSetBack.start();
+            }
+        });
+        animSet.start();
     }
 
 
