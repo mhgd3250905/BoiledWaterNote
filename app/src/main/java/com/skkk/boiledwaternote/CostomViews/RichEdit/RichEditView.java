@@ -18,6 +18,7 @@ import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -147,7 +148,46 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             }
         });
 
+        rvRichEdit.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction()==MotionEvent.ACTION_DOWN){
+                    View underView = rvRichEdit.findChildViewUnder(event.getX(), event.getY());
+                    if (underView==null){
+                        selectLastTextItem(rvRichEdit,linearLayoutManager);
+                    }
+                }
+                return false;
+            }
+        });
+    }
 
+    /**
+     * 获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
+     *
+     * @param rvNoteEdit
+     * @param layoutManager
+     */
+    private void selectLastTextItem(RecyclerView rvNoteEdit, LinearLayoutManager layoutManager) {
+        int lastPos = layoutManager.findLastCompletelyVisibleItemPosition();
+        View lastItem = rvNoteEdit.getChildAt(lastPos);
+        if (lastItem == null) {
+            return;
+        }
+        if (null != rvNoteEdit.getChildViewHolder(lastItem)) {
+            NoteEditAdapter.NoteEditViewHolder viewHolder = (NoteEditAdapter.NoteEditViewHolder) rvNoteEdit.getChildViewHolder(lastItem);
+            if (viewHolder.etItem.getVisibility() == View.VISIBLE
+                    && mDataList.get(mDataList.size() - 1).getItemFlag() == NoteEditModel.Flag.TEXT) {
+                //首先判断文本是可见的,那么就获取焦点呼出键盘
+                String lastText = viewHolder.etItem.getText().toString();
+                viewHolder.etItem.setSelection(lastText.length());
+                viewHolder.etItem.setFocusable(true);
+                viewHolder.etItem.setFocusableInTouchMode(true);
+                viewHolder.etItem.requestFocus();
+                viewHolder.etItem.setSelection(viewHolder.etItem.length());
+
+            }
+        }
     }
 
     /**

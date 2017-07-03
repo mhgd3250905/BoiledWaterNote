@@ -14,7 +14,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Gravity;
@@ -102,6 +101,10 @@ public class NoteEditActivity extends AppCompatActivity {
         initUI();           //初始化UI
         initEvent();        //初始化各种事件
 
+        if (imm.isActive()) {
+            imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+
     }
 
     /**
@@ -151,33 +154,6 @@ public class NoteEditActivity extends AppCompatActivity {
 
     }
 
-
-    /**
-     * 获取最后一个Item，如果是文本，那么就获取焦点呼出键盘
-     *
-     * @param rvNoteEdit
-     * @param layoutManager
-     */
-    private void selectLastTextItem(RecyclerView rvNoteEdit, LinearLayoutManager layoutManager) {
-        int lastPos = layoutManager.findLastCompletelyVisibleItemPosition();
-        View lastItem = rvNoteEdit.getChildAt(lastPos);
-        if (lastItem == null) {
-            return;
-        }
-        if (null != rvNoteEdit.getChildViewHolder(lastItem)) {
-            NoteEditAdapter.NoteEditViewHolder viewHolder = (NoteEditAdapter.NoteEditViewHolder) rvNoteEdit.getChildViewHolder(lastItem);
-            if (viewHolder.etItem.getVisibility() == View.VISIBLE
-                    && mDataList.get(mDataList.size() - 1).getItemFlag() == NoteEditModel.Flag.TEXT) {
-                //首先判断文本是可见的,那么就获取焦点呼出键盘
-                String lastText = viewHolder.etItem.getText().toString();
-                viewHolder.etItem.setSelection(lastText.length());
-                viewHolder.etItem.setFocusable(true);
-                viewHolder.etItem.setFocusableInTouchMode(true);
-                viewHolder.etItem.requestFocus();
-                imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        }
-    }
 
 
     /**
