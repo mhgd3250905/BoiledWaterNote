@@ -20,6 +20,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -185,6 +186,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 viewHolder.etItem.setFocusableInTouchMode(true);
                 viewHolder.etItem.requestFocus();
                 viewHolder.etItem.setSelection(viewHolder.etItem.length());
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
             }
         }
