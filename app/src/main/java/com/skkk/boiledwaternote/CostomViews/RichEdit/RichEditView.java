@@ -146,6 +146,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
             }
         });
+
+
     }
 
     /**
@@ -408,5 +410,19 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     @Override
     public List<NoteEditModel> getRichText() {
         return adapter.getmDataList();
+    }
+
+    /**
+     * 是否获取焦点
+     */
+    @Override
+    public void setFocusEnable(boolean focus) {
+        if (focus) {
+            adapter.setFocusItemPos(adapter.getItemCount());
+        }else {
+            ivEditFormatNotice.setFocusable(true);
+            ivEditFormatNotice.setFocusableInTouchMode(true);
+            ivEditFormatNotice.setFocusable(true);
+        }
     }
 }

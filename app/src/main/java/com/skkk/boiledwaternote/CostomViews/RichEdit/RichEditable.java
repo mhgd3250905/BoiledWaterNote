@@ -16,4 +16,6 @@ public interface RichEditable {
     void loadRichText(List<NoteEditModel> richTexts);
     //获取数据
     List<NoteEditModel> getRichText();
+    //是否获取焦点
+    void setFocusEnable(boolean focus);
 }

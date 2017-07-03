@@ -94,7 +94,9 @@ public class NoteEditActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         presenter = new NoteEditPresenter(this);
+//        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
 
         initSetting();      //获取传入数据
         initUI();           //初始化UI
@@ -145,6 +147,8 @@ public class NoteEditActivity extends AppCompatActivity {
             }
             revEdit.startNewEdit(false, mDataList);
         }
+
+
     }
 
 
@@ -202,11 +206,11 @@ public class NoteEditActivity extends AppCompatActivity {
                                 true);
                         popupWindow.setOutsideTouchable(true);
                         popupWindow.setAnimationStyle(R.style.MyPopupWindow_anim_style);
-                        backgroundAlpha(1f,0.5f,200);
+                        backgroundAlpha(1f, 0.5f, 200);
                         popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                             @Override
                             public void onDismiss() {
-                                backgroundAlpha(0.5f,1f,200);
+                                backgroundAlpha(0.5f, 1f, 200);
                             }
                         });
                         popupWindow.showAtLocation(llEditContainer, Gravity.BOTTOM, 0, 300);
@@ -237,8 +241,6 @@ public class NoteEditActivity extends AppCompatActivity {
         });
 
     }
-
-
 
 
     @Override
@@ -277,7 +279,7 @@ public class NoteEditActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode){
+            switch (requestCode) {
                 case CAMERA_REQUEST_CODE:    //拍照返回插入图片到编辑框
                     List<NoteEditModel> cameraItems = new ArrayList<>();
                     cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.IMAGE, cameraPath));
@@ -297,6 +299,17 @@ public class NoteEditActivity extends AppCompatActivity {
                     break;
             }
 
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*
+        * 在进入编辑界面的时候判断并隐藏软键盘
+        * */
+        if (imm.isActive()) {
+            imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
@@ -350,11 +363,12 @@ public class NoteEditActivity extends AppCompatActivity {
 
     /**
      * 在指定时间内改变透明度
-     * @param start 起始透明度
-     * @param end   结束透明度
+     *
+     * @param start    起始透明度
+     * @param end      结束透明度
      * @param duration 耗时
      */
-    private void backgroundAlpha(float start,float end,int duration) {
+    private void backgroundAlpha(float start, float end, int duration) {
         lp = getWindow().getAttributes();
         AnimatorUtils.backgroundAlpha(start, end, duration, new ValueAnimator.AnimatorUpdateListener() {
             @Override

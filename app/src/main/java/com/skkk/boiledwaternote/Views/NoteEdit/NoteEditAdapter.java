@@ -158,6 +158,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
 
             //设置指定的Item获取焦点
+
             if (focusItemPos == position) {
                 holder.etItem.setFocusable(true);
                 holder.etItem.setFocusableInTouchMode(true);
@@ -393,6 +394,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public NoteEditViewHolder(View itemView, final MyItemTextChangeListener myItemTextChangeListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            llEditContainer.setFocusable(true);
+            llEditContainer.setFocusableInTouchMode(true);
             //设置焦点获取监听：直接抛给EditText
             itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
