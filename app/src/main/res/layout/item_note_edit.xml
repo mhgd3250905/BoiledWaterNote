@@ -46,55 +46,6 @@
         android:layout_height="wrap_content"
         android:visibility="visible">
 
-        <FrameLayout
-            android:padding="10dp"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true">
-
-            <com.skkk.boiledwaternote.CostomViews.BombMenu
-                android:id="@id/bm_item_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/cv_item_img"
-                android:layout_alignParentTop="true">
-
-                <ImageView
-                    android:id="@id/iv_item_move_edit"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_mode_edit"
-                    android:translationZ="5dp" />
-
-                <ImageView
-                    android:id="@id/iv_item_move_delete"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_delete"
-                    android:translationZ="5dp" />
-
-                <ImageView
-                    android:id="@id/iv_item_move"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_swap_vertical"
-                    android:translationZ="5dp" />
-
-                <ImageView
-                    android:id="@id/iv_item_menu"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:elevation="10dp"
-                    android:src="@drawable/ic_arrow_drop_down"
-                    android:visibility="visible" />
-
-            </com.skkk.boiledwaternote.CostomViews.BombMenu>
-        </FrameLayout>
-
         <android.support.v7.widget.CardView
             android:id="@id/cv_item_img"
             android:layout_width="wrap_content"
@@ -117,6 +68,54 @@
                 android:scaleType="centerCrop"
                 android:src="@mipmap/ic_launcher"
                 android:visibility="visible" />
+
+            <FrameLayout
+                android:id="@id/fl_menu_container"
+                android:layout_width="540px"
+                android:layout_height="800px"
+                android:layout_alignParentTop="true">
+
+                <com.skkk.boiledwaternote.CostomViews.BombMenu
+                    android:id="@id/bm_item_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/cv_item_img"
+                    android:layout_alignParentTop="true">
+
+                    <ImageView
+                        android:id="@id/iv_item_move_edit"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_mode_edit"
+                        android:translationZ="5dp" />
+
+                    <ImageView
+                        android:id="@id/iv_item_move_delete"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_delete"
+                        android:translationZ="5dp" />
+
+                    <ImageView
+                        android:id="@id/iv_item_move"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_swap_vertical"
+                        android:translationZ="5dp" />
+
+                    <ImageView
+                        android:id="@id/iv_item_menu"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:elevation="10dp"
+                        android:src="@drawable/ic_arrow_drop_down"
+                        android:visibility="visible" />
+
+                </com.skkk.boiledwaternote.CostomViews.BombMenu>
+            </FrameLayout>
 
         </android.support.v7.widget.CardView>
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -25,17 +26,17 @@ import java.io.IOException;
 public class ImageUtils {
 
     /* @描述 保存图片然后返回路径 */
-    public static String saveBitmapAndReturnPath(Context context,Bitmap bitmap) {
-        File f = new File(context.getFilesDir(), com.skkk.boiledwaternote.Utils.Utils.DateUtils.getTime()+"shareBKS");
+    public static String saveBitmapAndReturnPath(Context context, Bitmap bitmap) {
+        File f = new File(context.getFilesDir(), com.skkk.boiledwaternote.Utils.Utils.DateUtils.getTime() + "shareBKS");
         if (f.exists()) {
             f.delete();
         }
         try {
             FileOutputStream out = new FileOutputStream(f);
-            bitmap.compress(Bitmap.CompressFormat.PNG,100, out);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
-            String sharePath=f.getAbsolutePath();
+            String sharePath = f.getAbsolutePath();
             return sharePath;
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -53,9 +54,9 @@ public class ImageUtils {
      * @param uri
      * @return
      */
-    public static String getAbsoluteImagePath(Activity context,Uri uri) {
+    public static String getAbsoluteImagePath(Activity context, Uri uri) {
         String imagePath = "";
-        String[] proj = { MediaStore.Images.Media.DATA };
+        String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = context.managedQuery(uri, proj, // Which
                 null, // WHERE clause; which rows to return (all rows)
                 null, // WHERE clause selection arguments (none)
@@ -71,6 +72,31 @@ public class ImageUtils {
         return imagePath;
     }
 
+    /**
+     * 获取bitmap宽高
+     * @param imgPath
+     * @param isWidth true返回width false返回height
+     * @return
+     */
+    public static int getBitmapWidth(String imgPath, boolean isWidth) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        /**
+         * 最关键在此，把options.inJustDecodeBounds = true;
+         * 这里再decodeFile()，返回的bitmap为空，但此时调用options.outHeight时，已经包含了图片的高了
+         */
+        options.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(imgPath, options); // 此时返回的bitmap为null
+        /**
+         *options.outHeight为原始图片的高
+         */
+        int width = options.outWidth;
+        int height = options.outHeight;
+        options.inJustDecodeBounds = false;
+        if (isWidth) {
+            return width;
+        }
+        return height;
+    }
 
 
 }

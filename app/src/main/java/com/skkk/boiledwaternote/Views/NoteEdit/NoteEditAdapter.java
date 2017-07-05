@@ -15,11 +15,13 @@ import android.text.TextWatcher;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -33,7 +35,7 @@ import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdap
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
-import com.skkk.boiledwaternote.Utils.Utils.DensityUtil;
+import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +43,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION_CODES.N;
 import static android.view.View.GONE;
 
@@ -124,13 +127,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             //因为HTML转Span之后块级元素会自动换行，所以这里直接手动将块级元素P删除掉，有点暴力
             //通过将<p>元素替换为<span>元素来避免以为块级元素自动添加换号引起的麻烦
             String contentHtml = mDataList.get(position).getContent();
-            contentHtml = contentHtml.replace("<p", "<span").replace("/p>", "/span>").replace("\n", "");
+
+            contentHtml = contentHtml.replace("\n", "").replace("/p><p","/span><br><span").replace("<p", "<span").replace("/p>", "/span>");
 
             if (Build.VERSION.SDK_INT >= N) {
                 holder.etItem.setText(Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_LEGACY));
             } else {
                 holder.etItem.setText(Html.fromHtml(contentHtml));
-
             }
 
             //设置光标在最后一个字符后面，默认会多出一个空格
@@ -207,19 +210,27 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             });
 
 
-
-            ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-
-            layoutParams.height = DensityUtil.dip2px(context, context.getResources().getDimension(R.dimen.edit_item_image_max_height));
-            holder.itemView.setLayoutParams(layoutParams);
-
-
-
-
             if (itemDate.getImagePath() == null) {
                 return;
             }
 
+
+                        /*
+            * 根据图片的宽高来设置相框的大小
+            * */
+            int imgWidth= ImageUtils.getBitmapWidth(itemDate.getImagePath(),true);
+            int imgHeight=ImageUtils.getBitmapWidth(itemDate.getImagePath(),false);
+
+            ViewGroup.LayoutParams layoutParams =  holder.ivItemImage.getLayoutParams();
+            if (imgHeight>imgWidth) {
+                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
+                layoutParams.height =(int)context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
+            }else {
+                layoutParams.width = (int)context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
+                layoutParams.height = (int)context.getResources().getDimension(R.dimen.item_edit_image_height_hor);
+            }
+            holder.flBombMenuContainer.setLayoutParams(layoutParams);
+            holder.ivItemImage.setLayoutParams(layoutParams);
 
 
             Glide.with(context)
@@ -366,6 +377,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public CardView cvItemImg;              //图片容器
         @Bind(R.id.bm_item_image)
         public BombMenu bmItemImage;            //弹射菜单
+        @Bind(R.id.fl_menu_container)
+        public FrameLayout flBombMenuContainer; //弹射菜单容器
 
         private Boolean moveMenuIsHide=true;
 
@@ -648,6 +661,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 currentEdit.setSelection(start + count);
 
                 if (android.os.Build.VERSION.SDK_INT >= N) {
+                    Log.i(TAG, "onTextChanged: --->"+Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                 } else {
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
