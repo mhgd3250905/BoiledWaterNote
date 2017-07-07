@@ -9,4 +9,5 @@ import android.view.View;
 
 public interface OnMenuItemTouchListener {
     void onItemTouchListener(int pos, View v);
+    void onItemTouchLeaveListener(int pos, View v);
 }

@@ -47,4 +47,5 @@
     <item name="iv_item_move_edit" type="id">iv_item_move_edit</item>
     <item name="iv_item_menu" type="id">iv_item_menu</item>
     <item name="fl_menu_container" type="id">fl_menu_container</item>
+    <item name="cv_note_list_image" type="id">cv_note_list_image</item>
 </resources>

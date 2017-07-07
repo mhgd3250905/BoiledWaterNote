@@ -65,7 +65,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
-                android:scaleType="centerCrop"
+                android:scaleType="fitXY"
                 android:src="@mipmap/ic_launcher"
                 android:visibility="visible" />
 

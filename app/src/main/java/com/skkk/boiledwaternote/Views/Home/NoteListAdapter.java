@@ -20,8 +20,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemView;
 import com.skkk.boiledwaternote.Modles.Note;
@@ -107,17 +109,36 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
         if (!TextUtils.isEmpty(content)) {
             NoteEditModel[] noteEditModels = new Gson().fromJson(content, NoteEditModel[].class);
+            //获取并设置第一个Text
             for (int i = 0; i < noteEditModels.length; i++) {
                 if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.TEXT) {
                     title = noteEditModels[i].getContent();
                     break;
                 }
             }
+            if (!TextUtils.isEmpty(title)) {
+                holder.tvNoteListTitle.setText(Html.fromHtml(title).toString());
+            }
+
+            //获取并设置第一个图片
+            for (int i = 0; i < noteEditModels.length; i++) {
+                if (noteEditModels[i].getItemFlag()== NoteEditModel.Flag.IMAGE){
+                    imagePath=noteEditModels[i].getImagePath();
+                    break;
+                }
+            }
+            if (!TextUtils.isEmpty(imagePath)){
+                holder.cvNoteListImage.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(imagePath)
+                        .into(holder.ivNoteListImage);
+            }else {
+                holder.cvNoteListImage.setVisibility(View.GONE);
+            }
         }
 
-        if (!TextUtils.isEmpty(title)) {
-            holder.tvNoteListTitle.setText(Html.fromHtml(title).toString());
-        }
+
+
 
         if (onItemClickListener != null) {
             holder.llShow.setOnClickListener(new View.OnClickListener() {
@@ -168,6 +189,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         public Button btnDelete;
         @Bind(R.id.div_item)
         public DragItemView divItem;
+        @Bind(R.id.iv_note_list_image)
+        public ImageView ivNoteListImage;
+        @Bind(R.id.cv_note_list_image)
+        public CardView cvNoteListImage;
 
         public MyViewHolder(View itemView) {
             super(itemView);

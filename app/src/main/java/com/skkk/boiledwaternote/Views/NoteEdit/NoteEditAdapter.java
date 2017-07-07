@@ -205,7 +205,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.bmItemImage.setmMenuItemTouchListener(new OnMenuItemTouchListener() {
                 @Override
                 public void onItemTouchListener(int pos, View v) {
+                    //当触摸到滑动按钮的时候
                     onStartDragListener.onStartDragListener(viewHolder);
+                }
+
+                @Override
+                public void onItemTouchLeaveListener(int pos, View v) {
+
                 }
             });
 
@@ -231,6 +237,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             }
             holder.flBombMenuContainer.setLayoutParams(layoutParams);
             holder.ivItemImage.setLayoutParams(layoutParams);
+
 
 
             Glide.with(context)
@@ -476,8 +483,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 }else {
                                     setFocusItemPos(currentPos - 1);
                                 }
-                                notifyItemRemoved(currentPos);
-                                notifyItemRemoved(currentPos-1);
+//                                notifyItemRemoved(currentPos);
+//                                notifyItemRemoved(currentPos-1);
                                 notifyDataSetChanged();
 
                                 if (onKeyDownFinishListener != null) {
