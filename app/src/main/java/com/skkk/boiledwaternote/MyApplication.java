@@ -8,6 +8,7 @@ import android.app.Application;
 // TODO: 2017/6/26 4.根据bitmap的不同添加不同宽高比的相框 ---> done/2
 // TODO: 2017/6/27 5.弹射菜单，你懂得--->done
 // TODO: 2017/7/3  6.点击编辑框外面，自定定位到最后一个编辑框--->done
+// TODO: 2017/7/10 7.完成富文本编辑栏位
 
 /*
 * 

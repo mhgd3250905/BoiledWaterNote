@@ -16,7 +16,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,9 +156,13 @@ public class BombMenu extends ViewGroup implements View.OnClickListener {
 
                         if (mMenuItemTouchListener != null) {
                             if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                                //拖拽移动按钮按下
+                                setBackgroundColor(Color.argb(100,0,0,0));
+                                Log.i(TAG, "onTouch: 设置背景页面为暗色");
                                 mMenuItemTouchListener.onItemTouchListener(pos, v);
                             }
                             if (event.getAction() == MotionEvent.ACTION_UP) {
+                                //拖拽按钮抬起
                                 mMenuItemTouchListener.onItemTouchLeaveListener(pos, v);
                             }
                         }

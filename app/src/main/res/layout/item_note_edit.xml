@@ -54,7 +54,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center"
             app:cardBackgroundColor="@color/colorWhite"
-            app:cardCornerRadius="5dp"
+            app:cardCornerRadius="0dp"
             app:cardElevation="5dp"
             app:cardUseCompatPadding="true">
 
@@ -65,7 +65,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:src="@mipmap/ic_launcher"
                 android:visibility="visible" />
 
@@ -131,27 +131,18 @@
         android:visibility="gone" />
 
     <RelativeLayout
+        android:padding="8dp"
         android:id="@id/rl_item_separated"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:layout_marginBottom="5dp"
         android:orientation="horizontal"
         android:visibility="visible">
-
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="10dp"
-            android:layout_toLeftOf="@+id/iv_item_separated"
-            android:background="@color/colorBlackBody" />
-
-        <ImageView
-            android:id="@id/iv_item_separated"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/vector_drawable_pen" />
+            android:layout_height="match_parent"
+            android:background="@color/colorGray"/>
+        
     </RelativeLayout>
 
 </RelativeLayout>

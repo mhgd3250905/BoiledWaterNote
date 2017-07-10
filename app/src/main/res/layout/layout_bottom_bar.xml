@@ -35,8 +35,8 @@
         android:layout_height="match_parent" />
 
     <ImageView
-        android:id="@id/iv_format_list_numbered"
-        android:src="@drawable/format_list_numbered"
+        android:id="@id/iv_format_hor_seperate"
+        android:src="@drawable/format_hor_seperate"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent" />

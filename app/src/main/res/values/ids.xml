@@ -48,4 +48,5 @@
     <item name="iv_item_menu" type="id">iv_item_menu</item>
     <item name="fl_menu_container" type="id">fl_menu_container</item>
     <item name="cv_note_list_image" type="id">cv_note_list_image</item>
+    <item name="iv_format_hor_seperate" type="id">iv_format_hor_seperate</item>
 </resources>

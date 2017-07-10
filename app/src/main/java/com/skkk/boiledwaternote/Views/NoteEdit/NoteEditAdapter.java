@@ -60,7 +60,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private Context context;                                                    //上下文
     private List<NoteEditModel> mDataList;                                      //数据
     private OnStartDragListener onStartDragListener;                            //拖拽监听
-    private OnItemEditSelectedLintener onItemEditSelectedLintener;              //Item编辑焦点监听
+    private OnItemEditHasFocusListener onItemEditHasFocusListener;              //Item编辑焦点监听
     private OnKeyDownFinishListener onKeyDownFinishListener;                    //换行删除按键处理完毕监听
     private NoteEditViewHolder currentHolder;                                   //当前ViewHolder
     private boolean alignCenterText = false;                                    //ItemEdit文字是否居中对齐
@@ -69,8 +69,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private int separatedImageResouseId;
 
 
-    interface OnItemEditSelectedLintener {
-        void onItemEditSelectedLintener(View view, int pos, boolean hasFocus);
+    public interface OnItemEditHasFocusListener {
+        void onItemEditHasFocusListener(View view, int pos);
     }
 
 
@@ -148,6 +148,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     if (hasFocus) {
                         currentHolder = viewHolder;
                     }
+                    if (onItemEditHasFocusListener!=null&&hasFocus){
+                        onItemEditHasFocusListener.onItemEditHasFocusListener(v,position);
+                    }
                 }
             });
 
@@ -175,6 +178,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.setFormat_list(itemDate.isFormat_list());
             //设置对齐方式
             holder.setFormat_align_flag(itemDate.format_align_center);
+
 
 
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
@@ -232,8 +236,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
                 layoutParams.height =(int)context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
             }else {
-                layoutParams.width = (int)context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
-                layoutParams.height = (int)context.getResources().getDimension(R.dimen.item_edit_image_height_hor);
+                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                layoutParams.height = (int)context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
             }
             holder.flBombMenuContainer.setLayoutParams(layoutParams);
             holder.ivItemImage.setLayoutParams(layoutParams);
@@ -310,8 +314,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
      *
      * @param onItemEditSelectedLintener
      */
-    public void setOnItemEditSelectedLintener(OnItemEditSelectedLintener onItemEditSelectedLintener) {
-        this.onItemEditSelectedLintener = onItemEditSelectedLintener;
+    public void setOnItemEditSelectedLintener(OnItemEditHasFocusListener onItemEditSelectedLintener) {
+        this.onItemEditHasFocusListener = onItemEditSelectedLintener;
     }
 
     public void setOnKeyDownFinishListener(OnKeyDownFinishListener onKeyDownFinishListener) {

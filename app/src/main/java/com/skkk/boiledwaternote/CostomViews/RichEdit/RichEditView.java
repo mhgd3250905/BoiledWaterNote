@@ -42,7 +42,7 @@ import java.util.List;
 * 作    者：ksheng
 * 时    间：2017/6/17$ 23:41$.
 */
-public class RichEditView extends RelativeLayout implements View.OnClickListener,RichEditable {
+public class RichEditView extends RelativeLayout implements View.OnClickListener, RichEditable {
     private String TAG = RichEditView.class.getSimpleName();
     private RecyclerView rvRichEdit;
     private LinearLayoutManager linearLayoutManager;
@@ -50,7 +50,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     private NoteEditAdapter adapter;
     private Context context;
     private ImageView ivFormatAlignCenter, ivFormatBold, ivFormatItalic,
-            ivFormatList, ivFormatListNum, ivFormatQuote, ivFormatSize,
+            ivFormatList, ivFormatHorSeperate, ivFormatQuote, ivFormatSize,
             ivFormatUnderLine, ivFormatStrikeThrough;
     private ImageView ivEditFormatNotice;
 
@@ -88,7 +88,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatBold = (ImageView) findViewById(R.id.iv_format_blod);
         ivFormatItalic = (ImageView) findViewById(R.id.iv_format_italic);
         ivFormatList = (ImageView) findViewById(R.id.iv_format_list);
-        ivFormatListNum = (ImageView) findViewById(R.id.iv_format_list_numbered);
+        ivFormatHorSeperate = (ImageView) findViewById(R.id.iv_format_hor_seperate);
         ivFormatQuote = (ImageView) findViewById(R.id.iv_format_quote);
         ivFormatSize = (ImageView) findViewById(R.id.iv_format_size);
         ivFormatUnderLine = (ImageView) findViewById(R.id.iv_format_underlined);
@@ -98,7 +98,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatBold.setOnClickListener(this);
         ivFormatItalic.setOnClickListener(this);
         ivFormatList.setOnClickListener(this);
-        ivFormatListNum.setOnClickListener(this);
+        ivFormatHorSeperate.setOnClickListener(this);
         ivFormatQuote.setOnClickListener(this);
         ivFormatSize.setOnClickListener(this);
         ivFormatUnderLine.setOnClickListener(this);
@@ -136,9 +136,9 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 /*
                 * 锁定光标
                 * */
-                if (pos<adapter.getItemCount()-1) {
+                if (pos < adapter.getItemCount() - 1) {
                     rvRichEdit.smoothScrollToPosition(pos);
-                }else {
+                } else {
                     rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
                 }
             }
@@ -149,13 +149,33 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             }
         });
 
+        /*
+        * Item中EidtText获取到焦点的时候的监听事件
+        * */
+        adapter.setOnItemEditSelectedLintener(new NoteEditAdapter.OnItemEditHasFocusListener() {
+            @Override
+            public void onItemEditHasFocusListener(View view, int pos) {
+                NoteEditModel model = adapter.getmDataList().get(pos);
+                if (model.getItemFlag() == NoteEditModel.Flag.TEXT) {
+                    if (model.isFormat_quote() || model.isFormat_list()) {
+                        ivFormatAlignCenter.setEnabled(false);
+                        ivFormatAlignCenter.setImageResource(R.drawable.format_align_center_unenable);
+                    } else {
+                        ivFormatAlignCenter.setEnabled(true);
+                        ivFormatAlignCenter.setImageResource(R.drawable.format_align_center);
+                    }
+
+                }
+            }
+        });
+
         rvRichEdit.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction()==MotionEvent.ACTION_DOWN){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     View underView = rvRichEdit.findChildViewUnder(event.getX(), event.getY());
-                    if (underView==null){
-                        selectLastTextItem(rvRichEdit,linearLayoutManager);
+                    if (underView == null) {
+                        selectLastTextItem(rvRichEdit, linearLayoutManager);
                     }
                 }
                 return false;
@@ -187,7 +207,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 viewHolder.etItem.requestFocus();
                 viewHolder.etItem.setSelection(viewHolder.etItem.length());
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
             }
         }
@@ -197,7 +217,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
      * 根据是否为新笔记加载内容
      *
      * @param isNew 是否为新建笔记
-     * @param datas  如果不是新建笔记那么给出笔记数据集
+     * @param datas 如果不是新建笔记那么给出笔记数据集
      */
     public void startNewEdit(boolean isNew, List<NoteEditModel> datas) {
         if (isNew && datas == null) {       //新笔记
@@ -240,11 +260,14 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             * 设置文字居中
             * */
             case R.id.iv_format_align_center:
-                List<NoteEditModel> cameraItems = new ArrayList<>();
-                cameraItems.add(new NoteEditModel(null, NoteEditModel.Flag.SEPARATED, null));
-                cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
-                insertItems(cameraItems, -1);
-                adapter.setFocusItemPos(adapter.getItemCount());
+
+                if (adapter.getmDataList().get(currentHolder.getAdapterPosition()).isFormat_align_center()) {
+                    adapter.getmDataList().get(currentHolder.getAdapterPosition()).setFormat_align_center(false);
+                } else {
+                    adapter.getmDataList().get(currentHolder.getAdapterPosition()).setFormat_align_center(true);
+                }
+                adapter.notifyItemChanged(currentHolder.getAdapterPosition());
+
                 break;
             case R.id.iv_format_blod:                //设置文字Blod
                 if (!isSelected) {                   //如果没有选择
@@ -300,6 +323,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                     }
                 }
                 break;
+
             case R.id.iv_format_list:               //列表
 
                 if (currentHolder.myItemTextChangeListener.isFormat_list()) {
@@ -309,12 +333,31 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 }
                 v.setBackgroundColor(adapter.isItemFormatList() ? Color.LTGRAY : Color.TRANSPARENT);
                 break;
-            case R.id.iv_format_list_numbered:
-                rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+
+            case R.id.iv_format_hor_seperate:       //增加分隔线
+                List<NoteEditModel> cameraItems = new ArrayList<>();
+                cameraItems.add(new NoteEditModel(null, NoteEditModel.Flag.SEPARATED, null));
+                cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+                int pos=currentHolder.getCurrentPos();
+                insertItems(cameraItems, pos+1);
+                adapter.setFocusItemPos(pos+2);
+                adapter.notifyDataSetChanged();
+
+
+                /*
+                * 锁定光标
+                * */
+                if (pos < adapter.getItemCount() - 1) {
+                    rvRichEdit.smoothScrollToPosition(pos);
+                } else {
+                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+                }
                 break;
+
             case R.id.iv_format_size:
 
                 break;
+
             case R.id.iv_format_quote:
                 if (currentHolder.myItemTextChangeListener.isFormat_quote()) {
                     currentHolder.setFormat_quote(false);
@@ -322,6 +365,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                     currentHolder.setFormat_quote(true);
                 }
                 break;
+
             case R.id.iv_format_underlined:         //设置文字下划线
                 if (!isSelected) {
                     if (currentHolder.myItemTextChangeListener.isFormat_underlined()) {
@@ -350,6 +394,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                     }
                 }
                 break;
+
             case R.id.iv_format_strike_through:     //设置文字删除线
                 if (!isSelected) {
                     if (currentHolder.myItemTextChangeListener.isFormat_strike_through()) {
@@ -415,13 +460,14 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 在指定位置添加Item
+     *
      * @param itemDatas Items
      * @param pos       指定位置，如果设置为-1，那么默认最后
      */
-    public void insertItems(List<NoteEditModel> itemDatas,int pos){
-        if (pos==-1) {
+    public void insertItems(List<NoteEditModel> itemDatas, int pos) {
+        if (pos == -1) {
             adapter.getmDataList().addAll(itemDatas);
-        }else {
+        } else {
             adapter.getmDataList().addAll(pos, itemDatas);
         }
         adapter.notifyDataSetChanged();
@@ -438,6 +484,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 加载数据
+     *
      * @param richTexts
      */
     @Override
@@ -449,6 +496,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 获取此时的富文本数据内容
+     *
      * @return 数据内容
      */
     @Override
@@ -463,7 +511,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     public void setFocusEnable(boolean focus) {
         if (focus) {
             adapter.setFocusItemPos(adapter.getItemCount());
-        }else {
+        } else {
             ivEditFormatNotice.setFocusable(true);
             ivEditFormatNotice.setFocusableInTouchMode(true);
             ivEditFormatNotice.setFocusable(true);
