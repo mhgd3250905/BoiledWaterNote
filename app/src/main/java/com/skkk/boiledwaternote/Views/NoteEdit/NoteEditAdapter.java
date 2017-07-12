@@ -177,7 +177,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             //设置列表格式
             holder.setFormat_list(itemDate.isFormat_list());
             //设置对齐方式
-            holder.setFormat_align_flag(itemDate.format_align_center);
+            Log.i(TAG, "onBindViewHolder: pos->"+position+"center?->"+itemDate.isFormat_align_center());
+            holder.setFormat_align_flag(itemDate.isFormat_align_center());
 
 
 
@@ -241,6 +242,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             }
             holder.flBombMenuContainer.setLayoutParams(layoutParams);
             holder.ivItemImage.setLayoutParams(layoutParams);
+            holder.ivItemImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
 
 
@@ -487,8 +489,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 }else {
                                     setFocusItemPos(currentPos - 1);
                                 }
-//                                notifyItemRemoved(currentPos);
-//                                notifyItemRemoved(currentPos-1);
                                 notifyDataSetChanged();
 
                                 if (onKeyDownFinishListener != null) {

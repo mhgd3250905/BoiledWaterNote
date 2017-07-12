@@ -260,7 +260,6 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             * 设置文字居中
             * */
             case R.id.iv_format_align_center:
-
                 if (adapter.getmDataList().get(currentHolder.getAdapterPosition()).isFormat_align_center()) {
                     adapter.getmDataList().get(currentHolder.getAdapterPosition()).setFormat_align_center(false);
                 } else {
@@ -325,24 +324,17 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 break;
 
             case R.id.iv_format_list:               //列表
-
-                if (currentHolder.myItemTextChangeListener.isFormat_list()) {
-                    currentHolder.setFormat_list(false);
-                } else {
-                    currentHolder.setFormat_list(true);
-                }
-                v.setBackgroundColor(adapter.isItemFormatList() ? Color.LTGRAY : Color.TRANSPARENT);
-                break;
-
-            case R.id.iv_format_hor_seperate:       //增加分隔线
-                List<NoteEditModel> cameraItems = new ArrayList<>();
-                cameraItems.add(new NoteEditModel(null, NoteEditModel.Flag.SEPARATED, null));
-                cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+                /*
+                * 点击列表项目之后在下方添加一行
+                * */
+                List<NoteEditModel> listItems = new ArrayList<>();
+                NoteEditModel listModel=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
+                listModel.setFormat_list(true);
+                listItems.add(listModel);
                 int pos=currentHolder.getCurrentPos();
-                insertItems(cameraItems, pos+1);
-                adapter.setFocusItemPos(pos+2);
+                insertItems(listItems, pos+1);
+                adapter.setFocusItemPos(pos+1);
                 adapter.notifyDataSetChanged();
-
 
                 /*
                 * 锁定光标
@@ -354,17 +346,49 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 }
                 break;
 
+            case R.id.iv_format_hor_seperate:       //增加分隔线
+                List<NoteEditModel> cameraItems = new ArrayList<>();
+                cameraItems.add(new NoteEditModel(null, NoteEditModel.Flag.SEPARATED, null));
+                cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+                insertItems(cameraItems, currentHolder.getCurrentPos()+1);
+                adapter.setFocusItemPos(currentHolder.getCurrentPos()+2);
+                adapter.notifyDataSetChanged();
+
+                /*
+                * 锁定光标
+                * */
+                if (currentHolder.getCurrentPos() < adapter.getItemCount() - 1) {
+                    rvRichEdit.smoothScrollToPosition(currentHolder.getCurrentPos());
+                } else {
+                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+                }
+                break;
+
             case R.id.iv_format_size:
 
                 break;
 
             case R.id.iv_format_quote:
-                if (currentHolder.myItemTextChangeListener.isFormat_quote()) {
-                    currentHolder.setFormat_quote(false);
+                /*
+                * 点击列表项目之后在下方添加一行
+                * */
+                List<NoteEditModel> quoteItems = new ArrayList<>();
+                NoteEditModel qutoeModel=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
+                qutoeModel.setFormat_quote(true);
+                quoteItems.add(qutoeModel);
+                int quotePos=currentHolder.getCurrentPos();
+                insertItems(quoteItems, quotePos+1);
+                adapter.setFocusItemPos(quotePos+1);
+                adapter.notifyDataSetChanged();
+
+                /*
+                * 锁定光标
+                * */
+                if (quotePos < adapter.getItemCount() - 1) {
+                    rvRichEdit.smoothScrollToPosition(quotePos);
                 } else {
-                    currentHolder.setFormat_quote(true);
+                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
                 }
-                break;
 
             case R.id.iv_format_underlined:         //设置文字下划线
                 if (!isSelected) {
