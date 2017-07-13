@@ -12,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
@@ -620,7 +621,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         private boolean format_list = false;          //列表
         private boolean format_list_numbered = false; //数字列表
         private boolean format_quote = false;         //引用
-        private int format_size = 1;                  //字体大小：0-p 1-h1 2-h2 3-h3
+        private int format_size = 0;                  //字体大小：0-p 1-h1 2-h2 3-h3
         private boolean format_underlined = false;    //下划线
         private boolean format_strike_through = false;//删除线
 
@@ -665,6 +666,27 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 if (format_strike_through) {
                     for (int i = start; i < start + count; i++) {
                         ss.setSpan(new StrikethroughSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                }
+
+                //设置字体
+                if (format_size!=0){
+                    switch (format_size){
+                        case 1:
+                            for (int i = start; i < start + count; i++) {
+                                ss.setSpan(new AbsoluteSizeSpan(150), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                            break;
+                        case 2:
+                            for (int i = start; i < start + count; i++) {
+                                ss.setSpan(new AbsoluteSizeSpan(110), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                            break;
+                        case 3:
+                            for (int i = start; i < start + count; i++) {
+                                ss.setSpan(new AbsoluteSizeSpan(70), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                            break;
                     }
                 }
 
