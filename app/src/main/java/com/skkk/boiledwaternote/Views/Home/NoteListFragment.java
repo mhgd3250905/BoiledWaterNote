@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Configs;
-import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemView;
+import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
@@ -39,7 +39,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     private List<Note> mDataList;
     private NoteListAdapter adapter;
 
-    private DragItemView lastDragItem;
+    private DragItemCircleView lastDragItem;
 
 
     public static NoteListFragment newInstance(String param1, String param2) {
@@ -139,7 +139,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
         adapter.setOnDragItemStatusChange(new NoteListAdapter.OnDragItemStatusChange() {
             @Override
-            public void onDragingListener(int pos, DragItemView item, View changedView, int left, int top, int dx, int dy) {
+            public void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
                 linearLayoutManager.setScroll(false);
                 if (lastDragItem!=null){
                     lastDragItem.resetItemAnim();
@@ -149,7 +149,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             }
 
             @Override
-            public void onDragClose(int pos, DragItemView item, View changedView, int left, int top, int dx, int dy) {
+            public void onDragClose(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
                 linearLayoutManager.setScroll(true);
                 lastDragItem=item;
                 Log.i(TAG, "onDragingListener: 第"+pos+"个Item结束！left--->"+left);

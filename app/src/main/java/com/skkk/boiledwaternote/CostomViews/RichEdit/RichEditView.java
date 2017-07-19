@@ -366,13 +366,29 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
             case R.id.iv_format_size:
                 if (!isSelected) {
-                    if (currentHolder.myItemTextChangeListener.isFormat_italic()) {
-                        currentHolder.myItemTextChangeListener.setFormat_italic(false);
-                        v.setBackgroundColor(Color.TRANSPARENT);
-                    } else {
-                        currentHolder.myItemTextChangeListener.setFormat_italic(true);
-                        v.setBackgroundColor(Color.LTGRAY);
+                    int sizeType=currentHolder.myItemTextChangeListener.getFormat_size();
+                    if (sizeType<3) {
+                        sizeType++;
+                    }else {
+                        sizeType=0;
                     }
+                    currentHolder.myItemTextChangeListener.setFormat_size(sizeType);
+                    ImageView imageView= (ImageView) v;
+                    switch (sizeType){
+                        case 0:
+                            imageView.setImageResource(R.drawable.format_size);
+                            break;
+                        case 1:
+                            imageView.setImageResource(R.drawable.vector_drawable_h1);
+                            break;
+                        case 2:
+                            imageView.setImageResource(R.drawable.vector_drawable_h2);
+                            break;
+                        case 3:
+                            imageView.setImageResource(R.drawable.vector_drawable_h3);
+                            break;
+                    }
+
                 } else {
                     //获取选择区域内所有的StyleSpan
                     StyleSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StyleSpan.class);

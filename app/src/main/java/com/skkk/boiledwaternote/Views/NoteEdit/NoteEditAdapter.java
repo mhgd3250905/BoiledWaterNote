@@ -12,7 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.style.AbsoluteSizeSpan;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
@@ -674,17 +674,17 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     switch (format_size){
                         case 1:
                             for (int i = start; i < start + count; i++) {
-                                ss.setSpan(new AbsoluteSizeSpan(150), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                ss.setSpan(new RelativeSizeSpan(4), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
                             break;
                         case 2:
                             for (int i = start; i < start + count; i++) {
-                                ss.setSpan(new AbsoluteSizeSpan(110), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                ss.setSpan(new RelativeSizeSpan(3), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
                             break;
                         case 3:
                             for (int i = start; i < start + count; i++) {
-                                ss.setSpan(new AbsoluteSizeSpan(70), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                ss.setSpan(new RelativeSizeSpan(2), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             }
                             break;
                     }

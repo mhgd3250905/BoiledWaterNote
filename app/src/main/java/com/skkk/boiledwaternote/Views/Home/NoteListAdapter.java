@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -45,9 +46,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private OnDragItemStatusChange onDragItemStatusChange;
 
     interface OnDragItemStatusChange {
-        void onDragingListener(int pos, DragItemView item, View changedView, int left, int top, int dx, int dy);
+        void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
 
-        void onDragClose(int pos, DragItemView item, View changedView, int left, int top, int dx, int dy);
+        void onDragClose(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
     }
 
 
@@ -80,19 +81,19 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        if (onDragItemStatusChange != null) {
-            holder.divItem.setOnDragPosChangeListener(new DragItemView.OnDragPosChangeListener() {
-                @Override
-                public void isDragListener(DragItemView item, View changedView, int left, int top, int dx, int dy) {
-                    onDragItemStatusChange.onDragingListener(position, item, changedView, left, top, dx, dy);
-                }
-
-                @Override
-                public void closeDragListener(DragItemView item, View changedView, int left, int top, int dx, int dy) {
-                    onDragItemStatusChange.onDragClose(position, item, changedView, left, top, dx, dy);
-                }
-            });
-        }
+//        if (onDragItemStatusChange != null) {
+//            holder.divItem.setOnDragPosChangeListener(new DragItemCircleView.OnDragPosChangeListener() {
+//                @Override
+//                public void isDragListener(DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
+//                    onDragItemStatusChange.onDragingListener(position, item, changedView, left, top, dx, dy);
+//                }
+//
+//                @Override
+//                public void closeDragListener(DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
+//                    onDragItemStatusChange.onDragClose(position, item, changedView, left, top, dx, dy);
+//                }
+//            });
+//        }
         //重置Item切换状态
         holder.divItem.resetItem();
 
