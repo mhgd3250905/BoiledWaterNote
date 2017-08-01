@@ -155,6 +155,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         adapter.setOnItemEditSelectedLintener(new NoteEditAdapter.OnItemEditHasFocusListener() {
             @Override
             public void onItemEditHasFocusListener(View view, int pos) {
+                //在接收到焦点的时候重置底部富文本状态
+//                resetBottomBarStatus();
                 NoteEditModel model = adapter.getmDataList().get(pos);
                 if (model.getItemFlag() == NoteEditModel.Flag.TEXT) {
                     if (model.isFormat_quote() || model.isFormat_list()) {
@@ -168,6 +170,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 }
             }
         });
+
 
         rvRichEdit.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -344,6 +347,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 } else {
                     rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
                 }
+
                 break;
 
             case R.id.iv_format_hor_seperate:       //增加分隔线
@@ -581,5 +585,21 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             ivEditFormatNotice.setFocusableInTouchMode(true);
             ivEditFormatNotice.setFocusable(true);
         }
+    }
+
+    /**
+     * 重置bottomBar状态
+     */
+    @Override
+    public void resetBottomBarStatus() {
+        ivFormatAlignCenter.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatBold.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatHorSeperate.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatItalic.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatList.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatQuote.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatSize.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatStrikeThrough.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatUnderLine.setBackgroundColor(Color.TRANSPARENT);
     }
 }

@@ -28,6 +28,7 @@ public class DragItemView extends FrameLayout {
     private int middleBorder;//可以拖拽的最大距离
     private int rightBorder;
     private OnDragPosChangeListener onDragPosChangeListener;
+    private boolean isOpen = true;
 
     private int d = 1;
     private boolean isMenuShow = false;
@@ -72,9 +73,9 @@ public class DragItemView extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        leftborder=llShow.getLeft();//获取左边界
-        rightBorder = (int) (llShow.getLeft() + llShow.getMeasuredWidth()*0.5);//终点坐标
-        middleBorder = (leftborder+rightBorder)/2;//获取最大滑动距离
+        leftborder = llShow.getLeft();//获取左边界
+        rightBorder = (int) (llShow.getLeft() + llShow.getMeasuredWidth() * 0.5);//终点坐标
+        middleBorder = (leftborder + rightBorder) / 2;//获取最大滑动距离
     }
 
 
@@ -90,6 +91,7 @@ public class DragItemView extends FrameLayout {
 
     private ViewDragHelper.Callback callback = new ViewDragHelper.Callback() {
 
+        private boolean isRelease;
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
@@ -100,7 +102,6 @@ public class DragItemView extends FrameLayout {
         public int clampViewPositionVertical(View child, int top, int dy) {
             return 0;
         }
-
 
         /**
          * 位置发生变化
@@ -113,13 +114,23 @@ public class DragItemView extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            Log.i(TAG, "onViewPositionChanged: 位置变化！");
+            Log.i(TAG, "onViewPositionChanged: 位置变化left: " + left);
+            if (left <= leftborder) {
+                //如果已经关闭，那么就设状态isOpen false
+                Log.i(TAG, "onViewPositionChanged: isOpen-->" + isOpen);
+                isOpen = false;
+            } else if (left >= rightBorder) {
+                //如果全部打开 那么就设置状态为isOpen
+                Log.i(TAG, "onViewPositionChanged: isOpen-->" + isOpen);
+                isOpen = true;
+            }
         }
 
         @Override
         public void onViewCaptured(View capturedChild, int activePointerId) {
             super.onViewCaptured(capturedChild, activePointerId);
             Log.i(TAG, "onViewCaptured: ");
+            isRelease = false;
         }
 
         /**
@@ -149,14 +160,18 @@ public class DragItemView extends FrameLayout {
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             super.onViewReleased(releasedChild, xvel, yvel);
             Log.i(TAG, "onViewReleased: 结束拖动");
-                int smooth = 0;
-                if (releasedChild.getLeft() > middleBorder) {
-                    smooth = rightBorder;
-                } else if (releasedChild.getLeft() < middleBorder) {
+            int smooth = 0;
+            if (releasedChild.getLeft() > middleBorder) {
+                if (isOpen) {
                     smooth = leftborder;
+                } else {
+                    smooth = rightBorder;
                 }
-                dragHelper.smoothSlideViewTo(releasedChild, smooth, releasedChild.getTop());
-                ViewCompat.postInvalidateOnAnimation(DragItemView.this);
+            } else if (releasedChild.getLeft() < middleBorder) {
+                smooth = leftborder;
+            }
+            dragHelper.smoothSlideViewTo(releasedChild, smooth, releasedChild.getTop());
+            ViewCompat.postInvalidateOnAnimation(DragItemView.this);
         }
 
         @Override

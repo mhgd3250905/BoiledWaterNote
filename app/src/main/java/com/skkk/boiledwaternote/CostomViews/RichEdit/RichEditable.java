@@ -18,4 +18,6 @@ public interface RichEditable {
     List<NoteEditModel> getRichText();
     //是否获取焦点
     void setFocusEnable(boolean focus);
+    //重置底部富文本状态
+    void resetBottomBarStatus();
 }

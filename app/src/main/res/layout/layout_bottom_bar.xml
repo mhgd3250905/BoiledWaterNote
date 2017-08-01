@@ -14,20 +14,6 @@
         android:layout_height="match_parent" />
 
     <ImageView
-        android:id="@id/iv_format_blod"
-        android:src="@drawable/format_blod"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@id/iv_format_italic"
-        android:src="@drawable/format_italic"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="match_parent" />
-
-    <ImageView
         android:id="@id/iv_format_list"
         android:src="@drawable/format_list"
         android:layout_weight="1"
@@ -49,8 +35,23 @@
         android:layout_height="match_parent" />
 
     <ImageView
+        android:visibility="gone"
         android:id="@id/iv_format_size"
         android:src="@drawable/format_size"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@id/iv_format_blod"
+        android:src="@drawable/format_blod"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@id/iv_format_italic"
+        android:src="@drawable/format_italic"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent" />

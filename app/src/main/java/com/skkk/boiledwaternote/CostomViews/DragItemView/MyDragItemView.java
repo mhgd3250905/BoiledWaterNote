@@ -31,9 +31,18 @@ public class MyDragItemView extends ViewGroup {
     private int leftBorder;
     private boolean dragToRight;//是否向右拖动
     private boolean mIsMoving;//是否正在拖动
+    private OnItemDragStatusChange onItemDragStatusChange;//菜单拖拽状态打开切换监听
 
     private RecyclerView rv;
 
+    interface OnItemDragStatusChange{
+        void onItemDragStatusOpen(boolean open,int pos);
+        void onItemDragStatusClose(boolean close,int pos);
+    }
+
+    public void setOnItemDragStatusChange(OnItemDragStatusChange onItemDragStatusChange) {
+        this.onItemDragStatusChange = onItemDragStatusChange;
+    }
 
     public MyDragItemView(Context context) {
         super(context);
@@ -83,6 +92,10 @@ public class MyDragItemView extends ViewGroup {
         llShow = (LinearLayout) getChildAt(1);
     }
 
+
+
+
+
     private ViewDragHelper.Callback callback = new ViewDragHelper.Callback() {
 
         @Override
@@ -114,9 +127,9 @@ public class MyDragItemView extends ViewGroup {
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             super.onViewReleased(releasedChild, xvel, yvel);
-            if (releasedChild.getLeft() < (leftBorder + maxWidth / 3)) {
+            if (releasedChild.getLeft() < (leftBorder + maxWidth / 4 )) {
                 closeItem();
-            } else if (releasedChild.getLeft() >= (leftBorder + maxWidth * 1 / 3)
+            } else if (releasedChild.getLeft() >= (leftBorder + maxWidth / 4)
                     && releasedChild.getLeft() <= (leftBorder + maxWidth)) {
                 if (dragToRight) {
                     dragHelper.smoothSlideViewTo(llShow, leftBorder + maxWidth, 0);

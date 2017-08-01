@@ -75,14 +75,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
 
-
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
 
         void onDelFinishListner(int pos);
     }
-
-
 
 
     public NoteEditAdapter(Context context, List<NoteEditModel> mDataList) {
@@ -129,7 +126,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             //通过将<p>元素替换为<span>元素来避免以为块级元素自动添加换号引起的麻烦
             String contentHtml = mDataList.get(position).getContent();
 
-            contentHtml = contentHtml.replace("\n", "").replace("/p><p","/span><br><span").replace("<p", "<span").replace("/p>", "/span>");
+            contentHtml = contentHtml.replace("\n", "").replace("/p><p", "/span><br><span").replace("<p", "<span").replace("/p>", "/span>");
 
             if (Build.VERSION.SDK_INT >= N) {
                 holder.etItem.setText(Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_LEGACY));
@@ -149,8 +146,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     if (hasFocus) {
                         currentHolder = viewHolder;
                     }
-                    if (onItemEditHasFocusListener!=null&&hasFocus){
-                        onItemEditHasFocusListener.onItemEditHasFocusListener(v,position);
+                    if (onItemEditHasFocusListener != null && hasFocus) {
+                        onItemEditHasFocusListener.onItemEditHasFocusListener(v, position);
                     }
                 }
             });
@@ -178,9 +175,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             //设置列表格式
             holder.setFormat_list(itemDate.isFormat_list());
             //设置对齐方式
-            Log.i(TAG, "onBindViewHolder: pos->"+position+"center?->"+itemDate.isFormat_align_center());
+            Log.i(TAG, "onBindViewHolder: pos->" + position + "center?->" + itemDate.isFormat_align_center());
             holder.setFormat_align_flag(itemDate.isFormat_align_center());
-
 
 
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
@@ -196,13 +192,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.bmItemImage.setmMenuItemClickListener(new OnMenuItemClickListener() {
                 @Override
                 public void onItemClickListener(int pos, View v) {
-                    switch (pos){
+                    switch (pos) {
                         case 0:
                             break;
                         case 1:
                             mDataList.remove(position);
                             notifyItemRemoved(position);
-                            notifyItemRangeChanged(position,getItemCount());
+                            notifyItemRangeChanged(position, getItemCount());
                             break;
                     }
                 }
@@ -230,28 +226,27 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                         /*
             * 根据图片的宽高来设置相框的大小
             * */
-            int imgWidth= ImageUtils.getBitmapWidth(itemDate.getImagePath(),true);
-            int imgHeight=ImageUtils.getBitmapWidth(itemDate.getImagePath(),false);
+            int imgWidth = ImageUtils.getBitmapWidth(itemDate.getImagePath(), true);
+            int imgHeight = ImageUtils.getBitmapWidth(itemDate.getImagePath(), false);
 
-            ViewGroup.LayoutParams layoutParams =  holder.ivItemImage.getLayoutParams();
-            if (imgHeight>imgWidth) {
+            ViewGroup.LayoutParams layoutParams = holder.ivItemImage.getLayoutParams();
+            if (imgHeight > imgWidth) {
                 layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
-                layoutParams.height =(int)context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
-            }else {
+                layoutParams.height = (int) context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
+            } else {
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                layoutParams.height = (int)context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
+                layoutParams.height = (int) context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
             }
             holder.flBombMenuContainer.setLayoutParams(layoutParams);
             holder.ivItemImage.setLayoutParams(layoutParams);
             holder.ivItemImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
 
-
             Glide.with(context)
                     .load(itemDate.getImagePath())
                     .into(holder.ivItemImage);
 
-        }else if (itemDate.getItemFlag()== NoteEditModel.Flag.SEPARATED){
+        } else if (itemDate.getItemFlag() == NoteEditModel.Flag.SEPARATED) {
             /*
             * 分隔线
             * */
@@ -305,6 +300,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     /**
      * 设置哪个位置的Item获取焦点
+     *
      * @param focusItemPos
      */
     public void setFocusItemPos(int focusItemPos) {
@@ -357,8 +353,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
 
-
-
     public boolean isItemFormatList() {
         return itemFormatList;
     }
@@ -394,7 +388,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         @Bind(R.id.fl_menu_container)
         public FrameLayout flBombMenuContainer; //弹射菜单容器
 
-        private Boolean moveMenuIsHide=true;
+        private Boolean moveMenuIsHide = true;
 
         @Bind(R.id.iv_swipe_notice)
         public View ivSwipeNotice;              //拖拽切换的时候的提示图标
@@ -482,12 +476,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 return false;
                             }
                             if (currentPos != 0) {
+                                // TODO: 2017/8/1 如果长按删除键会出现重复删除的bug
                                 //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
                                 mDataList.remove(currentPos);
-                                if (mDataList.get(currentPos-1).getItemFlag()== NoteEditModel.Flag.SEPARATED){
-                                    mDataList.remove(currentPos-1);
+                                if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED) {
+                                    mDataList.remove(currentPos - 1);
                                     setFocusItemPos(currentPos - 2);
-                                }else {
+                                } else {
                                     setFocusItemPos(currentPos - 1);
                                 }
                                 notifyDataSetChanged();
@@ -670,8 +665,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
 
                 //设置字体
-                if (format_size!=0){
-                    switch (format_size){
+                if (format_size != 0) {
+                    switch (format_size) {
                         case 1:
                             for (int i = start; i < start + count; i++) {
                                 ss.setSpan(new RelativeSizeSpan(4), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -694,7 +689,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 currentEdit.setSelection(start + count);
 
                 if (android.os.Build.VERSION.SDK_INT >= N) {
-                    Log.i(TAG, "onTextChanged: --->"+Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                    Log.i(TAG, "onTextChanged: --->" + Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                 } else {
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
