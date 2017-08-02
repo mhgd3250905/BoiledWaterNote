@@ -19,14 +19,13 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
-import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemView;
+import com.skkk.boiledwaternote.CostomViews.DragItemView.MyDragItemView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
@@ -55,9 +54,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     public interface OnItemClickListener {
         void onItemClickListener(View view, int pos);
 
-        void onDragButtonClickListener(View view, int pos);
-
         void onItemDeleteClickListener(View view, int pos);
+
+        void onItemLockClickListener(View view,int pos);
     }
 
     public void setOnDragItemStatusChange(OnDragItemStatusChange onDragItemStatusChange) {
@@ -80,7 +79,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
 //        if (onDragItemStatusChange != null) {
 //            holder.divItem.setOnDragPosChangeListener(new DragItemCircleView.OnDragPosChangeListener() {
 //                @Override
@@ -95,7 +94,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 //            });
 //        }
         //重置Item切换状态
-        holder.divItem.resetItem();
+//        holder.divItem.resetItem();
 
         //显示距离此刻模式的时间显示方式
         CharSequence relativeDateTimeString = DateUtils
@@ -119,6 +118,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             }
             if (!TextUtils.isEmpty(title)) {
                 holder.tvNoteListTitle.setText(Html.fromHtml(title).toString());
+            }else {
+                holder.tvNoteListTitle.setText("无题");
             }
 
             //获取并设置第一个图片
@@ -138,23 +139,28 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             }
         }
 
-
-
-
         if (onItemClickListener != null) {
             holder.llShow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int pos = position;
+                    int pos = holder.getAdapterPosition();
                     onItemClickListener.onItemClickListener(v, pos);
                 }
             });
 
-            holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            holder.ivDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int pos = position;
+                    int pos = holder.getAdapterPosition();
                     onItemClickListener.onItemDeleteClickListener(v, pos);
+                }
+            });
+
+            holder.ivLock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos=holder.getAdapterPosition();
+                    onItemClickListener.onItemLockClickListener(v,pos);
                 }
             });
         }
@@ -186,10 +192,12 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         public CardView llShow;
         @Bind(R.id.ll_hide)
         public CardView llHide;
-        @Bind(R.id.btn_delete)
-        public Button btnDelete;
+        @Bind(R.id.iv_delete)
+        public ImageView ivDelete;
+        @Bind(R.id.iv_lock)
+        public ImageView ivLock;
         @Bind(R.id.div_item)
-        public DragItemView divItem;
+        public MyDragItemView divItem;
         @Bind(R.id.iv_note_list_image)
         public ImageView ivNoteListImage;
         @Bind(R.id.cv_note_list_image)

@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.skkk.boiledwaternote.R;
 
@@ -25,8 +25,8 @@ import com.skkk.boiledwaternote.R;
 public class MyDragItemView extends ViewGroup {
 
     private ViewDragHelper dragHelper;
-    private LinearLayout llShow;
-    private LinearLayout llHide;
+    private CardView llShow;
+    private CardView llHide;
     private int maxWidth;//可以拖拽的最大距离
     private int leftBorder;
     private boolean dragToRight;//是否向右拖动
@@ -88,8 +88,8 @@ public class MyDragItemView extends ViewGroup {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        llHide = (LinearLayout) getChildAt(0);
-        llShow = (LinearLayout) getChildAt(1);
+        llHide = (CardView) getChildAt(0);
+        llShow = (CardView) getChildAt(1);
     }
 
 

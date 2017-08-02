@@ -110,6 +110,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
         //设置Item点击事件以及拖拽事件
         adapter.setOnItemClickListener(new NoteListAdapter.OnItemClickListener() {
+            //Item点击事件
             @Override
             public void onItemClickListener(View view, int pos) {
                 Note note = mDataList.get(pos);
@@ -119,21 +120,22 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                 getActivity().startActivityForResult(intent, Configs.REQUEST_UPDATE_NOTE);
             }
 
-            @Override
-            public void onDragButtonClickListener(View view, int pos) {
-
-            }
-
+            //隐藏菜单删除按钮点击事件
             @Override
             public void onItemDeleteClickListener(View view, int pos) {
                 Note note = mDataList.get(pos);
                 if (noteListPresenter.deleteNote(note)) {
                     mDataList.remove(pos);
                     adapter.notifyItemRemoved(pos);
-                    adapter.notifyItemRangeRemoved(pos,adapter.getItemCount());
                 }else {
                     Toast.makeText(getContext(), "删除笔记失败", Toast.LENGTH_SHORT).show();
                 }
+            }
+
+            //隐藏菜单上锁点击事件
+            @Override
+            public void onItemLockClickListener(View view, int pos) {
+
             }
         });
 

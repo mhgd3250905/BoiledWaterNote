@@ -12,7 +12,7 @@
     <item name="tv_note_list_time" type="id">tv_note_list_time</item>
     <item name="tv_note_list_title" type="id">tv_note_list_title</item>
     <item name="iv_note_list_image" type="id">iv_note_list_image</item>
-    <item name="btn_delete" type="id">btn_delete</item>
+    <item name="iv_delete" type="id">btn_delete</item>
     <item name="iv_format_align_left" type="id">iv_format_align_left</item>
     <item name="iv_format_align_center" type="id">iv_format_align_center</item>
     <item name="iv_format_align_right" type="id">iv_format_align_right</item>
@@ -49,4 +49,5 @@
     <item name="fl_menu_container" type="id">fl_menu_container</item>
     <item name="cv_note_list_image" type="id">cv_note_list_image</item>
     <item name="iv_format_hor_seperate" type="id">iv_format_hor_seperate</item>
+    <item name="iv_lock" type="id">iv_lock</item>
 </resources>
