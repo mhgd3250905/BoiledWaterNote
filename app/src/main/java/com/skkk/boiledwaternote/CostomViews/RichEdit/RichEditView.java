@@ -263,13 +263,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             * 设置文字居中
             * */
             case R.id.iv_format_align_center:
-                if (adapter.getmDataList().get(currentHolder.getAdapterPosition()).isFormat_align_center()) {
-                    adapter.getmDataList().get(currentHolder.getAdapterPosition()).setFormat_align_center(false);
-                } else {
-                    adapter.getmDataList().get(currentHolder.getAdapterPosition()).setFormat_align_center(true);
-                }
-                adapter.notifyItemChanged(currentHolder.getAdapterPosition());
-
+                currentHolder.setFormat_align_flag(!currentHolder.getFormat_align_flag());
+                adapter.notifyItemChanged(currentHolder.getCurrentPos());
                 break;
             case R.id.iv_format_blod:                //设置文字Blod
                 if (!isSelected) {                   //如果没有选择
@@ -410,7 +405,6 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                         currentHolder.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
-
                 break;
 
             case R.id.iv_format_quote:
@@ -466,13 +460,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
             case R.id.iv_format_strike_through:     //设置文字删除线
                 if (!isSelected) {
-                    if (currentHolder.myItemTextChangeListener.isFormat_strike_through()) {
-                        currentHolder.myItemTextChangeListener.setFormat_strike_through(false);
-                        v.setBackgroundColor(Color.TRANSPARENT);
-                    } else {
-                        currentHolder.myItemTextChangeListener.setFormat_strike_through(true);
-                        v.setBackgroundColor(Color.LTGRAY);
-                    }
+                    currentHolder.setFormat_strike_through(!currentHolder.isFormat_strike_through());
                 } else {
                     //获取选择区域内所有的StyleSpan
                     StrikethroughSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StrikethroughSpan.class);

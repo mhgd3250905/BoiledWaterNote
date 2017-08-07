@@ -152,7 +152,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
             });
 
-
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.itemView.setLayoutParams(layoutParams);
@@ -160,25 +159,20 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.rlItemImg.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
 
+            //设置引用格式
+            holder.setFormat_quote(itemDate.isFormat_quote());
+            //设置列表格式
+            holder.setFormat_list(itemDate.isFormat_list());
+            //设置对齐方式
+            holder.setFormat_align_flag(itemDate.isFormat_align_center());
 
             //设置指定的Item获取焦点
-
             if (focusItemPos == position) {
                 holder.etItem.setFocusable(true);
                 holder.etItem.setFocusableInTouchMode(true);
                 holder.etItem.requestFocus();
                 holder.etItem.setSelection(holder.etItem.length());
             }
-
-            //设置引用格式
-            holder.setFormat_quote(itemDate.isFormat_quote());
-            //设置列表格式
-            holder.setFormat_list(itemDate.isFormat_list());
-            //设置对齐方式
-            Log.i(TAG, "onBindViewHolder: pos->" + position + "center?->" + itemDate.isFormat_align_center());
-            holder.setFormat_align_flag(itemDate.isFormat_align_center());
-
-
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
             /*
             * 图片
@@ -376,7 +370,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public ImageView ivTextQuote;           //编辑栏位引用图标
         @Bind(R.id.iv_text_point)
         public ImageView ivTextPonit;           //编辑栏位列表图标
-
         @Bind(R.id.rl_item_img)
         public RelativeLayout rlItemImg;        //Image区域容器
         @Bind(R.id.iv_item_img)
@@ -387,38 +380,44 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public BombMenu bmItemImage;            //弹射菜单
         @Bind(R.id.fl_menu_container)
         public FrameLayout flBombMenuContainer; //弹射菜单容器
-
-        private Boolean moveMenuIsHide = true;
-
         @Bind(R.id.iv_swipe_notice)
         public View ivSwipeNotice;              //拖拽切换的时候的提示图标
-
         @Bind(R.id.rl_item_separated)
         public RelativeLayout rlItemSeparated;  //分割线容器
 
+        private Boolean moveMenuIsHide = true;  //图片上的菜单是否隐藏
 
-        private OnKeyDownFinishListener onKeyDownFinishListener;
+        private OnKeyDownFinishListener onKeyDownFinishListener;//按键按下事件监听
 
+        /*
+        * 每一个Item都需要保存对应的位置：便于管理
+        * */
         private int currentPos;             //当前的position
+
         private NoteEditModel model;        //用来操作的模板
 
+        /*
+        * 设置与获取当前Item的位置
+        * */
         public int getCurrentPos() {
             return currentPos;
         }
-
         public void setCurrentPos(int currentPos) {
             this.currentPos = currentPos;
         }
 
+        /*
+        * 文本变化监听
+        * */
         public MyItemTextChangeListener myItemTextChangeListener;
 
         public NoteEditViewHolder(View itemView, final MyItemTextChangeListener myItemTextChangeListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-
+            //初始化获取焦点
             llEditContainer.setFocusable(true);
             llEditContainer.setFocusableInTouchMode(true);
-            //设置焦点获取监听：直接抛给EditText
+            //如果item获取到了焦点，那么默认的编辑框也就获取到了焦点
             itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -429,45 +428,72 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     }
                 }
             });
+
+            //设置文本变化监听
             this.myItemTextChangeListener = myItemTextChangeListener;
             myItemTextChangeListener.setCurrentEdit(etItem);
             etItem.addTextChangedListener(myItemTextChangeListener);        //当文本发生变化的时候就保存对应的内容到dataList
 
             /**
-             * 设置Edit按键监听
+             * 设置Edit按键监听：判断按键行为作出不同的处理方式
              */
             etItem.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    /*
+                    * 如果按下了Enter按键
+                    * */
                     if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
                         if (myItemTextChangeListener.isFormat_list() || myItemTextChangeListener.isFormat_quote()) {
-                            //将要插入的行数据
+                            /*
+                            * 如果此时这个Item是富文本引用或者列表类型
+                            * 就初始化一个文本Item，当然内容为空
+                            * */
                             model = new NoteEditModel();
                             model.setItemFlag(NoteEditModel.Flag.TEXT);
                             model.setImagePath(null);
                             model.setContent("");
-                            //根据富文本格式不同设置不同的样式
-                            if (myItemTextChangeListener.isFormat_list()) {    //如果是列表格式
+
+                            if (myItemTextChangeListener.isFormat_list()) {
+                                /*
+                                * 如果富文本样式为列表，那么就需要在下方在添加一个列表
+                                * */
                                 if (etItem.length() > 0) {
-                                    //当这个列表中有内容的时候，换行下一个才会是列表格式
-                                    //否则下一个就不是列表格式
+                                    /*
+                                    * 当这个列表中有内容的时候，换行下一个才会是列表格式
+                                    * 否则下一个就不是列表格式
+                                    * */
                                     model.setFormat_list(myItemTextChangeListener.isFormat_list());
                                     model.setFormat_quote(!myItemTextChangeListener.isFormat_list());
                                 }
                             }
+                            /*
+                            * 将数据同步到List中
+                            * */
                             mDataList.add(currentPos + 1, model);
                             setFocusItemPos(currentPos + 1);
                             notifyDataSetChanged();
 
+                            /*
+                            * 触发按键监听
+                            * */
                             if (onKeyDownFinishListener != null) {
                                 onKeyDownFinishListener.onEnterFinishListner(currentPos + 1);
                             }
                         }
                     }
+                    /*
+                    * 如果按下了DEL按键
+                    * */
                     if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
+                            /*
+                            * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
+                            * */
                         if (TextUtils.isEmpty(etItem.getText())) {
                             if (myItemTextChangeListener.isFormat_list()) {
-                                //如果该item富文本为list那么就取消其状态
+                                /*
+                                * 如果富文本样式为List，那么就取消其富文本样式
+                                * */
                                 setFormat_list(!myItemTextChangeListener.isFormat_list());
                                 return false;
                             } else if (myItemTextChangeListener.isFormat_quote()) {
@@ -479,6 +505,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 // TODO: 2017/8/1 如果长按删除键会出现重复删除的bug
                                 //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
                                 mDataList.remove(currentPos);
+                                /*
+                                * 如果已经删除的上衣个Item是分割线，那么也将其删除，然后焦点跳转到上一个Item
+                                * */
                                 if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED) {
                                     mDataList.remove(currentPos - 1);
                                     setFocusItemPos(currentPos - 2);
@@ -487,6 +516,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 }
                                 notifyDataSetChanged();
 
+                                /*
+                                * 触发按键监听
+                                * */
                                 if (onKeyDownFinishListener != null) {
                                     onKeyDownFinishListener.onDelFinishListner(currentPos - 1);
                                 }
@@ -496,6 +528,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     return false;
                 }
             });
+
 
             etItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
@@ -509,10 +542,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         /**
          * 设置Holder中的编辑栏span特效并同步保存数据样式
          *
-         * @param what
-         * @param start
-         * @param end
-         * @param flags
+         * @param what Span类型
+         * @param start 起始位置
+         * @param end 结束为止
+         * @param flags SPAN标签
          */
         public void setSpan(Object what, int start, int end, int flags) {
             etItem.getText().setSpan(what, start, end, flags);
@@ -526,7 +559,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         /**
          * 删除Holder中的编辑框的富文本特效并同步保存数据
          *
-         * @param what
+         * @param what Span类型
          */
         public void removeSpan(Object what) {
             etItem.getText().removeSpan(what);
@@ -538,6 +571,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         }
 
 
+        /**
+         * 设置按键（Enter/Del）按键监听
+         * @param onKeyDownFinishListener
+         */
         public void setOnKeyDownFinishListener(OnKeyDownFinishListener onKeyDownFinishListener) {
             this.onKeyDownFinishListener = onKeyDownFinishListener;
         }
@@ -545,7 +582,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         /**
          * 设置文本对齐方式
          *
-         * @param isTextCenter
+         * @param isTextCenter 是否居中对齐
          */
 
         public void setFormat_align_flag(boolean isTextCenter) {
@@ -554,34 +591,123 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             } else {
                 etItem.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             }
-            myItemTextChangeListener.setFormat_align_center(isTextCenter);
+            mDataList.get(currentPos).setFormat_align_center(isTextCenter);
         }
 
+        /**
+         * 获取文本对齐方式
+         * @return
+         */
+        public boolean getFormat_align_flag(){
+            if (etItem.getTextAlignment()==View.TEXT_ALIGNMENT_CENTER){
+                return true;
+            }else {
+                return false;
+            }
+        }
+
+        /**
+         * 设置是否字体加粗
+         * @param format_blod
+         */
         public void setFormat_blod(boolean format_blod) {
             myItemTextChangeListener.setFormat_blod(format_blod);
         }
 
+        /**
+         * 获取字体是否加粗
+         * @return
+         */
+        public boolean isFormat_bold(){
+            return myItemTextChangeListener.isFormat_blod();
+        }
+
+        /**
+         * 设置是否字体倾斜
+         * @param format_italic
+         */
         public void setFormat_italic(boolean format_italic) {
             myItemTextChangeListener.setFormat_italic(format_italic);
         }
 
+        /**
+         * 获取字体是否倾斜
+         * @return
+         */
+        public boolean isFormat_italic(){
+            return myItemTextChangeListener.isFormat_italic();
+        }
+
+        /**
+         * 设置字体下划线
+         * @param format_underlined
+         */
+        public void setFormat_underlined(boolean format_underlined) {
+            myItemTextChangeListener.setFormat_underlined(format_underlined);
+        }
+
+        /**
+         * 获取字体是否下划线
+         * @return
+         */
+        public boolean isFormat_underlined(){
+            return myItemTextChangeListener.isFormat_underlined();
+        }
+
+        /**
+         * 设置字体删除线
+         * @param format_strike_through
+         */
+        public void setFormat_strike_through(boolean format_strike_through){
+            myItemTextChangeListener.setFormat_strike_through(format_strike_through);
+        }
+
+        /**
+         * 获取字体是否删除线
+         * @return
+         */
+        public boolean isFormat_strike_through(){
+            return myItemTextChangeListener.isFormat_strike_through();
+        }
+
+
+        /**
+         * 设置富文本列表样式
+         * @param format_list
+         */
         public void setFormat_list(boolean format_list) {
+            /*
+            * 如果此时Item为引用样式，那么强行转换为列表样式
+            * */
             if (format_list) {
-                setFormat_quote(!format_list);
+                setFormat_quote(format_list);
             }
+            //同步到数据列表
+            mDataList.get(currentPos).setFormat_list(format_list);
             myItemTextChangeListener.setFormat_list(format_list);
             ivTextPonit.setVisibility(format_list ? View.VISIBLE : GONE);
         }
+
+
 
         public void setFormat_list_numbered(boolean format_list_numbered) {
             myItemTextChangeListener.setFormat_list_numbered(format_list_numbered);
         }
 
+
+        /**
+         * 设置富文本引用样式
+         * @param format_quote
+         */
         public void setFormat_quote(boolean format_quote) {
+            /*
+            * 将列表强制转换为引用
+            * */
             if (format_quote) {
                 setFormat_list(!format_quote);
             }
-            myItemTextChangeListener.setFormat_quote(format_quote);
+            //同步数据列表
+            mDataList.get(currentPos).setFormat_quote(format_quote);
             ivTextQuote.setVisibility(format_quote ? View.VISIBLE : GONE);
             etItem.setTextColor(format_quote ? ContextCompat.getColor(context, R.color.colorGray)
                     : ContextCompat.getColor(context, R.color.colorBlackBody));
@@ -592,9 +718,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             myItemTextChangeListener.setFormat_size(format_size);
         }
 
-        public void setFormat_underlined(boolean format_underlined) {
-            myItemTextChangeListener.setFormat_underlined(format_underlined);
-        }
+
 
         public Boolean getMoveMenuIsHide() {
             return moveMenuIsHide;
@@ -725,7 +849,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         public void setFormat_list(boolean format_list) {
             this.format_list = format_list;
-            mDataList.get(position).setFormat_list(format_list);
         }
 
         public void setFormat_list_numbered(boolean format_list_numbered) {
@@ -734,7 +857,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         public void setFormat_quote(boolean format_quote) {
             this.format_quote = format_quote;
-            mDataList.get(position).setFormat_quote(format_quote);
         }
 
         public void setFormat_size(int format_size) {
