@@ -16,6 +16,8 @@ import com.skkk.boiledwaternote.R;
 /**
  * Created by admin on 2017/4/11.
  */
+
+// TODO: 2017/8/13 菜单状态reset功能，在每次滑动复用Item的时候都还原为初始状态
 /*
 * 
 * 描    述：常见的可以拖动删除的Item
@@ -172,9 +174,6 @@ public class MyDragItemView extends ViewGroup {
         dragHelper.smoothSlideViewTo(llShow, leftBorder, 0);
     }
 
-    public void resetMenu(){
-        invalidate();
-    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
