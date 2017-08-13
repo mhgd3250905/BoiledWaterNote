@@ -14,13 +14,14 @@ public class NoteEditModel {
     public Flag itemFlag;
     public String imagePath;
     public boolean format_align_center=false;  //居中
-    public boolean format_blod=false;          //加粗
+    public boolean format_bold=false;          //加粗
     public boolean format_italic=false;        //斜体
     public boolean format_list=false;          //列表
     public boolean format_list_numbered=false; //数字列表
     public boolean format_quote=false;         //引用
     public int format_size=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
     public boolean format_underlined=false;    //下划线
+    public boolean format_strike_through = false;//删除线
 
     public NoteEditModel() {
     }
@@ -70,14 +71,6 @@ public class NoteEditModel {
         this.format_align_center = format_align_center;
     }
 
-    public boolean isFormat_blod() {
-        return format_blod;
-    }
-
-    public void setFormat_blod(boolean format_blod) {
-        this.format_blod = format_blod;
-    }
-
     public boolean isFormat_italic() {
         return format_italic;
     }
@@ -124,5 +117,21 @@ public class NoteEditModel {
 
     public void setFormat_underlined(boolean format_underlined) {
         this.format_underlined = format_underlined;
+    }
+
+    public boolean isFormat_bold() {
+        return format_bold;
+    }
+
+    public void setFormat_bold(boolean format_bold) {
+        this.format_bold = format_bold;
+    }
+
+    public boolean isFormat_strike_through() {
+        return format_strike_through;
+    }
+
+    public void setFormat_strike_through(boolean format_strike_through) {
+        this.format_strike_through = format_strike_through;
     }
 }

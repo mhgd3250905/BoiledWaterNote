@@ -263,16 +263,16 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             * 设置文字居中
             * */
             case R.id.iv_format_align_center:
-                currentHolder.setFormat_align_flag(!currentHolder.getFormat_align_flag());
+                currentHolder.setFormat_align_center(!currentHolder.isFormat_align_center());
                 adapter.notifyItemChanged(currentHolder.getCurrentPos());
                 break;
             case R.id.iv_format_blod:                //设置文字Blod
                 if (!isSelected) {                   //如果没有选择
-                    if (currentHolder.myItemTextChangeListener.isFormat_blod()) {
-                        currentHolder.myItemTextChangeListener.setFormat_blod(false);
+                    if (currentHolder.isFormat_bold()) {
+                        currentHolder.setFormat_blod(false);
                         v.setBackgroundColor(Color.TRANSPARENT);
                     } else {
-                        currentHolder.myItemTextChangeListener.setFormat_blod(true);
+                        currentHolder.setFormat_blod(true);
                         v.setBackgroundColor(Color.LTGRAY);
                     }
                 } else {                             //如果选择
@@ -295,11 +295,11 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 break;
             case R.id.iv_format_italic:             //设置文字斜体
                 if (!isSelected) {
-                    if (currentHolder.myItemTextChangeListener.isFormat_italic()) {
-                        currentHolder.myItemTextChangeListener.setFormat_italic(false);
+                    if (currentHolder.isFormat_italic()) {
+                        currentHolder.setFormat_italic(false);
                         v.setBackgroundColor(Color.TRANSPARENT);
                     } else {
-                        currentHolder.myItemTextChangeListener.setFormat_italic(true);
+                        currentHolder.setFormat_italic(true);
                         v.setBackgroundColor(Color.LTGRAY);
                     }
                 } else {
@@ -431,11 +431,11 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
             case R.id.iv_format_underlined:         //设置文字下划线
                 if (!isSelected) {
-                    if (currentHolder.myItemTextChangeListener.isFormat_underlined()) {
-                        currentHolder.myItemTextChangeListener.setFormat_underlined(false);
+                    if (currentHolder.isFormat_underlined()) {
+                        currentHolder.setFormat_underlined(false);
                         v.setBackgroundColor(Color.TRANSPARENT);
                     } else {
-                        currentHolder.myItemTextChangeListener.setFormat_underlined(true);
+                        currentHolder.setFormat_underlined(true);
                         v.setBackgroundColor(Color.LTGRAY);
                     }
                 } else {
@@ -460,7 +460,13 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
             case R.id.iv_format_strike_through:     //设置文字删除线
                 if (!isSelected) {
-                    currentHolder.setFormat_strike_through(!currentHolder.isFormat_strike_through());
+                    if (currentHolder.isFormat_strike_through()) {
+                        currentHolder.setFormat_strike_through(false);
+                        v.setBackgroundColor(Color.TRANSPARENT);
+                    } else {
+                        currentHolder.setFormat_strike_through(true);
+                        v.setBackgroundColor(Color.LTGRAY);
+                    }
                 } else {
                     //获取选择区域内所有的StyleSpan
                     StrikethroughSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StrikethroughSpan.class);

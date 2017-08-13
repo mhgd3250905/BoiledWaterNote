@@ -172,6 +172,10 @@ public class MyDragItemView extends ViewGroup {
         dragHelper.smoothSlideViewTo(llShow, leftBorder, 0);
     }
 
+    public void resetMenu(){
+        invalidate();
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return dragHelper.shouldInterceptTouchEvent(ev);
