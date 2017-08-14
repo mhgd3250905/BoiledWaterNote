@@ -165,7 +165,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             });
         }
 
-        holder.divItem.resetMenu();
+        holder.divItem.resetItem();
     }
 
     @Override

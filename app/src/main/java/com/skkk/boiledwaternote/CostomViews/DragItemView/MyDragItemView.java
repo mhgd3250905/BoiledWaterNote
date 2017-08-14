@@ -34,6 +34,7 @@ public class MyDragItemView extends ViewGroup {
     private boolean dragToRight;//是否向右拖动
     private boolean mIsMoving;//是否正在拖动
     private OnItemDragStatusChange onItemDragStatusChange;//菜单拖拽状态打开切换监听
+    private int l,t,r,b;
 
     private RecyclerView rv;
 
@@ -77,6 +78,10 @@ public class MyDragItemView extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         if (changed) {
+            this.l=l;
+            this.t=t;
+            this.r=r;
+            this.b=b;
             getChildAt(0).layout(l, t, r, b);
             getChildAt(1).layout(l, t, r, b);
             maxWidth = llShow.getMeasuredWidth() / 2;
@@ -172,6 +177,11 @@ public class MyDragItemView extends ViewGroup {
      */
     public void closeItem() {
         dragHelper.smoothSlideViewTo(llShow, leftBorder, 0);
+    }
+
+    public void resetItem(){
+        llHide.layout(l,t,r,b);
+        llShow.layout(l,t,r,b);
     }
 
 

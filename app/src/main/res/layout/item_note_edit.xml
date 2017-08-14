@@ -30,6 +30,7 @@
             android:visibility="visible" />
 
         <EditText
+            android:inputType=""
             android:id="@id/tv_item_recylcer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
