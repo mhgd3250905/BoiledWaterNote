@@ -428,7 +428,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 } else {
                     rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
                 }
-
+                break;
             case R.id.iv_format_underlined:         //设置文字下划线
                 if (!isSelected) {
                     if (currentHolder.isFormat_underlined()) {

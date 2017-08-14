@@ -389,7 +389,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         * */
         public MyItemTextChangeListener myItemTextChangeListener;
 
-        public NoteEditViewHolder(View itemView, final MyItemTextChangeListener myItemTextChangeListener) {
+        public NoteEditViewHolder(View itemView, MyItemTextChangeListener myItemTextChangeListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             //初始化获取焦点
@@ -581,15 +581,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             return format_align_center;
         }
 
-
-//        public boolean getFormat_align_flag(){
-//            if (etItem.getTextAlignment()==View.TEXT_ALIGNMENT_CENTER){
-//                return true;
-//            }else {
-//                return false;
-//            }
-//        }
-
         /**
          * 设置是否字体加粗
          * @param format_bold
@@ -718,15 +709,12 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         private int position;
 
         private EditText currentEdit;
-
         private boolean flagIsAuto = false;           //设置一个flag用来避免重新设置EditText时候触发监听
-
         private boolean format_blod = false;          //加粗
         private boolean format_italic = false;        //斜体
         private int format_size = 0;                  //字体大小：0-p 1-h1 2-h2 3-h3
         private boolean format_underlined = false;    //下划线
         private boolean format_strike_through = false;//删除线
-
 
         public void updatePos(int position) {
             this.position = position;
@@ -772,7 +760,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
 
                 currentEdit.setText(ss);
-                currentEdit.setSelection(start + count);
+
 
                 if (android.os.Build.VERSION.SDK_INT >= N) {
                     Log.i(TAG, "onTextChanged: --->" + Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
@@ -783,6 +771,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
             } else {
                 flagIsAuto = false;
+                currentEdit.setSelection(start + count);
             }
 
 
