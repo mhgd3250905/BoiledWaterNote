@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,6 @@ import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 
 public class NoteListFragment extends Fragment implements NoteListImpl {
@@ -113,6 +110,8 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //Item点击事件
             @Override
             public void onItemClickListener(View view, int pos) {
+
+
                 Note note = mDataList.get(pos);
                 Intent intent = new Intent();
                 intent.setClass(getContext(), NoteEditActivity.class);
@@ -139,24 +138,24 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             }
         });
 
-        adapter.setOnDragItemStatusChange(new NoteListAdapter.OnDragItemStatusChange() {
-            @Override
-            public void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
-                linearLayoutManager.setScroll(false);
-                if (lastDragItem!=null){
-                    lastDragItem.resetItemAnim();
-                    lastDragItem=null;
-                }
-//               Log.i(TAG, "onDragingListener: 第"+pos+"个Item正在拖拽！left--->"+left);
-            }
-
-            @Override
-            public void onDragClose(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
-                linearLayoutManager.setScroll(true);
-                lastDragItem=item;
-                Log.i(TAG, "onDragingListener: 第"+pos+"个Item结束！left--->"+left);
-            }
-        });
+//        adapter.setOnDragItemStatusChange(new NoteListAdapter.OnDragItemStatusChange() {
+//            @Override
+//            public void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
+//                linearLayoutManager.setScroll(false);
+//                if (lastDragItem!=null){
+//                    lastDragItem.resetItemAnim();
+//                    lastDragItem=null;
+//                }
+////               Log.i(TAG, "onDragingListener: 第"+pos+"个Item正在拖拽！left--->"+left);
+//            }
+//
+//            @Override
+//            public void onDragClose(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
+//                linearLayoutManager.setScroll(true);
+//                lastDragItem=item;
+//                Log.i(TAG, "onDragingListener: 第"+pos+"个Item结束！left--->"+left);
+//            }
+//        });
     }
 
     @Override

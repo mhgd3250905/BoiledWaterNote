@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,14 +36,19 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * RecyclerView数据适配器
  */
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyViewHolder> {
     private Context context;
     private List<Note> dataList;
-    public OnItemClickListener onItemClickListener;
-    private OnDragItemStatusChange onDragItemStatusChange;
+    private OnItemClickListener onItemClickListener;
+    private boolean isItemResetAnim = false;
+    private boolean haveItemOpen = false;//是否有Item菜单打开
+    private int isHaveItemOpenPos = -1;//已经打开的Item的位置
+    private int isHaveItemClosePos = -1;
 
     interface OnDragItemStatusChange {
         void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
@@ -56,11 +62,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
         void onItemDeleteClickListener(View view, int pos);
 
-        void onItemLockClickListener(View view,int pos);
-    }
-
-    public void setOnDragItemStatusChange(OnDragItemStatusChange onDragItemStatusChange) {
-        this.onDragItemStatusChange = onDragItemStatusChange;
+        void onItemLockClickListener(View view, int pos);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -80,21 +82,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
-//        if (onDragItemStatusChange != null) {
-//            holder.divItem.setOnDragPosChangeListener(new DragItemCircleView.OnDragPosChangeListener() {
-//                @Override
-//                public void isDragListener(DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
-//                    onDragItemStatusChange.onDragingListener(position, item, changedView, left, top, dx, dy);
-//                }
-//
-//                @Override
-//                public void closeDragListener(DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
-//                    onDragItemStatusChange.onDragClose(position, item, changedView, left, top, dx, dy);
-//                }
-//            });
-//        }
-        //重置Item切换状态
-//        holder.divItem.resetItem();
 
         //显示距离此刻模式的时间显示方式
         CharSequence relativeDateTimeString = DateUtils
@@ -118,23 +105,23 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             }
             if (!TextUtils.isEmpty(title)) {
                 holder.tvNoteListTitle.setText(Html.fromHtml(title).toString());
-            }else {
+            } else {
                 holder.tvNoteListTitle.setText("无题");
             }
 
             //获取并设置第一个图片
             for (int i = 0; i < noteEditModels.length; i++) {
-                if (noteEditModels[i].getItemFlag()== NoteEditModel.Flag.IMAGE){
-                    imagePath=noteEditModels[i].getImagePath();
+                if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.IMAGE) {
+                    imagePath = noteEditModels[i].getImagePath();
                     break;
                 }
             }
-            if (!TextUtils.isEmpty(imagePath)){
+            if (!TextUtils.isEmpty(imagePath)) {
                 holder.cvNoteListImage.setVisibility(View.VISIBLE);
                 Glide.with(context)
                         .load(imagePath)
                         .into(holder.ivNoteListImage);
-            }else {
+            } else {
                 holder.cvNoteListImage.setVisibility(View.GONE);
             }
         }
@@ -159,13 +146,33 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             holder.ivLock.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int pos=holder.getAdapterPosition();
-                    onItemClickListener.onItemLockClickListener(v,pos);
+                    int pos = holder.getAdapterPosition();
+                    onItemClickListener.onItemLockClickListener(v, pos);
                 }
             });
         }
 
+
         holder.divItem.resetItem();
+
+
+        /**
+         * 设置拖拽状态监听事件
+         */
+        holder.divItem.setOnItemDragStatusChange(new MyDragItemView.OnItemDragStatusChange() {
+            @Override
+            public void onItemDragStatusOpen() {
+                if (position != isHaveItemOpenPos) {
+                    isHaveItemOpenPos = position;
+                    Log.i(TAG, "onItemDragStatusOpen: 需要关闭：" + isHaveItemClosePos + ",需要打开：" + isHaveItemOpenPos);
+                }
+            }
+
+            @Override
+            public void onItemDragStatusClose() {
+
+            }
+        });
     }
 
     @Override
@@ -175,6 +182,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     /**
      * 数据操作
+     *
      * @return
      */
     public List<Note> getDataList() {
@@ -183,6 +191,19 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     public void setDataList(List<Note> dataList) {
         this.dataList = dataList;
+    }
+
+    /**
+     * 是否需要使用动画的方式重置所有的Item
+     *
+     * @return
+     */
+    public boolean isItemResetAnim() {
+        return isItemResetAnim;
+    }
+
+    public void setItemResetAnim(boolean itemResetAnim) {
+        isItemResetAnim = itemResetAnim;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

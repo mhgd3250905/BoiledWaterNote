@@ -38,9 +38,9 @@ public class MyDragItemView extends ViewGroup {
 
     private RecyclerView rv;
 
-    interface OnItemDragStatusChange{
-        void onItemDragStatusOpen(boolean open,int pos);
-        void onItemDragStatusClose(boolean close,int pos);
+    public interface OnItemDragStatusChange{
+        void onItemDragStatusOpen();
+        void onItemDragStatusClose();
     }
 
     public void setOnItemDragStatusChange(OnItemDragStatusChange onItemDragStatusChange) {
@@ -101,8 +101,6 @@ public class MyDragItemView extends ViewGroup {
 
 
 
-
-
     private ViewDragHelper.Callback callback = new ViewDragHelper.Callback() {
 
         @Override
@@ -156,6 +154,12 @@ public class MyDragItemView extends ViewGroup {
                 dragToRight = true;
             } else if (dx < 0) {
                 dragToRight = false;
+            }
+            /**
+             * 判断并设置Item的拖拽状态
+             */
+            if (left>leftBorder){
+                onItemDragStatusChange.onItemDragStatusOpen();
             }
 
             if (mIsMoving && rv != null) {
