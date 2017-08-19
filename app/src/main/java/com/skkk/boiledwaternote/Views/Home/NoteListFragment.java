@@ -110,8 +110,10 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //Item点击事件
             @Override
             public void onItemClickListener(View view, int pos) {
-
-
+                if (adapter.isHaveItemOpen()){
+                    adapter.notifyDataSetChanged();
+                    return;
+                }
                 Note note = mDataList.get(pos);
                 Intent intent = new Intent();
                 intent.setClass(getContext(), NoteEditActivity.class);

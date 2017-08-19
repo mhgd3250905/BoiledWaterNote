@@ -160,6 +160,8 @@ public class MyDragItemView extends ViewGroup {
              */
             if (left>leftBorder){
                 onItemDragStatusChange.onItemDragStatusOpen();
+            }else if (left<=leftBorder){
+                onItemDragStatusChange.onItemDragStatusClose();
             }
 
             if (mIsMoving && rv != null) {
