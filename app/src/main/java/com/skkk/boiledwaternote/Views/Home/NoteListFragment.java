@@ -110,7 +110,8 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //Item点击事件
             @Override
             public void onItemClickListener(View view, int pos) {
-                if (adapter.isHaveItemOpen()){
+                boolean haveItemOpen = adapter.isHaveItemMenuOpen();
+                if (haveItemOpen){
                     adapter.notifyDataSetChanged();
                     return;
                 }
@@ -130,7 +131,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                     adapter.notifyItemRemoved(pos);
                 }else {
                     Toast.makeText(getContext(), "删除笔记失败", Toast.LENGTH_SHORT).show();
-                }
+                                                                                        }
             }
 
             //隐藏菜单上锁点击事件

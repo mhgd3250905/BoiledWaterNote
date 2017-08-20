@@ -35,12 +35,13 @@ public class MyDragItemView extends ViewGroup {
     private boolean mIsMoving;//是否正在拖动
     private OnItemDragStatusChange onItemDragStatusChange;//菜单拖拽状态打开切换监听
     private int l,t,r,b;
+    private int position;
 
     private RecyclerView rv;
 
     public interface OnItemDragStatusChange{
-        void onItemDragStatusOpen();
-        void onItemDragStatusClose();
+        void onItemDragStatusOpen(int position);
+        void onItemDragStatusClose(int position);
     }
 
     public void setOnItemDragStatusChange(OnItemDragStatusChange onItemDragStatusChange) {
@@ -127,6 +128,7 @@ public class MyDragItemView extends ViewGroup {
         public void onViewCaptured(View capturedChild, int activePointerId) {
             super.onViewCaptured(capturedChild, activePointerId);
             mIsMoving = true;
+            onItemDragStatusChange.onItemDragStatusOpen(getPosition());
         }
 
         @Override
@@ -158,10 +160,8 @@ public class MyDragItemView extends ViewGroup {
             /**
              * 判断并设置Item的拖拽状态
              */
-            if (left>leftBorder){
-                onItemDragStatusChange.onItemDragStatusOpen();
-            }else if (left<=leftBorder){
-                onItemDragStatusChange.onItemDragStatusClose();
+            if (left<=leftBorder){
+                onItemDragStatusChange.onItemDragStatusClose(getPosition());
             }
 
             if (mIsMoving && rv != null) {
@@ -207,5 +207,13 @@ public class MyDragItemView extends ViewGroup {
         if (dragHelper.continueSettling(true)) {
             ViewCompat.postInvalidateOnAnimation(this);
         }
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

@@ -32,7 +32,7 @@ buildscript {
 
 //greenDao
 greendao {
-    schemaVersion 3
+    schemaVersion 4
     daoPackage 'com.skkk.boiledwaternote.Modles.gen'
     targetGenDir 'src/main/java'
 }

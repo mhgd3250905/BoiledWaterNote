@@ -31,7 +31,6 @@ import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -47,8 +46,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private List<Note> dataList;
     private OnItemClickListener onItemClickListener;
     private boolean isItemResetAnim = false;
-    private List<Boolean> menuStateList;
-    private boolean isHaveItemOpen;
 
     interface OnDragItemStatusChange {
         void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
@@ -72,10 +69,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     public NoteListAdapter(Context context, List<Note> dataList) {
         this.context = context;
         this.dataList = dataList;
-        menuStateList = new ArrayList<>();
-        for (Note note : this.dataList) {
-            menuStateList.add(false);
-        }
     }
 
     @Override
@@ -130,6 +123,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             }
         }
 
+
+
         if (onItemClickListener != null) {
             holder.llShow.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -157,33 +152,42 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         }
 
 
+        /**
+         * 设置Item菜单
+         */
+        //设置当前位置
+        holder.divItem.setPosition(position);
+
         Log.i(TAG, "onBindViewHolder: 处理第"+position+"个Item的菜单状态");
-        isHaveItemOpen = isHaveItemOpen();
-        if (isHaveItemOpen) {
+        if (dataList.get(position).isMenuOpen()) {
             Log.i(TAG, "onBindViewHolder: 正在关闭第"+position+"个Item");
             holder.divItem.closeItem();
-            menuStateList.set(position,false);
+            Note note = dataList.get(position);
+            note.setMenuOpen(false);
+            dataList.set(position,note);
         } else {
             holder.divItem.resetItem();
-            menuStateList.set(position,false);
+            Note note = dataList.get(position);
+            note.setMenuOpen(false);
+            dataList.set(position,note);
         }
 
         /**
          * 设置拖拽状态监听事件
          */
-        final Boolean isMenuOpem = menuStateList.get(position);
+        final Boolean isMenuOpem = dataList.get(position).isMenuOpen();
         holder.divItem.setOnItemDragStatusChange(new MyDragItemView.OnItemDragStatusChange() {
             @Override
-            public void onItemDragStatusOpen() {
+            public void onItemDragStatusOpen(int position) {
                 if (!isMenuOpem) {
-                    menuStateList.set(position, true);
+                    dataList.get(position).setMenuOpen(true);
                 }
             }
 
             @Override
-            public void onItemDragStatusClose() {
+            public void onItemDragStatusClose(int position) {
                 if (isMenuOpem) {
-                    menuStateList.set(position, false);
+                    dataList.get(position).setMenuOpen(false);
                 }
             }
         });
@@ -205,10 +209,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     public void setDataList(List<Note> dataList) {
         this.dataList = dataList;
-        menuStateList.clear();
-        for (Note note : this.dataList) {
-            menuStateList.add(false);
-        }
     }
 
     /**
@@ -224,17 +224,15 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         isItemResetAnim = itemResetAnim;
     }
 
-    public boolean isHaveItemOpen() {
-        boolean isMenuOpen=false;
-        for (int i = 0; i < menuStateList.size(); i++) {
-            if (menuStateList.get(i)){
-                Log.i(TAG, "isHaveItemOpen: 第"+i+"个Item需要关闭");
-                isMenuOpen=true;
-                break;
+    public boolean isHaveItemMenuOpen(){
+        for (Note note : dataList) {
+            if (note.isMenuOpen()){
+                return true;
             }
         }
-        return isMenuOpen;
+        return false;
     }
+
 
 //    public void setHaveItemOpen(boolean haveItemOpen) {
 //        this.haveItemOpen = haveItemOpen;
