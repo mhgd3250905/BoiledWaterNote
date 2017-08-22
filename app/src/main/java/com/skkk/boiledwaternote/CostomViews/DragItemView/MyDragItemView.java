@@ -7,11 +7,14 @@ import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.skkk.boiledwaternote.R;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by admin on 2017/4/11.
@@ -42,6 +45,8 @@ public class MyDragItemView extends ViewGroup {
     public interface OnItemDragStatusChange{
         void onItemDragStatusOpen(int position);
         void onItemDragStatusClose(int position);
+        void onItemMenuStatusOpen(int position);
+        void onItemMenuStatusClose(int position);
     }
 
     public void setOnItemDragStatusChange(OnItemDragStatusChange onItemDragStatusChange) {
@@ -127,8 +132,13 @@ public class MyDragItemView extends ViewGroup {
         @Override
         public void onViewCaptured(View capturedChild, int activePointerId) {
             super.onViewCaptured(capturedChild, activePointerId);
+            Log.i(TAG, "onViewCaptured: 第"+getPosition()+"触发拖拽打开");
             mIsMoving = true;
             onItemDragStatusChange.onItemDragStatusOpen(getPosition());
+            if (capturedChild.getLeft()<=leftBorder){
+                onItemDragStatusChange.onItemMenuStatusOpen(getPosition());
+                Log.i(TAG, "onViewCaptured: 第"+getPosition()+"触发菜单开启");
+            }
         }
 
         @Override
@@ -145,6 +155,8 @@ public class MyDragItemView extends ViewGroup {
                 }
             }
             ViewCompat.postInvalidateOnAnimation(MyDragItemView.this);
+            Log.i(TAG, "onViewCaptured: 第"+getPosition()+"触发拖拽关闭");
+            onItemDragStatusChange.onItemDragStatusClose(getPosition());
             mIsMoving = false;
 
         }
@@ -161,7 +173,8 @@ public class MyDragItemView extends ViewGroup {
              * 判断并设置Item的拖拽状态
              */
             if (left<=leftBorder){
-                onItemDragStatusChange.onItemDragStatusClose(getPosition());
+                onItemDragStatusChange.onItemMenuStatusClose(getPosition());
+                Log.i(TAG, "onViewCaptured: 第"+getPosition()+"触发菜单关闭");
             }
 
             if (mIsMoving && rv != null) {
