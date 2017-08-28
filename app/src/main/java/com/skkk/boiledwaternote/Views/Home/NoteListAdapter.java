@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -266,7 +267,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         @Bind(R.id.ll_show)
         public CardView llShow;
         @Bind(R.id.ll_hide)
-        public CardView llHide;
+        public LinearLayout llHide;
         @Bind(R.id.iv_delete)
         public ImageView ivDelete;
         @Bind(R.id.iv_lock)

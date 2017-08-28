@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.skkk.boiledwaternote.R;
 
@@ -31,11 +32,11 @@ public class MyDragItemView extends ViewGroup {
 
     private ViewDragHelper dragHelper;
     private CardView llShow;
-    private CardView llHide;
+    private LinearLayout llHide;
     private int maxWidth;//可以拖拽的最大距离
     private int leftBorder;
     private boolean dragToRight;//是否向右拖动
-    private boolean mIsMoving;//是否正在拖动
+    private boolean isDraging;//是否正在拖动
     private OnItemDragStatusChange onItemDragStatusChange;//菜单拖拽状态打开切换监听
     private OnDragItemClickListener onDragItemClickListener;//拖拽Item点击事件
     private int l,t,r,b;
@@ -122,7 +123,7 @@ public class MyDragItemView extends ViewGroup {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        llHide = (CardView) getChildAt(0);
+        llHide = (LinearLayout) getChildAt(0);
         llShow = (CardView) getChildAt(1);
     }
 
@@ -154,7 +155,7 @@ public class MyDragItemView extends ViewGroup {
         public void onViewCaptured(View capturedChild, int activePointerId) {
             super.onViewCaptured(capturedChild, activePointerId);
             //设置滑动状态状态为True
-            mIsMoving = true;
+            isDraging = true;
             //设置开启拖拽监听
             onItemDragStatusChange.onItemDragStatusOpen(getPosition());
             if (capturedChild.getLeft()<=leftBorder){
@@ -180,7 +181,7 @@ public class MyDragItemView extends ViewGroup {
 
             Log.i(TAG, "onViewCaptured: 第"+getPosition()+"触发拖拽关闭");
             onItemDragStatusChange.onItemDragStatusClose(getPosition());
-            mIsMoving = false;
+            isDraging = false;
 
         }
 
