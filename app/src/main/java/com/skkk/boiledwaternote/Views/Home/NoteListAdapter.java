@@ -4,7 +4,7 @@ package com.skkk.boiledwaternote.Views.Home;
  * Created by admin on 2017/5/28.
  */
 /*
-* 
+*
 * 描    述：
 * 作    者：ksheng
 * 时    间：2017/5/28$ 20:39$.
@@ -247,6 +247,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             }
         }
         return false;
+    }
+
+    public void resetMenuStatus(){
+        notifyDataSetChanged();
     }
 
 

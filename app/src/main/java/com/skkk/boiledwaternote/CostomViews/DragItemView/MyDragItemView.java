@@ -37,10 +37,17 @@ public class MyDragItemView extends ViewGroup {
     private boolean dragToRight;//是否向右拖动
     private boolean mIsMoving;//是否正在拖动
     private OnItemDragStatusChange onItemDragStatusChange;//菜单拖拽状态打开切换监听
+    private OnDragItemClickListener onDragItemClickListener;//拖拽Item点击事件
     private int l,t,r,b;
     private int position;
+    private boolean isMenuOpen;
 
     private RecyclerView rv;
+
+    public interface OnDragItemClickListener{
+        void onItemClickListener(View view, int pos);
+        void onItemMenuCloseClickListener(View view,int pos);
+    }
 
     public interface OnItemDragStatusChange{
         void onItemDragStatusOpen(int position);
@@ -51,6 +58,20 @@ public class MyDragItemView extends ViewGroup {
 
     public void setOnItemDragStatusChange(OnItemDragStatusChange onItemDragStatusChange) {
         this.onItemDragStatusChange = onItemDragStatusChange;
+    }
+
+    public void setOnDragItemClickListener(final OnDragItemClickListener onDragItemClickListener) {
+        this.onDragItemClickListener = onDragItemClickListener;
+        llShow.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isMenuOpen()){
+                    onDragItemClickListener.onItemMenuCloseClickListener(v,getPosition());
+                }else {
+                    onDragItemClickListener.onItemClickListener(v, getPosition());
+                }
+            }
+        });
     }
 
     public MyDragItemView(Context context) {
@@ -132,8 +153,9 @@ public class MyDragItemView extends ViewGroup {
         @Override
         public void onViewCaptured(View capturedChild, int activePointerId) {
             super.onViewCaptured(capturedChild, activePointerId);
-            Log.i(TAG, "onViewCaptured: 第"+getPosition()+"触发拖拽打开");
+            //设置滑动状态状态为True
             mIsMoving = true;
+            //设置开启拖拽监听
             onItemDragStatusChange.onItemDragStatusOpen(getPosition());
             if (capturedChild.getLeft()<=leftBorder){
                 onItemDragStatusChange.onItemMenuStatusOpen(getPosition());
@@ -155,6 +177,7 @@ public class MyDragItemView extends ViewGroup {
                 }
             }
             ViewCompat.postInvalidateOnAnimation(MyDragItemView.this);
+
             Log.i(TAG, "onViewCaptured: 第"+getPosition()+"触发拖拽关闭");
             onItemDragStatusChange.onItemDragStatusClose(getPosition());
             mIsMoving = false;
@@ -177,11 +200,11 @@ public class MyDragItemView extends ViewGroup {
                 Log.i(TAG, "onViewCaptured: 第"+getPosition()+"触发菜单关闭");
             }
 
-            if (mIsMoving && rv != null) {
-                rv.setLayoutFrozen(true);
-            } else if(!mIsMoving && rv != null){
-                rv.setLayoutFrozen(false);
-            }
+//            if (mIsMoving && rv != null) {
+//                rv.setLayoutFrozen(true);
+//            } else if(!mIsMoving && rv != null){
+//                rv.setLayoutFrozen(false);
+//            }
         }
 
         @Override
@@ -228,5 +251,13 @@ public class MyDragItemView extends ViewGroup {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public boolean isMenuOpen() {
+        return isMenuOpen;
+    }
+
+    public void setMenuOpen(boolean menuOpen) {
+        isMenuOpen = menuOpen;
     }
 }

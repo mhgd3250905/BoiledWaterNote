@@ -112,7 +112,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             public void onItemClickListener(View view, int pos) {
                 boolean haveItemOpen = adapter.isHaveItemMenuOpen();
                 if (haveItemOpen){
-                    adapter.notifyDataSetChanged();
+                    adapter.resetMenuStatus();
                     return;
                 }
                 Note note = mDataList.get(pos);
@@ -141,24 +141,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             }
         });
 
-//        adapter.setOnDragItemStatusChange(new NoteListAdapter.OnDragItemStatusChange() {
-//            @Override
-//            public void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
-//                linearLayoutManager.setScroll(false);
-//                if (lastDragItem!=null){
-//                    lastDragItem.resetItemAnim();
-//                    lastDragItem=null;
-//                }
-////               Log.i(TAG, "onDragingListener: 第"+pos+"个Item正在拖拽！left--->"+left);
-//            }
-//
-//            @Override
-//            public void onDragClose(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy) {
-//                linearLayoutManager.setScroll(true);
-//                lastDragItem=item;
-//                Log.i(TAG, "onDragingListener: 第"+pos+"个Item结束！left--->"+left);
-//            }
-//        });
+
     }
 
     @Override
