@@ -193,9 +193,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             public void onItemMenuStatusOpen(int position) {
                 Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽开启" + position);
                 dataList.get(position).setMenuOpen(true);
-                for (int i = 0; i < dataList.size(); i++) {
-                    Log.i(TAG, position+"->" + dataList.get(i).isMenuOpen());
-                }
             }
 
             @Override

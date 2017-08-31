@@ -129,6 +129,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                 if (noteListPresenter.deleteNote(note)) {
                     mDataList.remove(pos);
                     adapter.notifyItemRemoved(pos);
+                    adapter.notifyItemRangeChanged(pos,adapter.getItemCount());
                 }else {
                     Toast.makeText(getContext(), "删除笔记失败", Toast.LENGTH_SHORT).show();
                                                                                         }
