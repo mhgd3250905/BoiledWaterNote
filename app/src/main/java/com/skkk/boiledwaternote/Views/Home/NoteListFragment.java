@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
+import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
 import com.skkk.boiledwaternote.R;
@@ -31,7 +31,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     private String mParam1;
     private String mParam2;
     //    private RefreshLayout refreshLayout;
-    private RecyclerView rvNoteList;
+    private VerticalRecyclerView rvNoteList;
     private MyLinearLayoutManager linearLayoutManager;
     private List<Note> mDataList;
     private NoteListAdapter adapter;
@@ -78,7 +78,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
      */
     private void initUI(View view) {
 //      refreshLayout = (RefreshLayout) view.findViewById(R.id.rl_note_list);
-        rvNoteList = (RecyclerView) view.findViewById(R.id.rv_note_list);
+        rvNoteList = (VerticalRecyclerView) view.findViewById(R.id.rv_note_list);
         linearLayoutManager=new MyLinearLayoutManager(getContext());
         rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());

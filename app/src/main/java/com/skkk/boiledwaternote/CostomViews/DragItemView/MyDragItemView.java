@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -43,7 +42,6 @@ public class MyDragItemView extends ViewGroup {
     private int position;
     private boolean isMenuOpen;
 
-    private RecyclerView rv;
 
     public interface OnDragItemClickListener{
         void onItemClickListener(View view, int pos);
@@ -114,9 +112,6 @@ public class MyDragItemView extends ViewGroup {
             getChildAt(1).layout(l, t, r, b);
             maxWidth = llShow.getMeasuredWidth() / 2;
             leftBorder = llShow.getLeft();
-            if (getParent().getParent() instanceof RecyclerView) {
-                rv = (RecyclerView) getParent().getParent();
-            }
         }
     }
 
