@@ -51,7 +51,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     private Context context;
     private ImageView ivFormatAlignCenter, ivFormatBold, ivFormatItalic,
             ivFormatList, ivFormatHorSeperate, ivFormatQuote, ivFormatSize,
-            ivFormatUnderLine, ivFormatStrikeThrough;
+            ivFormatUnderLine, ivFormatStrikeThrough,ivFormatCheckBox;
     private ImageView ivEditFormatNotice;
 
     private MyItemTouchHelperCallback callback;
@@ -93,6 +93,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatSize = (ImageView) findViewById(R.id.iv_format_size);
         ivFormatUnderLine = (ImageView) findViewById(R.id.iv_format_underlined);
         ivFormatStrikeThrough = (ImageView) findViewById(R.id.iv_format_strike_through);
+        ivFormatCheckBox = (ImageView) findViewById(R.id.iv_format_checkbox);
 
         ivFormatAlignCenter.setOnClickListener(this);
         ivFormatBold.setOnClickListener(this);
@@ -103,6 +104,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatSize.setOnClickListener(this);
         ivFormatUnderLine.setOnClickListener(this);
         ivFormatStrikeThrough.setOnClickListener(this);
+        ivFormatCheckBox.setOnClickListener(this);
     }
 
     /**
@@ -429,6 +431,30 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                     rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
                 }
                 break;
+            case R.id.iv_format_checkbox:
+                /*
+                * 点击列表项目之后在下方添加一行
+                * */
+                List<NoteEditModel> checkItems = new ArrayList<>();
+                NoteEditModel checkModle=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
+                checkModle.setFormat_show_checkbox(true,false);
+                checkItems.add(checkModle);
+                int checkPos=currentHolder.getCurrentPos();
+                insertItems(checkItems, checkPos+1);
+                adapter.setFocusItemPos(checkPos+1);
+                adapter.notifyDataSetChanged();
+
+                /*
+                * 锁定光标
+                * */
+                if (checkPos < adapter.getItemCount() - 1) {
+                    rvRichEdit.smoothScrollToPosition(checkPos);
+                } else {
+                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+                }
+                break;
+
+
             case R.id.iv_format_underlined:         //设置文字下划线
                 if (!isSelected) {
                     if (currentHolder.isFormat_underlined()) {

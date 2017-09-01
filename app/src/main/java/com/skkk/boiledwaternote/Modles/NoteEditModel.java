@@ -22,6 +22,8 @@ public class NoteEditModel {
     public int format_size=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
     public boolean format_underlined=false;    //下划线
     public boolean format_strike_through = false;//删除线
+    public boolean format_show_checkbox=false;  //勾选框
+    public boolean foramt_checkBox_check=false; //勾选框是否勾选
 
     public NoteEditModel() {
     }
@@ -133,5 +135,18 @@ public class NoteEditModel {
 
     public void setFormat_strike_through(boolean format_strike_through) {
         this.format_strike_through = format_strike_through;
+    }
+
+    public boolean isFormat_show_checkbox() {
+        return format_show_checkbox;
+    }
+
+    public boolean isForamt_checkBox_check() {
+        return foramt_checkBox_check;
+    }
+
+    public void setFormat_show_checkbox(boolean format_show_checkbox, boolean foramt_checkBox_check) {
+        this.format_show_checkbox = format_show_checkbox;
+        this.foramt_checkBox_check=foramt_checkBox_check;
     }
 }

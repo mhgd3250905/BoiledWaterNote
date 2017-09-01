@@ -11,15 +11,20 @@
         android:orientation="horizontal"
         android:visibility="visible">
 
+        <CheckBox
+            style="@style/FormatCheckBox"
+            android:layout_marginStart="5dp"
+            android:id="@id/cb_text_check"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
+
         <ImageView
-            android:background="@color/colorGray"
+            android:background="@drawable/vector_drawable_quote"
             android:id="@id/iv_text_quote"
-            android:layout_width="5dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="20dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="5dp"
             android:visibility="visible" />
-
-
 
         <ImageView
             android:id="@id/iv_text_point"

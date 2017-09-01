@@ -50,4 +50,6 @@
     <item name="cv_note_list_image" type="id">cv_note_list_image</item>
     <item name="iv_format_hor_seperate" type="id">iv_format_hor_seperate</item>
     <item name="iv_lock" type="id">iv_lock</item>
+    <item name="cb_text_check" type="id">cb_text_check</item>
+    <item name="iv_format_checkbox" type="id">iv_format_checkbox</item>
 </resources>

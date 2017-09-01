@@ -53,4 +53,10 @@
         <item name="android:windowEnterAnimation">@anim/pop_show_anim</item>
         <item name="android:windowExitAnimation">@anim/pop_hidden_anim</item>
     </style>
+
+    <style name="FormatCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/select_foramt_checkbox</item>
+        <item name="android:paddingLeft">5.0dip</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

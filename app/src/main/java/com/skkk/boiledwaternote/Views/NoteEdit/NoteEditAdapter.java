@@ -20,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -162,6 +163,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.setFormat_quote(itemDate.isFormat_quote());
             //设置列表格式
             holder.setFormat_list(itemDate.isFormat_list());
+            //设置勾选框样式
+            holder.setForamtCheckBox(itemDate.isFormat_show_checkbox(),itemDate.isForamt_checkBox_check());
             //设置对齐方式
             holder.setFormat_align_center(itemDate.isFormat_align_center());
 
@@ -326,8 +329,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
 
-
-
     /**
      * ViewHolder
      */
@@ -336,10 +337,12 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public LinearLayout llEditContainer;    //edit文本区域
         @Bind(R.id.tv_item_recylcer)
         public EditText etItem;                 //编辑文本框
-        @Bind(R.id.iv_text_quote)
-        public ImageView ivTextQuote;           //编辑栏位引用图标
         @Bind(R.id.iv_text_point)
         public ImageView ivTextPonit;           //编辑栏位列表图标
+        @Bind(R.id.cb_text_check)
+        public CheckBox cbTextCheck;           //编辑栏位勾选框
+        @Bind(R.id.iv_text_quote)
+        public ImageView ivTextQuote;           //编辑栏位引用图标
         @Bind(R.id.rl_item_img)
         public RelativeLayout rlItemImg;        //Image区域容器
         @Bind(R.id.iv_item_img)
@@ -355,17 +358,20 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         @Bind(R.id.rl_item_separated)
         public RelativeLayout rlItemSeparated;  //分割线容器
 
+
         private OnKeyDownFinishListener onKeyDownFinishListener;//按键按下事件监听
 
-        public boolean format_align_center=false;  //居中
-        public boolean format_bold=false;          //加粗
-        public boolean format_italic=false;        //斜体
-        public boolean format_list=false;          //列表
-        public boolean format_list_numbered=false; //数字列表
-        public boolean format_quote=false;         //引用
-        public int format_size=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
-        public boolean format_underlined=false;    //下划线
-        public boolean format_strike_through=false;    //下划线
+        public boolean format_align_center = false;  //居中
+        public boolean format_bold = false;          //加粗
+        public boolean format_italic = false;        //斜体
+        public boolean format_list = false;          //列表
+        public boolean format_list_numbered = false; //数字列表
+        public boolean format_quote = false;         //引用
+        public int format_size = 1;                  //字体大小：0-p 1-h1 2-h2 3-h3
+        public boolean format_underlined = false;    //下划线
+        public boolean format_strike_through = false;    //下划线
+        public boolean foramt_show_checkBox=false;       //勾选框
+        public boolean foramt_checkBox_checked=false;  //勾选框是否勾选
 
         /*
         * 每一个Item都需要保存对应的位置：便于管理
@@ -380,6 +386,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public int getCurrentPos() {
             return currentPos;
         }
+
         public void setCurrentPos(int currentPos) {
             this.currentPos = currentPos;
         }
@@ -520,9 +527,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         /**
          * 设置Holder中的编辑栏span特效并同步保存数据样式
          *
-         * @param what Span类型
+         * @param what  Span类型
          * @param start 起始位置
-         * @param end 结束为止
+         * @param end   结束为止
          * @param flags SPAN标签
          */
         public void setSpan(Object what, int start, int end, int flags) {
@@ -551,6 +558,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         /**
          * 设置按键（Enter/Del）按键监听
+         *
          * @param onKeyDownFinishListener
          */
         public void setOnKeyDownFinishListener(OnKeyDownFinishListener onKeyDownFinishListener) {
@@ -564,7 +572,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
          */
 
         public void setFormat_align_center(boolean isTextCenter) {
-            format_align_center=isTextCenter;
+            format_align_center = isTextCenter;
             if (format_align_center) {
                 etItem.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             } else {
@@ -575,6 +583,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         /**
          * 获取文本对齐方式
+         *
          * @return
          */
         public boolean isFormat_align_center() {
@@ -583,80 +592,89 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         /**
          * 设置是否字体加粗
+         *
          * @param format_bold
          */
         public void setFormat_blod(boolean format_bold) {
-            this.format_bold=format_bold;
+            this.format_bold = format_bold;
             myItemTextChangeListener.setFormat_blod(format_bold);
         }
 
 
         /**
          * 获取字体是否加粗
+         *
          * @return
          */
-        public boolean isFormat_bold(){
+        public boolean isFormat_bold() {
             return format_bold;
         }
 
         /**
          * 设置是否字体倾斜
+         *
          * @param format_italic
          */
         public void setFormat_italic(boolean format_italic) {
-            this.format_italic=format_italic;
+            this.format_italic = format_italic;
             myItemTextChangeListener.setFormat_italic(format_italic);
         }
 
         /**
          * 获取字体是否倾斜
+         *
          * @return
          */
-        public boolean isFormat_italic(){
+        public boolean isFormat_italic() {
             return format_italic;
         }
 
         /**
          * 设置字体下划线
+         *
          * @param format_underlined
          */
         public void setFormat_underlined(boolean format_underlined) {
-            this.format_underlined=format_underlined;
+            this.format_underlined = format_underlined;
             myItemTextChangeListener.setFormat_underlined(format_underlined);
         }
 
         /**
          * 获取字体是否下划线
+         *
          * @return
          */
-        public boolean isFormat_underlined(){
+        public boolean isFormat_underlined() {
             return format_underlined;
         }
 
         /**
          * 设置字体删除线
+         *
          * @param format_strike_through
          */
-        public void setFormat_strike_through(boolean format_strike_through){
-            this.format_strike_through=format_strike_through;
+        public void setFormat_strike_through(boolean format_strike_through) {
+            this.format_strike_through = format_strike_through;
             myItemTextChangeListener.setFormat_strike_through(format_strike_through);
         }
 
         /**
          * 获取字体是否删除线
+         *
          * @return
          */
-        public boolean isFormat_strike_through(){
+        public boolean isFormat_strike_through() {
             return format_strike_through;
         }
 
 
         /**
          * 设置富文本列表样式
+         *
          * @param format_list
          */
         public void setFormat_list(boolean format_list) {
-            this.format_list=format_list;
+            this.format_list = format_list;
             /*
             * 如果此时Item为引用样式，那么强行转换为列表样式
             * */
@@ -670,6 +688,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         /**
          * 是否为列表样式
+         *
          * @return
          */
         public boolean isFormat_list() {
@@ -678,10 +697,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         /**
          * 设置富文本引用样式
+         *
          * @param format_quote
          */
         public void setFormat_quote(boolean format_quote) {
-            this.format_quote=format_quote;
+            this.format_quote = format_quote;
             /*
             * 将列表强制转换为引用
             * */
@@ -695,8 +715,41 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     : ContextCompat.getColor(context, R.color.colorBlackBody));
         }
 
+
+        /**
+         * 是否为勾选框样式
+         * @return
+         */
+        public boolean isForamt_show_checkBox(){
+            return foramt_show_checkBox;
+        }
+
+        /**
+         * 设置勾选框
+         * @param foramt_show_checkBox
+         * @param foramt_checkBox_checked
+         */
+        public void setForamtCheckBox(boolean foramt_show_checkBox, boolean foramt_checkBox_checked){
+            this.foramt_show_checkBox = foramt_show_checkBox;
+            this.foramt_checkBox_checked=foramt_checkBox_checked;
+            /*
+            * 如果此时Item为引用样式，那么强行转换为列表样式
+            * */
+            if (format_list) {
+                setFormat_quote(!format_list);
+            }
+            if (format_quote){
+                setFormat_quote(!format_quote);
+            }
+            //同步到数据列表
+            mDataList.get(currentPos).setFormat_show_checkbox(foramt_show_checkBox,foramt_checkBox_checked);
+            cbTextCheck.setVisibility(foramt_show_checkBox ? View.VISIBLE : GONE);
+            cbTextCheck.setChecked(foramt_checkBox_checked);
+        }
+
         /**
          * 是否为引用样式
+         *
          * @return
          */
         public boolean isFormat_quote() {

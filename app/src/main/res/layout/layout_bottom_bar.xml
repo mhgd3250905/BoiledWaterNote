@@ -70,4 +70,11 @@
         android:layout_width="0dp"
         android:layout_height="match_parent" />
 
+    <ImageView
+        android:id="@id/iv_format_checkbox"
+        android:src="@drawable/format_checkbox"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+
 </LinearLayout>
