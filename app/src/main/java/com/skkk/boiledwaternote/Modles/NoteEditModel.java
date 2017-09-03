@@ -147,6 +147,10 @@ public class NoteEditModel {
 
     public void setFormat_show_checkbox(boolean format_show_checkbox, boolean foramt_checkBox_check) {
         this.format_show_checkbox = format_show_checkbox;
-        this.foramt_checkBox_check=foramt_checkBox_check;
+        setForamt_checkBox_check(foramt_checkBox_check);
+    }
+
+    public void setForamt_checkBox_check(boolean foramt_checkBox_check) {
+        this.foramt_checkBox_check = foramt_checkBox_check;
     }
 }

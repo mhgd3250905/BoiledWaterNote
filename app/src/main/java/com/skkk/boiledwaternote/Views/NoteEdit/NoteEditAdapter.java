@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -164,9 +165,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             //设置列表格式
             holder.setFormat_list(itemDate.isFormat_list());
             //设置勾选框样式
-            holder.setForamtCheckBox(itemDate.isFormat_show_checkbox(),itemDate.isForamt_checkBox_check());
+            holder.setForamtCheckBox(itemDate.isFormat_show_checkbox(), itemDate.isForamt_checkBox_check());
             //设置对齐方式
             holder.setFormat_align_center(itemDate.isFormat_align_center());
+
 
             //设置指定的Item获取焦点
             if (focusItemPos == position) {
@@ -370,8 +372,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public int format_size = 1;                  //字体大小：0-p 1-h1 2-h2 3-h3
         public boolean format_underlined = false;    //下划线
         public boolean format_strike_through = false;    //下划线
-        public boolean foramt_show_checkBox=false;       //勾选框
-        public boolean foramt_checkBox_checked=false;  //勾选框是否勾选
+        public boolean foramt_show_checkBox = false;       //勾选框
+        public boolean foramt_checkBox_checked = false;  //勾选框是否勾选
 
         /*
         * 每一个Item都需要保存对应的位置：便于管理
@@ -429,7 +431,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     * 如果按下了Enter按键
                     * */
                     if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                        if (isFormat_list() || isFormat_quote()) {
+                        if (isFormat_list() || isFormat_quote() || isForamt_show_checkBox()) {
                             /*
                             * 如果此时这个Item是富文本引用或者列表类型
                             * 就初始化一个文本Item，当然内容为空
@@ -450,6 +452,21 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                     * */
                                     model.setFormat_list(isFormat_list());
                                     model.setFormat_quote(!isFormat_list());
+                                    model.setFormat_show_checkbox(!isFormat_list(), !isFormat_list());
+                                }
+                            } else if (isForamt_show_checkBox()) {
+                                /*
+                                * 如果富文本样式为列表，那么就需要在下方在添加一个列表
+                                * */
+                                if (etItem.length() > 0) {
+                                    /*
+                                    * 当这个checkBox中有内容的时候
+                                    * 否则下一个就不是checkBox
+                                    * */
+                                    model.setFormat_show_checkbox(isForamt_show_checkBox(), false);
+                                    model.setFormat_quote(!isForamt_show_checkBox());
+                                    model.setFormat_list(!isForamt_show_checkBox());
+
                                 }
                             }
                             /*
@@ -485,6 +502,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 //如果该item富文本为quote那么就取消其状态
                                 setFormat_quote(!isFormat_quote());
                                 return false;
+                            } else if (isForamt_show_checkBox()) {
+                                setForamtCheckBox(false, false);
+                                return false;
                             }
                             if (currentPos != 0) {
                                 // TODO: 2017/8/1 如果长按删除键会出现重复删除的bug
@@ -518,7 +538,25 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             etItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    return isFormat_list() || isFormat_quote();
+                    return isFormat_list() || isFormat_quote() || isForamt_show_checkBox();
+                }
+            });
+
+
+            cbTextCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mDataList.get(getCurrentPos()).setForamt_checkBox_check(isChecked);
+                    //获取选择区域内所有的StyleSpan
+                    StrikethroughSpan[] spans = etItem.getText().getSpans(0, etItem.length(), StrikethroughSpan.class);
+                    //清除区域内所有的UnderLineSpan
+                    for (int i = 0; i < spans.length; i++) {
+                        removeSpan(spans[i]);
+                    }
+                    //如果本身没有Span，这里需要设置
+                    if (isChecked) {
+                        setSpan(new StrikethroughSpan(), 0, etItem.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                 }
             });
 
@@ -681,6 +719,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (format_list) {
                 setFormat_quote(!format_list);
             }
+            if (format_list) {
+                setForamtCheckBox(!format_list, !format_list);
+            }
             //同步到数据列表
             mDataList.get(currentPos).setFormat_list(format_list);
             ivTextPonit.setVisibility(format_list ? View.VISIBLE : GONE);
@@ -708,6 +749,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (format_quote) {
                 setFormat_list(!format_quote);
             }
+            if (format_quote) {
+                setForamtCheckBox(!foramt_show_checkBox, !foramt_checkBox_checked);
+            }
             //同步数据列表
             mDataList.get(currentPos).setFormat_quote(format_quote);
             ivTextQuote.setVisibility(format_quote ? View.VISIBLE : GONE);
@@ -718,31 +762,33 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         /**
          * 是否为勾选框样式
+         *
          * @return
          */
-        public boolean isForamt_show_checkBox(){
+        public boolean isForamt_show_checkBox() {
             return foramt_show_checkBox;
         }
 
         /**
          * 设置勾选框
+         *
          * @param foramt_show_checkBox
          * @param foramt_checkBox_checked
          */
-        public void setForamtCheckBox(boolean foramt_show_checkBox, boolean foramt_checkBox_checked){
+        public void setForamtCheckBox(boolean foramt_show_checkBox, boolean foramt_checkBox_checked) {
             this.foramt_show_checkBox = foramt_show_checkBox;
-            this.foramt_checkBox_checked=foramt_checkBox_checked;
+            this.foramt_checkBox_checked = foramt_checkBox_checked;
             /*
             * 如果此时Item为引用样式，那么强行转换为列表样式
             * */
-            if (format_list) {
-                setFormat_quote(!format_list);
+            if (foramt_show_checkBox) {
+                setFormat_quote(!foramt_show_checkBox);
             }
-            if (format_quote){
-                setFormat_quote(!format_quote);
+            if (foramt_show_checkBox) {
+                setFormat_quote(!foramt_show_checkBox);
             }
             //同步到数据列表
-            mDataList.get(currentPos).setFormat_show_checkbox(foramt_show_checkBox,foramt_checkBox_checked);
+            mDataList.get(currentPos).setFormat_show_checkbox(foramt_show_checkBox, foramt_checkBox_checked);
             cbTextCheck.setVisibility(foramt_show_checkBox ? View.VISIBLE : GONE);
             cbTextCheck.setChecked(foramt_checkBox_checked);
         }
