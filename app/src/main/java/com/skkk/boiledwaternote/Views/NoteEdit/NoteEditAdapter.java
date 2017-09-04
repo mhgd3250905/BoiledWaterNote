@@ -547,19 +547,28 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     mDataList.get(getCurrentPos()).setForamt_checkBox_check(isChecked);
-                    //获取选择区域内所有的StyleSpan
-                    StrikethroughSpan[] spans = etItem.getText().getSpans(0, etItem.length(), StrikethroughSpan.class);
-                    //清除区域内所有的UnderLineSpan
-                    for (int i = 0; i < spans.length; i++) {
-                        removeSpan(spans[i]);
-                    }
-                    //如果本身没有Span，这里需要设置
-                    if (isChecked) {
-                        setSpan(new StrikethroughSpan(), 0, etItem.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
+                    setWholeEditStrikethroughSpan(isChecked);
+                    setFormat_strike_through(isChecked);
                 }
             });
 
+        }
+
+        /**
+         * 设置整个EditText删除线
+         * @param isChecked
+         */
+        private void setWholeEditStrikethroughSpan(boolean isChecked) {
+            //获取选择区域内所有的StyleSpan
+            StrikethroughSpan[] spans = etItem.getText().getSpans(0, etItem.length(), StrikethroughSpan.class);
+            //清除区域内所有的UnderLineSpan
+            for (int i = 0; i < spans.length; i++) {
+                removeSpan(spans[i]);
+            }
+            //如果本身没有Span，这里需要设置
+            if (isChecked) {
+                setSpan(new StrikethroughSpan(), 0, etItem.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
 
         /**
@@ -791,6 +800,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             mDataList.get(currentPos).setFormat_show_checkbox(foramt_show_checkBox, foramt_checkBox_checked);
             cbTextCheck.setVisibility(foramt_show_checkBox ? View.VISIBLE : GONE);
             cbTextCheck.setChecked(foramt_checkBox_checked);
+            setWholeEditStrikethroughSpan(foramt_checkBox_checked);
         }
 
         /**
@@ -814,6 +824,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         private int format_size = 0;                  //字体大小：0-p 1-h1 2-h2 3-h3
         private boolean format_underlined = false;    //下划线
         private boolean format_strike_through = false;//删除线
+        private int lastPos;
 
         public void updatePos(int position) {
             this.position = position;
@@ -860,17 +871,17 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
                 currentEdit.setText(ss);
 
-
                 if (android.os.Build.VERSION.SDK_INT >= N) {
                     Log.i(TAG, "onTextChanged: --->" + Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                 } else {
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
                 }
+                currentEdit.setSelection((start+count-before)>0?start+count-before:0);
 
             } else {
                 flagIsAuto = false;
-                currentEdit.setSelection(start + count);
+//                currentEdit.setSelection(lastPos);
             }
 
 
