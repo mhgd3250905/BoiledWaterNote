@@ -535,6 +535,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             });
 
 
+            /*
+            * 设置需要在哪种情况下屏蔽EditText的回车另作处理
+            * */
             etItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -543,6 +546,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             });
 
 
+            /*
+            * 设置勾选框切换勾选的时候的响应
+            * */
             cbTextCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -877,7 +883,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 } else {
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
                 }
-                currentEdit.setSelection((start+count-before)>0?start+count-before:0);
+                currentEdit.setSelection((start+count)>0?start+count:0);
 
             } else {
                 flagIsAuto = false;

@@ -165,14 +165,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         if (dataList.get(position).isMenuOpen()) {
             Log.i(TAG, "onBindViewHolder: 正在关闭第" + position + "个Item");
             holder.divItem.closeItem();
-            Note note = dataList.get(position);
-            note.setMenuOpen(false);
-            dataList.set(position, note);
         } else {
             holder.divItem.resetItem();
-            Note note = dataList.get(position);
-            note.setMenuOpen(false);
-            dataList.set(position, note);
         }
 
         /**
