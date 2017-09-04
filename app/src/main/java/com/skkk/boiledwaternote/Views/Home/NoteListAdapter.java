@@ -158,8 +158,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         /**
          * 设置Item菜单
          */
-        //设置当前位置
-        holder.divItem.setPosition(position);
 
         Log.i(TAG, "onBindViewHolder: 处理第" + position + "个Item的菜单状态");
         if (dataList.get(position).isMenuOpen()) {
@@ -174,25 +172,25 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
          */
         holder.divItem.setOnItemDragStatusChange(new MyDragItemView.OnItemDragStatusChange() {
             @Override
-            public void onItemDragStatusOpen(int position) {
+            public void onItemDragStatusOpen() {
                 itemClickable = false;
             }
 
             @Override
-            public void onItemDragStatusClose(int position) {
+            public void onItemDragStatusClose() {
                 itemClickable = true;
             }
 
             @Override
-            public void onItemMenuStatusOpen(int position) {
+            public void onItemMenuStatusOpen() {
                 Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽开启" + position);
-                dataList.get(position).setMenuOpen(true);
+                dataList.get(holder.getAdapterPosition()).setMenuOpen(true);
             }
 
             @Override
-            public void onItemMenuStatusClose(int position) {
+            public void onItemMenuStatusClose() {
                 Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽guanb" + position);
-                dataList.get(position).setMenuOpen(false);
+                dataList.get(holder.getAdapterPosition()).setMenuOpen(false);
                 for (int i = 0; i < dataList.size(); i++) {
                     Log.i(TAG, position+"->" + dataList.get(i).isMenuOpen());
                 }

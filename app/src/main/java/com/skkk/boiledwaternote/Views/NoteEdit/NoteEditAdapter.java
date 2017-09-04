@@ -765,7 +765,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 setFormat_list(!format_quote);
             }
             if (format_quote) {
-                setForamtCheckBox(!foramt_show_checkBox, !foramt_checkBox_checked);
+                setForamtCheckBox(!format_quote, !format_quote);
             }
             //同步数据列表
             mDataList.get(currentPos).setFormat_quote(format_quote);
