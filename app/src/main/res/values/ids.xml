@@ -52,4 +52,5 @@
     <item name="iv_lock" type="id">iv_lock</item>
     <item name="cb_text_check" type="id">cb_text_check</item>
     <item name="iv_format_checkbox" type="id">iv_format_checkbox</item>
+    <item name="ll_left_menu_top_container" type="id">ll_left_menu_top_container</item>
 </resources>
