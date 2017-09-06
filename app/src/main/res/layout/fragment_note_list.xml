@@ -5,17 +5,12 @@
     tools:context="com.skkk.boiledwaternote.Views.Home.NoteListFragment">
 
 
-    <!--<com.skkk.boiledwaternote.CostomViews.RefreshLayout.RefreshLayout-->
-        <!--android:id="@id/rl_note_list"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
         <com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView
             android:background="@color/colorWhite"
             android:id="@id/rv_note_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    <!--</com.skkk.boiledwaternote.CostomViews.RefreshLayout.RefreshLayout>-->
+
 
 </FrameLayout>

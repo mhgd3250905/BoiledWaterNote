@@ -187,18 +187,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        if (id == R.id.nav_article) {//文章
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_note) {//笔记
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_image) {//图片
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_privacy) {//隐私
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_recycle) {//回收站
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_about) {//关于
+
+        }else if (id==R.id.nav_setting){//设置
 
         }
 
