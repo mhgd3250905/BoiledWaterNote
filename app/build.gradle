@@ -44,8 +44,8 @@ dependencies {
     })
     //greenDao
     /*
-            这里是是Rxjava+Retrofit
-            */
+     * 这里是是Rxjava+Retrofit
+     */
     //图片压缩
     //cardView
     compile 'com.android.support:appcompat-v7:25.2.0'

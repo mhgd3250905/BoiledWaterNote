@@ -327,23 +327,24 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 /*
                 * 点击列表项目之后在下方添加一行
                 * */
-                List<NoteEditModel> listItems = new ArrayList<>();
-                NoteEditModel listModel=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
-                listModel.setFormat_list(true);
-                listItems.add(listModel);
-                int pos=currentHolder.getCurrentPos();
-                insertItems(listItems, pos+1);
-                adapter.setFocusItemPos(pos+1);
-                adapter.notifyDataSetChanged();
-
-                /*
-                * 锁定光标
-                * */
-                if (pos < adapter.getItemCount() - 1) {
-                    rvRichEdit.smoothScrollToPosition(pos);
-                } else {
-                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
-                }
+//                List<NoteEditModel> listItems = new ArrayList<>();
+//                NoteEditModel listModel=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
+//                listModel.setFormat_list(true);
+//                listItems.add(listModel);
+//                int pos=currentHolder.getCurrentPos();
+//                insertItems(listItems, pos+1);
+//                adapter.setFocusItemPos(pos+1);
+//                adapter.notifyDataSetChanged();
+//
+//                /*
+//                * 锁定光标
+//                * */
+//                if (pos < adapter.getItemCount() - 1) {
+//                    rvRichEdit.smoothScrollToPosition(pos);
+//                } else {
+//                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+//                }
+                currentHolder.setFormat_list(!currentHolder.isFormat_list());
 
                 break;
 
@@ -413,47 +414,50 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 /*
                 * 点击列表项目之后在下方添加一行
                 * */
-                List<NoteEditModel> quoteItems = new ArrayList<>();
-                NoteEditModel qutoeModel=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
-                qutoeModel.setFormat_quote(true);
-                quoteItems.add(qutoeModel);
-                int quotePos=currentHolder.getCurrentPos();
-                insertItems(quoteItems, quotePos+1);
-                adapter.setFocusItemPos(quotePos+1);
-                adapter.notifyDataSetChanged();
+//                List<NoteEditModel> quoteItems = new ArrayList<>();
+//                NoteEditModel qutoeModel=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
+//                qutoeModel.setFormat_quote(true);
+//                quoteItems.add(qutoeModel);
+//                int quotePos=currentHolder.getCurrentPos();
+//                insertItems(quoteItems, quotePos+1);
+//                adapter.setFocusItemPos(quotePos+1);
+//                adapter.notifyDataSetChanged();
 
-                /*
-                * 锁定光标
-                * */
-                if (quotePos < adapter.getItemCount() - 1) {
-                    rvRichEdit.smoothScrollToPosition(quotePos);
-                } else {
-                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
-                }
+//                /*
+//                * 锁定光标
+//                * */
+//                if (quotePos < adapter.getItemCount() - 1) {
+//                    rvRichEdit.smoothScrollToPosition(quotePos);
+//                } else {
+//                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+//                }
+
+                currentHolder.setFormat_quote(!currentHolder.isFormat_quote());
                 break;
             case R.id.iv_format_checkbox:
                 /*
                 * 点击列表项目之后在下方添加一行
                 * */
-                List<NoteEditModel> checkItems = new ArrayList<>();
-                NoteEditModel checkModle=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
-                checkModle.setFormat_show_checkbox(true,false);
-                checkItems.add(checkModle);
-                int checkPos=currentHolder.getCurrentPos();
-                insertItems(checkItems, checkPos+1);
-                adapter.setFocusItemPos(checkPos+1);
-                adapter.notifyDataSetChanged();
+//                List<NoteEditModel> checkItems = new ArrayList<>();
+//                NoteEditModel checkModle=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
+//                checkModle.setFormat_show_checkbox(true,false);
+//                checkItems.add(checkModle);
+//                int checkPos=currentHolder.getCurrentPos();
+//                insertItems(checkItems, checkPos+1);
+//                adapter.setFocusItemPos(checkPos+1);
+//                adapter.notifyDataSetChanged();
+//
+//                /*
+//                * 锁定光标
+//                * */
+//                if (checkPos < adapter.getItemCount() - 1) {
+//                    rvRichEdit.smoothScrollToPosition(checkPos);
+//                } else {
+//                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+//                }
 
-                /*
-                * 锁定光标
-                * */
-                if (checkPos < adapter.getItemCount() - 1) {
-                    rvRichEdit.smoothScrollToPosition(checkPos);
-                } else {
-                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
-                }
+                currentHolder.setForamtCheckBox(!currentHolder.isForamt_show_checkBox(),false);
                 break;
-
 
             case R.id.iv_format_underlined:         //设置文字下划线
                 if (!isSelected) {
