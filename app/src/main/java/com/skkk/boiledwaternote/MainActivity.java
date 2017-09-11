@@ -2,7 +2,6 @@ package com.skkk.boiledwaternote;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -13,29 +12,45 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Toolbar toolbar;
-    private FloatingActionButton fab;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.fl_container)
+    FrameLayout flContainer;
+    @Bind(R.id.content_main)
+    RelativeLayout contentMain;
+    @Bind(R.id.nav_view)
+    NavigationView navView;
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    private Menu navigationMenu;
+    private NoteEditPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        presenter = new NoteEditPresenter(this);
         initUI();               //初始化UI
         initEvent();            //初始化各种事件
         addDefaultFragment();   //添加进入时候默认的Fragment
-
     }
 
     /**
@@ -46,45 +61,38 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //FAB悬浮按钮
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-
         //侧滑菜单
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        navigationView.setNavigationItemSelectedListener(this);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationMenu = navigationView.getMenu();
     }
 
     /**
      * 初始化各种点击事件
      */
     private void initEvent() {
-        //fab点击事件
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(MainActivity.this, NoteEditActivity.class),Configs.REQUEST_START_NEW_NOTE);
-            }
-        });
+
     }
 
     /**
      * 返回值处理啊
+     *
      * @param requestCode 请求码
-     * @param resultCode    结果码
-     * @param data  数据
+     * @param resultCode  结果码
+     * @param data        数据
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //抛转到NoteList界面
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fl_container);
-        currentFragment.onActivityResult(requestCode,resultCode,data);
+        currentFragment.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -152,6 +160,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
         return true;
     }
 
@@ -169,7 +178,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add) {
+            startActivityForResult(new Intent(MainActivity.this, NoteEditActivity.class), Configs.REQUEST_START_NEW_NOTE);
             return true;
         }
 
@@ -187,8 +197,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        //设置菜单点击事件
+        navigationMenu.findItem(id).setChecked(true);
         if (id == R.id.nav_article) {//文章
-
         } else if (id == R.id.nav_note) {//笔记
 
         } else if (id == R.id.nav_image) {//图片
@@ -199,7 +210,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_about) {//关于
 
-        }else if (id==R.id.nav_setting){//设置
+        } else if (id == R.id.nav_setting) {//设置
 
         }
 

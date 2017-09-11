@@ -125,7 +125,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             }
         }
 
-
         if (onItemClickListener != null) {
             holder.llShow.setOnClickListener(new View.OnClickListener() {
                 @Override

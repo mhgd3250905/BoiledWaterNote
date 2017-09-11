@@ -1,16 +1,53 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.skkk.boiledwaternote.Views.Home.NoteListFragment">
 
 
-        <com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView
-            android:background="@color/colorWhite"
-            android:id="@id/rv_note_list"
+    <com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView
+        android:id="@id/rv_note_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:background="@color/colorWhite" />
+
+    <RelativeLayout
+        android:id="@id/rl_note_edit"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <EditText
+            android:textSize="18sp"
+            android:padding="5dp"
+            android:id="@id/et_note_edit"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/iv_note_edit_save"
+            android:background="@drawable/note_edit_bg_normal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="5dp"
+            android:id="@id/iv_note_edit_save"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/vector_drawable_record"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignTop="@+id/et_note_edit"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
 
 
-
-</FrameLayout>
+</LinearLayout>

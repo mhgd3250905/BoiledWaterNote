@@ -11,6 +11,7 @@ import com.skkk.boiledwaternote.Modles.gen.DaoSession;
 import com.skkk.boiledwaternote.Modles.gen.NoteDao;
 import com.skkk.boiledwaternote.Modles.gen.NoteImageDao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,16 +26,10 @@ import java.util.List;
 */
 public class NoteEditPresenter implements NoteEditable {
     private final String TAG = NoteEditPresenter.class.getSimpleName();
-
-    private String SEPARATED_FLAG = "☞";      //用来分隔不同条目传入的不同数据
-    private String SEPARATED_TEXT_FLAG = "$|TEXT|$";      //用来分隔不同条目传入的不同数据
-    private String SEPARATED_IMAGE_FLAG = "$|IMAGE|$";      //用来分隔不同条目传入的不同数据
     private Context context;
-
     public NoteEditPresenter(Context context) {
         this.context = context;
     }
-
 
     /**
      * 保存Note
@@ -47,6 +42,42 @@ public class NoteEditPresenter implements NoteEditable {
 
         Gson gson = new Gson();
         String contentJson = gson.toJson(noteEditModels);
+        Log.i(TAG, "saveNote: json---------------------->" + "\n" + contentJson);
+
+        //获取数据库操作类
+        DaoSession session = DBUtils.getInstance(context).getSession();
+        NoteDao noteDao = session.getNoteDao();
+        NoteImageDao noteImageDao = session.getNoteImageDao();
+
+        Note note = new Note();
+        note.setNid(System.currentTimeMillis());
+        note.setContent(contentJson);
+        note.setCreateTime(new Date());
+        note.setUpdateTime(new Date());
+
+        done = noteDao.insert(note) != -1;
+        Log.i(TAG, "getNote: " + note.toString());
+        return done;
+
+    }
+
+
+    /**
+     * 保存Note
+     * @param noteEditModels
+     * @return
+     */
+    @Override
+    public boolean saveNote(NoteEditModel... noteEditModels) {
+        boolean done = false;
+        List<NoteEditModel> noteEditViewHolderList = new ArrayList<>();
+
+        for (int i = 0; i < noteEditModels.length; i++) {
+            noteEditViewHolderList.add(noteEditModels[i]);
+        }
+
+        Gson gson = new Gson();
+        String contentJson = gson.toJson(noteEditViewHolderList);
         Log.i(TAG, "saveNote: json---------------------->" + "\n" + contentJson);
 
         //获取数据库操作类

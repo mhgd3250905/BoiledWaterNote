@@ -13,6 +13,9 @@ public interface NoteEditable {
     //分析内容字符串保存Note
     boolean saveNote(List<NoteEditModel> noteEditModels);
 
+    //保存Note
+    boolean saveNote(NoteEditModel... noteEditModels);
+
     //分析内容更新笔记
     boolean updateNote(List<NoteEditModel> noteEditModels, Note note);
 }

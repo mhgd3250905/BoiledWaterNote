@@ -53,4 +53,7 @@
     <item name="cb_text_check" type="id">cb_text_check</item>
     <item name="iv_format_checkbox" type="id">iv_format_checkbox</item>
     <item name="ll_left_menu_top_container" type="id">ll_left_menu_top_container</item>
+    <item name="et_note_edit" type="id">et_note_edit</item>
+    <item name="iv_note_edit_save" type="id">iv_note_edit_save</item>
+    <item name="rl_note_edit" type="id">rl_note_edit</item>
 </resources>

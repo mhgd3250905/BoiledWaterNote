@@ -6,8 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Configs;
@@ -15,6 +19,8 @@ import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
+import com.skkk.boiledwaternote.Modles.NoteEditModel;
+import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
@@ -22,16 +28,28 @@ import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 
 public class NoteListFragment extends Fragment implements NoteListImpl {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    @Bind(R.id.rv_note_list)
+    VerticalRecyclerView rvNoteList;
+    @Bind(R.id.et_note_edit)
+    EditText etNoteEdit;
+    @Bind(R.id.iv_note_edit_save)
+    ImageView ivNoteEditSave;
+    @Bind(R.id.rl_note_edit)
+    RelativeLayout rlNoteEdit;
+
     private NoteListPresenter noteListPresenter;
+    private NoteEditPresenter noteEditPresenter;
 
     private String mParam1;
     private String mParam2;
     //    private RefreshLayout refreshLayout;
-    private VerticalRecyclerView rvNoteList;
     private MyLinearLayoutManager linearLayoutManager;
     private List<Note> mDataList;
     private NoteListAdapter adapter;
@@ -60,14 +78,17 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_note_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_note_list, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         noteListPresenter = new NoteListPresenter(this);                //获取操作类
-        mDataList=new ArrayList<>();                                  //初始化数据集
+        noteEditPresenter=new NoteEditPresenter(getContext());
+        mDataList = new ArrayList<>();                                  //初始化数据集
         initUI(view);       //初始化UI
         initEvent();        //设置各种事件
         noteListPresenter.fectch();
@@ -77,28 +98,13 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
      * 初始化UI
      */
     private void initUI(View view) {
-//      refreshLayout = (RefreshLayout) view.findViewById(R.id.rl_note_list);
-        rvNoteList = (VerticalRecyclerView) view.findViewById(R.id.rv_note_list);
-        linearLayoutManager=new MyLinearLayoutManager(getContext());
+        linearLayoutManager = new MyLinearLayoutManager(getContext());
         rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
-//        mDataList = getDefaultData();
         adapter = new NoteListAdapter(getContext(), mDataList);
         rvNoteList.setAdapter(adapter);
     }
 
-    /**
-     * 获取数据
-     *
-     * @return
-     */
-//    public List<Note> getDefaultData() {
-//        List<Note> notes = new ArrayList<>();
-//        if (noteListPresenter != null) {
-//            notes = noteListPresenter.getNotes();
-//        }
-//        return notes;
-//    }
 
     /**
      * 初始化事件
@@ -111,7 +117,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             @Override
             public void onItemClickListener(View view, int pos) {
                 boolean haveItemOpen = adapter.isHaveItemMenuOpen();
-                if (haveItemOpen){
+                if (haveItemOpen) {
                     adapter.resetMenuStatus();
                     return;
                 }
@@ -130,9 +136,9 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                     mDataList.remove(pos);
                     adapter.setDataList(mDataList);
                     adapter.notifyItemRemoved(pos);
-                }else {
+                } else {
                     Toast.makeText(getContext(), "删除笔记失败", Toast.LENGTH_SHORT).show();
-                                                                                        }
+                }
             }
 
             //隐藏菜单上锁点击事件
@@ -142,6 +148,26 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             }
         });
 
+        /**
+         * 下方笔记类别添加按钮事件
+         */
+        ivNoteEditSave.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (etNoteEdit.length()!=0){
+                    NoteEditModel note=new NoteEditModel(etNoteEdit.getText().toString(), NoteEditModel.Flag.TEXT,null);
+                    if (noteEditPresenter.saveNote(note)){
+                        noteListPresenter.showNoteList();
+                        etNoteEdit.setText("");
+                    }else{
+                        Toast.makeText(getContext(), "保存失败！", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    Toast.makeText(getContext(), "内容为空", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
 
     }
 
@@ -172,7 +198,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     @Override
     public void showList(List<Note> noteList) {
-        mDataList=noteList;
+        mDataList = noteList;
         adapter.setDataList(mDataList);
         adapter.notifyDataSetChanged();
     }
@@ -181,7 +207,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     public void deleteNote(int pos) {
         mDataList.remove(pos);
         adapter.notifyItemRemoved(pos);
-        adapter.notifyItemRangeChanged(pos,adapter.getItemCount()-pos);
+        adapter.notifyItemRangeChanged(pos, adapter.getItemCount() - pos);
     }
 
     @Override
@@ -189,4 +215,9 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 }
