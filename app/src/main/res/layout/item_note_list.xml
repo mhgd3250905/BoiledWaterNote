@@ -6,46 +6,38 @@
     android:orientation="vertical">
 
     <com.skkk.boiledwaternote.CostomViews.DragItemView.MyDragItemView
+        android:visibility="visible"
         android:id="@id/div_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<android.support.v7.widget.CardView-->
-            <!--android:id="@id/ll_hide"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:foreground="?attr/selectableItemBackground"-->
-            <!--android:orientation="horizontal"-->
-            <!--app:cardBackgroundColor="@color/colorPrimary"-->
-            <!--app:cardUseCompatPadding="true">-->
-
-            <LinearLayout
-                android:id="@id/ll_hide"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+        <LinearLayout
+            android:id="@id/ll_hide"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <ImageView
+                android:id="@id/iv_delete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="10dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/vector_drawable_delete"
-                android:id="@id/iv_delete"
-                android:layout_margin="10dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
                 android:text="Delete" />
 
             <ImageView
-                android:scaleType="fitXY"
-                android:src="@drawable/vector_drawable_lock"
                 android:id="@id/iv_lock"
-                android:layout_margin="10dp"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
+                android:layout_margin="10dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/vector_drawable_lock"
                 android:text="Delete" />
 
-            </LinearLayout>
+        </LinearLayout>
 
         <!--</android.support.v7.widget.CardView>-->
 
@@ -103,17 +95,17 @@
 
                 <android.support.v7.widget.CardView
                     android:id="@id/cv_note_list_image"
-                    android:layout_margin="5dp"
                     android:layout_width="80dp"
-                    app:cardUseCompatPadding="true"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    app:cardUseCompatPadding="true">
 
                     <ImageView
-                        android:scaleType="fitXY"
                         android:id="@id/iv_note_list_image"
-                        android:src="@mipmap/ic_launcher"
                         android:layout_width="80dp"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:src="@mipmap/ic_launcher" />
                 </android.support.v7.widget.CardView>
 
             </LinearLayout>
@@ -121,4 +113,13 @@
 
     </com.skkk.boiledwaternote.CostomViews.DragItemView.MyDragItemView>
 
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@id/tv_note_list_note_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </LinearLayout>

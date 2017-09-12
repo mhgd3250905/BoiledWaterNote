@@ -56,4 +56,5 @@
     <item name="et_note_edit" type="id">et_note_edit</item>
     <item name="iv_note_edit_save" type="id">iv_note_edit_save</item>
     <item name="rl_note_edit" type="id">rl_note_edit</item>
+    <item name="tv_note_list_note_title" type="id">tv_note_list_note_title</item>
 </resources>
