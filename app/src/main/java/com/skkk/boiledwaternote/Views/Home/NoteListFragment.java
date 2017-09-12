@@ -157,7 +157,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                 if (etNoteEdit.length()!=0){
                     NoteEditModel note=new NoteEditModel(etNoteEdit.getText().toString(), NoteEditModel.Flag.TEXT,null);
                     if (noteEditPresenter.saveNote(note)){
-                        noteListPresenter.showNoteList();
+                        noteListPresenter.showLatestNote();
                         etNoteEdit.setText("");
                     }else{
                         Toast.makeText(getContext(), "保存失败！", Toast.LENGTH_SHORT).show();
@@ -213,6 +213,13 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     @Override
     public void deletelist(List<Note> noteList) {
 
+    }
+
+    @Override
+    public void showLatestOne(Note note) {
+        mDataList.add(0,note);
+        adapter.notifyItemInserted(0);
+        linearLayoutManager.scrollToPosition(0);
     }
 
     @Override

@@ -50,6 +50,11 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
         noteListImpl.showList(noteList);
     }
 
+    public void showLatestNote(){
+        Note note = noteModle.queryLatestOne();
+        noteListImpl.showLatestOne(note);
+    }
+
     /**
      * 删除笔记
      * @param note

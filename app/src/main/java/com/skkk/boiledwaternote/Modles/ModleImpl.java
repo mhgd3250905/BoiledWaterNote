@@ -16,4 +16,5 @@ interface ModleImpl<T> {
     boolean saveOne(T t);
     boolean updateOne(T t);
     boolean deleteOne(T t);
+    T queryLatestOne();
 }

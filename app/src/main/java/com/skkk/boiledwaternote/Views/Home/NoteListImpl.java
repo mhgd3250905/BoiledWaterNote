@@ -12,4 +12,5 @@ public interface NoteListImpl {
     void showList(List<Note> noteList);
     void deleteNote(int pos);
     void deletelist(List<Note> noteList);
+    void showLatestOne(Note note);
 }

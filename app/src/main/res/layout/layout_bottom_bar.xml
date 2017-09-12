@@ -21,8 +21,8 @@
         android:layout_height="match_parent" />
 
     <ImageView
-        android:id="@id/iv_format_hor_seperate"
-        android:src="@drawable/format_hor_seperate"
+        android:id="@id/iv_format_checkbox"
+        android:src="@drawable/ic_check_box_outline"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent" />
@@ -30,6 +30,13 @@
     <ImageView
         android:id="@id/iv_format_quote"
         android:src="@drawable/format_quote"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@id/iv_format_hor_seperate"
+        android:src="@drawable/format_hor_seperate"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent" />
@@ -70,11 +77,5 @@
         android:layout_width="0dp"
         android:layout_height="match_parent" />
 
-    <ImageView
-        android:id="@id/iv_format_checkbox"
-        android:src="@drawable/ic_check_box_outline"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="match_parent" />
 
 </LinearLayout>

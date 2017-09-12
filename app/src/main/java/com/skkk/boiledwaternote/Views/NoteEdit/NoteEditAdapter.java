@@ -454,7 +454,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                     model.setFormat_quote(!isFormat_list());
                                     model.setFormat_show_checkbox(!isFormat_list(), !isFormat_list());
                                 }
-                            } else if (isForamt_show_checkBox()) {
+                            }  else if (isForamt_show_checkBox()) {
                                 /*
                                 * 如果富文本样式为列表，那么就需要在下方在添加一个列表
                                 * */
@@ -488,10 +488,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     * 如果按下了DEL按键
                     * */
                     if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
-                            /*
-                            * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
-                            * */
-                        if (TextUtils.isEmpty(etItem.getText())) {
+                        /*
+                        * 如果处于引用 列表 或者 勾选框富文本样式
+                        * 那么从行首DEL就可以删除这个富文本样式
+                        * */
+                        if (etItem.getSelectionStart()==0) {
                             if (isFormat_list()) {
                                 /*
                                 * 如果富文本样式为List，那么就取消其富文本样式
@@ -506,6 +507,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 setForamtCheckBox(false, false);
                                 return false;
                             }
+                        }
+                        /*
+                        * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
+                        * */
+                        if (TextUtils.isEmpty(etItem.getText())) {
                             if (currentPos != 0) {
                                 // TODO: 2017/8/1 如果长按删除键会出现重复删除的bug
                                 //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
@@ -562,6 +568,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         /**
          * 设置整个EditText删除线
+         *
          * @param isChecked
          */
         private void setWholeEditStrikethroughSpan(boolean isChecked) {
@@ -883,7 +890,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 } else {
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
                 }
-                currentEdit.setSelection((start+count)>0?start+count:0);
+                currentEdit.setSelection((start + count) > 0 ? start + count : 0);
 
             } else {
                 flagIsAuto = false;
