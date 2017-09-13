@@ -109,7 +109,7 @@ public class NoteEditPresenter implements NoteEditable {
         try {
             Gson gson = new Gson();
             String contentJson = gson.toJson(noteEditModels);
-            Log.i(TAG, "saveNote: json---------------------->" + "\n" + contentJson);
+            Log.i(TAG, "updateNote: json---------------------->" + "\n" + contentJson);
 
             //获取数据库操作类
             DaoSession session = DBUtils.getInstance(context).getSession();

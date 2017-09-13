@@ -22,17 +22,18 @@ public class NoteModle implements ModleImpl<Note> {
 
     public NoteModle(Context context) {
         this.context = context;
-        session = DBUtils.getInstance(context).getSession();
     }
 
     @Override
     public List<Note> queryAll() {
+        session = DBUtils.getInstance(context).getSession();
         List<Note> noteList = session.getNoteDao().queryBuilder().orderDesc(NoteDao.Properties.CreateTime).list();
         return noteList;
     }
 
     @Override
     public boolean saveOne(Note note) {
+        session = DBUtils.getInstance(context).getSession();
         try {
             NoteDao noteDao = session.getNoteDao();
             long insert = noteDao.insert(note);
@@ -44,6 +45,7 @@ public class NoteModle implements ModleImpl<Note> {
 
     @Override
     public boolean updateOne(Note note) {
+        session = DBUtils.getInstance(context).getSession();
         try {
             NoteDao noteDao = session.getNoteDao();
             noteDao.update(note);
@@ -55,6 +57,7 @@ public class NoteModle implements ModleImpl<Note> {
 
     @Override
     public boolean deleteOne(Note note) {
+        session = DBUtils.getInstance(context).getSession();
         try {
             NoteDao noteDao = session.getNoteDao();
             noteDao.delete(note);
