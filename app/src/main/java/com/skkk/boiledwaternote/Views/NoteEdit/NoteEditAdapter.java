@@ -69,6 +69,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private int focusItemPos = -1;                                              //需要获得焦点的Item
     private boolean itemFormatList = false;                                     //设置List格式为List
     private int separatedImageResouseId;
+    private int moveToPos;
 
 
     public interface OnItemEditHasFocusListener {
@@ -233,8 +234,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
                 layoutParams.height = (int) context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
             } else {
-                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                layoutParams.height = (int) context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
+                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
+                layoutParams.height = (int) context.getResources().getDimension(R.dimen.item_edit_image_height_hor);
             }
             holder.flBombMenuContainer.setLayoutParams(layoutParams);
             holder.ivItemImage.setLayoutParams(layoutParams);
@@ -275,6 +276,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     public void onItemMove(int fromPos, int toPos) {
         Collections.swap(mDataList, fromPos, toPos);
         notifyItemMoved(fromPos, toPos);
+        moveToPos = toPos;
     }
 
     /**
@@ -282,6 +284,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
      */
     @Override
     public void onItemMoveDone() {
+        /*
+        * 当我们移动到最后一个Item的位置的时候就需要在后面添加一个文本Item
+        * */
+        if (moveToPos>=mDataList.size()-1){
+            mDataList.add(new NoteEditModel("", NoteEditModel.Flag.TEXT,null));
+            notifyItemInserted(moveToPos+1);
+        }
         notifyDataSetChanged();
     }
 

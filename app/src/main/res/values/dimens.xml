@@ -17,8 +17,8 @@
     <dimen name="text_size_item_popwindow">18sp</dimen>
     <dimen name="text_dialog_item">16sp</dimen>
     <dimen name="dialog_item_padding">15dp</dimen>
-    <dimen name="item_edit_image_width_ver">540px</dimen>
-    <dimen name="item_edit_image_height_ver">800px</dimen>
-    <dimen name="item_edit_image_width_hor">800px</dimen>
-    <dimen name="item_edit_image_height_hor">540px</dimen>
+    <dimen name="item_edit_image_width_ver">810px</dimen>
+    <dimen name="item_edit_image_height_ver">1066px</dimen>
+    <dimen name="item_edit_image_width_hor">1066px</dimen>
+    <dimen name="item_edit_image_height_hor">810px</dimen>
 </resources>

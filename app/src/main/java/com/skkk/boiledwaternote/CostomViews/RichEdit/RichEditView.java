@@ -567,6 +567,21 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     }
 
     /**
+     * 获取当前选中的Item的位置
+     * @return
+     */
+    public int getCurrentHolderPosition(){
+        if (null==adapter.getCurrentHolder()){
+            return 0;
+        }
+        return adapter.getCurrentHolder().getCurrentPos();
+    }
+
+    public List<NoteEditModel> getCurrentDataList(){
+        return adapter.getmDataList();
+    }
+
+    /**
      * 重置（开始新的）数据
      */
     @Override

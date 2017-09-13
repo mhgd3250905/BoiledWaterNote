@@ -155,7 +155,6 @@ public class NoteEditActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * 初始化各种事件
      */
@@ -259,8 +258,11 @@ public class NoteEditActivity extends AppCompatActivity {
                 case CAMERA_REQUEST_CODE:    //拍照返回插入图片到编辑框
                     List<NoteEditModel> cameraItems = new ArrayList<>();
                     cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.IMAGE, cameraPath));
-                    cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
-                    revEdit.insertItems(cameraItems, -1);
+                    if (revEdit.getCurrentHolderPosition() + 1 >= revEdit.getCurrentDataList().size()) {
+                        cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+                    }
+                    revEdit.insertItems(cameraItems, revEdit.getCurrentHolderPosition() + 1);
+
                     break;
                 case ALBUM_REQUEST_CODE:    //相册选取返回并插入图片到编辑框
                     if (data != null) {
@@ -269,8 +271,11 @@ public class NoteEditActivity extends AppCompatActivity {
                                 uriImageFromGallery);
                         List<NoteEditModel> albumItems = new ArrayList<>();
                         albumItems.add(new NoteEditModel("", NoteEditModel.Flag.IMAGE, albumImagePath));
-                        albumItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
-                        revEdit.insertItems(albumItems, -1);
+                        if (revEdit.getCurrentHolderPosition() + 1 >= revEdit.getCurrentDataList().size()) {
+                            albumItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+                        }
+
+                        revEdit.insertItems(albumItems, revEdit.getCurrentHolderPosition() + 1);
                     }
                     break;
             }
