@@ -137,7 +137,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                     adapter.setDataList(mDataList);
                     adapter.notifyItemRemoved(pos);
                 } else {
-                    Toast.makeText(getContext(), "删除笔记失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.note_list_article_item_delete, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -145,6 +145,20 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             @Override
             public void onItemLockClickListener(View view, int pos) {
 
+            }
+
+
+            //便签类型长按点击事件
+            @Override
+            public void onNoteItemLongClickListener(View view, int pos) {
+                Note note = mDataList.get(pos);
+                if (noteListPresenter.deleteNote(note)) {
+                    mDataList.remove(pos);
+                    adapter.setDataList(mDataList);
+                    adapter.notifyItemRemoved(pos);
+                } else {
+                    Toast.makeText(getContext(), R.string.note_list_note_item_delete, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -156,7 +170,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             public boolean onTouch(View v, MotionEvent event) {
                 if (etNoteEdit.length()!=0){
                     NoteEditModel note=new NoteEditModel(etNoteEdit.getText().toString(), NoteEditModel.Flag.TEXT,null);
-                    if (noteEditPresenter.saveNote(note)){
+                    if (noteEditPresenter.saveNote(true,note)){
                         noteListPresenter.showLatestNote();
                         etNoteEdit.setText("");
                     }else{

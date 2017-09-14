@@ -57,4 +57,14 @@
     <item name="iv_note_edit_save" type="id">iv_note_edit_save</item>
     <item name="rl_note_edit" type="id">rl_note_edit</item>
     <item name="tv_note_list_note_title" type="id">tv_note_list_note_title</item>
+    <item name="rl_note_list_note_container" type="id">rl_note_list_note_container</item>
+    <item name="ll_note_list_note_container_inside" type="id">ll_note_list_note_container_inside
+    </item>
+    <item name="tv_note_list_note_time" type="id">tv_note_list_note_time</item>
+    <item name="tv_article_list_time" type="id">tv_article_list_time</item>
+    <item name="tv_article_list_title" type="id">tv_article_list_title</item>
+    <item name="cv_article_list_image" type="id">cv_article_list_image</item>
+    <item name="iv_article_list_image" type="id">iv_article_list_image</item>
+    <item name="ll_note_list_container_inside" type="id">ll_note_list_container_inside</item>
+    <item name="rl_note_list_container" type="id">rl_note_list_container</item>
 </resources>

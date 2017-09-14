@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -62,6 +63,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         void onItemDeleteClickListener(View view, int pos);
 
         void onItemLockClickListener(View view, int pos);
+
+        void onNoteItemLongClickListener(View view,int pos);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -82,19 +85,26 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
-        //显示距离此刻模式的时间显示方式
-        CharSequence relativeDateTimeString = DateUtils
-                .getRelativeDateTimeString(context, dataList.get(position).getCreateTime().getTime(),
-                        DateUtils.MINUTE_IN_MILLIS, DateUtils.HOUR_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME);
-        holder.tvNoteListTime.setText(relativeDateTimeString);
-
+        boolean isNote=dataList.get(position).getIsNote();
         //获取第一段文字作为标题
         String content = dataList.get(position).getContent();
         String title = null;       //显示标题
         String imagePath = null;   //图片路径
 
-        if (!TextUtils.isEmpty(content)) {
-            NoteEditModel[] noteEditModels = new Gson().fromJson(content, NoteEditModel[].class);
+        if (isNote) {
+            /*
+            * 如果是笔记类型
+            * */
+            holder.divItem.setVisibility(View.GONE);
+            holder.rlListNoteContainer.setVisibility(View.VISIBLE);
+
+            //显示距离此刻模式的时间显示方式
+            CharSequence relativeDateTimeString = DateUtils
+                    .getRelativeDateTimeString(context, dataList.get(position).getCreateTime().getTime(),
+                            DateUtils.MINUTE_IN_MILLIS, DateUtils.HOUR_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME);
+            holder.tvNoteListTime.setText(relativeDateTimeString);
+
+            NoteEditModel[] noteEditModels = new Gson().fromJson(dataList.get(position).getContent(), NoteEditModel[].class);
             //获取并设置第一个Text
             for (int i = 0; i < noteEditModels.length; i++) {
                 if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.TEXT) {
@@ -105,97 +115,135 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             if (!TextUtils.isEmpty(title)) {
                 holder.tvNoteListTitle.setText(Html.fromHtml(title).toString());
             } else {
-                holder.tvNoteListTitle.setText("无题");
+                holder.tvNoteListTitle.setText(R.string.note_list_empty_title);
             }
 
-            //获取并设置第一个图片
-            for (int i = 0; i < noteEditModels.length; i++) {
-                if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.IMAGE) {
-                    imagePath = noteEditModels[i].getImagePath();
-                    break;
-                }
-            }
-            if (!TextUtils.isEmpty(imagePath)) {
-                holder.cvNoteListImage.setVisibility(View.VISIBLE);
-                Glide.with(context)
-                        .load(imagePath)
-                        .into(holder.ivNoteListImage);
-            } else {
-                holder.cvNoteListImage.setVisibility(View.GONE);
-            }
-        }
-
-        if (onItemClickListener != null) {
-            holder.llShow.setOnClickListener(new View.OnClickListener() {
+            /*
+            * 设置点击长按事件
+            * */
+            holder.rlListNoteContainer.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View v) {
-                    if (itemClickable) {
-                        int pos = holder.getAdapterPosition();
-                        onItemClickListener.onItemClickListener(v, pos);
+                public boolean onLongClick(View v) {
+                    onItemClickListener.onNoteItemLongClickListener(v,holder.getAdapterPosition());
+                    return false;
+                }
+            });
+
+
+        }else {
+            /*
+            * 如果是文章类型
+            * */
+            holder.divItem.setVisibility(View.VISIBLE);
+            holder.rlListNoteContainer.setVisibility(View.GONE);
+
+            //显示距离此刻模式的时间显示方式
+            CharSequence relativeDateTimeString = DateUtils
+                    .getRelativeDateTimeString(context, dataList.get(position).getCreateTime().getTime(),
+                            DateUtils.MINUTE_IN_MILLIS, DateUtils.HOUR_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME);
+            holder.tvArticleListTime.setText(relativeDateTimeString);
+
+            if (!TextUtils.isEmpty(content)) {
+                NoteEditModel[] noteEditModels = new Gson().fromJson(content, NoteEditModel[].class);
+                //获取并设置第一个Text
+                for (int i = 0; i < noteEditModels.length; i++) {
+                    if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.TEXT) {
+                        title = noteEditModels[i].getContent();
+                        break;
                     }
                 }
-            });
-
-            holder.ivDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = holder.getAdapterPosition();
-                    onItemClickListener.onItemDeleteClickListener(v, pos);
+                if (!TextUtils.isEmpty(title)) {
+                    holder.tvArticleListTitle.setText(Html.fromHtml(title).toString());
+                } else {
+                    holder.tvArticleListTitle.setText(R.string.note_list_empty_title);
                 }
-            });
 
-            holder.ivLock.setOnClickListener(new View.OnClickListener() {
+                //获取并设置第一个图片
+                for (int i = 0; i < noteEditModels.length; i++) {
+                    if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.IMAGE) {
+                        imagePath = noteEditModels[i].getImagePath();
+                        break;
+                    }
+                }
+                if (!TextUtils.isEmpty(imagePath)) {
+                    holder.cvArticleListImage.setVisibility(View.VISIBLE);
+                    Glide.with(context)
+                            .load(imagePath)
+                            .into(holder.ivArticleListImage);
+                } else {
+                    holder.cvArticleListImage.setVisibility(View.GONE);
+                }
+            }
+
+            if (onItemClickListener != null) {
+                holder.llShow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (itemClickable) {
+                            onItemClickListener.onItemClickListener(v, holder.getAdapterPosition());
+                        }
+                    }
+                });
+
+                holder.ivDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onItemClickListener.onItemDeleteClickListener(v, holder.getAdapterPosition());
+                    }
+                });
+
+                holder.ivLock.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onItemClickListener.onItemLockClickListener(v, holder.getAdapterPosition());
+                    }
+                });
+            }
+
+
+            /**
+             * 设置Item菜单
+             */
+
+            Log.i(TAG, "onBindViewHolder: 处理第" + position + "个Item的菜单状态");
+            if (dataList.get(position).isMenuOpen()) {
+                Log.i(TAG, "onBindViewHolder: 正在关闭第" + position + "个Item");
+                holder.divItem.closeItem();
+            } else {
+                holder.divItem.resetItem();
+            }
+
+            /**
+             * 设置拖拽状态监听事件
+             */
+            holder.divItem.setOnItemDragStatusChange(new MyDragItemView.OnItemDragStatusChange() {
                 @Override
-                public void onClick(View v) {
-                    int pos = holder.getAdapterPosition();
-                    onItemClickListener.onItemLockClickListener(v, pos);
+                public void onItemDragStatusOpen() {
+                    itemClickable = false;
+                }
+
+                @Override
+                public void onItemDragStatusClose() {
+                    itemClickable = true;
+                }
+
+                @Override
+                public void onItemMenuStatusOpen() {
+                    Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽开启" + position);
+                    dataList.get(holder.getAdapterPosition()).setMenuOpen(true);
+                }
+
+                @Override
+                public void onItemMenuStatusClose() {
+                    Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽guanb" + position);
+                    dataList.get(holder.getAdapterPosition()).setMenuOpen(false);
+                    for (int i = 0; i < dataList.size(); i++) {
+                        Log.i(TAG, position + "->" + dataList.get(i).isMenuOpen());
+                    }
+
                 }
             });
         }
-
-
-        /**
-         * 设置Item菜单
-         */
-
-        Log.i(TAG, "onBindViewHolder: 处理第" + position + "个Item的菜单状态");
-        if (dataList.get(position).isMenuOpen()) {
-            Log.i(TAG, "onBindViewHolder: 正在关闭第" + position + "个Item");
-            holder.divItem.closeItem();
-        } else {
-            holder.divItem.resetItem();
-        }
-
-        /**
-         * 设置拖拽状态监听事件
-         */
-        holder.divItem.setOnItemDragStatusChange(new MyDragItemView.OnItemDragStatusChange() {
-            @Override
-            public void onItemDragStatusOpen() {
-                itemClickable = false;
-            }
-
-            @Override
-            public void onItemDragStatusClose() {
-                itemClickable = true;
-            }
-
-            @Override
-            public void onItemMenuStatusOpen() {
-                Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽开启" + position);
-                dataList.get(holder.getAdapterPosition()).setMenuOpen(true);
-            }
-
-            @Override
-            public void onItemMenuStatusClose() {
-                Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽guanb" + position);
-                dataList.get(holder.getAdapterPosition()).setMenuOpen(false);
-                for (int i = 0; i < dataList.size(); i++) {
-                    Log.i(TAG, position+"->" + dataList.get(i).isMenuOpen());
-                }
-
-            }
-        });
     }
 
     @Override
@@ -248,10 +296,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 //    }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.tv_note_list_title)
-        public TextView tvNoteListTitle;
-        @Bind(R.id.tv_note_list_time)
-        public TextView tvNoteListTime;
+        @Bind(R.id.tv_article_list_title)
+        public TextView tvArticleListTitle;
+        @Bind(R.id.tv_article_list_time)
+        public TextView tvArticleListTime;
         @Bind(R.id.ll_show)
         public CardView llShow;
         @Bind(R.id.ll_hide)
@@ -262,10 +310,16 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         public ImageView ivLock;
         @Bind(R.id.div_item)
         public MyDragItemView divItem;
-        @Bind(R.id.iv_note_list_image)
-        public ImageView ivNoteListImage;
-        @Bind(R.id.cv_note_list_image)
-        public CardView cvNoteListImage;
+        @Bind(R.id.iv_article_list_image)
+        public ImageView ivArticleListImage;
+        @Bind(R.id.cv_article_list_image)
+        public CardView cvArticleListImage;
+        @Bind(R.id.rl_note_list_container)
+        public RelativeLayout rlListNoteContainer;
+        @Bind(R.id.tv_note_list_title)
+        public TextView tvNoteListTitle;
+        @Bind(R.id.tv_note_list_time)
+        public TextView tvNoteListTime;
 
         public MyViewHolder(View itemView) {
             super(itemView);

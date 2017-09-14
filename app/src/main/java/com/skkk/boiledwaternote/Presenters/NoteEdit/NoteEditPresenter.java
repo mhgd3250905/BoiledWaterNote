@@ -37,7 +37,7 @@ public class NoteEditPresenter implements NoteEditable {
      * @param noteEditModels 内容字符串
      */
     @Override
-    public boolean saveNote(List<NoteEditModel> noteEditModels) {
+    public boolean saveNote(boolean isNote,List<NoteEditModel> noteEditModels) {
         boolean done = false;
 
         Gson gson = new Gson();
@@ -54,6 +54,7 @@ public class NoteEditPresenter implements NoteEditable {
         note.setContent(contentJson);
         note.setCreateTime(new Date());
         note.setUpdateTime(new Date());
+        note.setIsNote(isNote);
 
         done = noteDao.insert(note) != -1;
         Log.i(TAG, "getNote: " + note.toString());
@@ -68,7 +69,7 @@ public class NoteEditPresenter implements NoteEditable {
      * @return
      */
     @Override
-    public boolean saveNote(NoteEditModel... noteEditModels) {
+    public boolean saveNote(boolean isNote,NoteEditModel... noteEditModels) {
         boolean done = false;
         List<NoteEditModel> noteEditViewHolderList = new ArrayList<>();
 
@@ -90,6 +91,7 @@ public class NoteEditPresenter implements NoteEditable {
         note.setContent(contentJson);
         note.setCreateTime(new Date());
         note.setUpdateTime(new Date());
+        note.setIsNote(isNote);
 
         done = noteDao.insert(note) != -1;
         Log.i(TAG, "getNote: " + note.toString());

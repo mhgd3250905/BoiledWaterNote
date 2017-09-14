@@ -30,6 +30,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         public final static Property Content = new Property(3, String.class, "content", false, "CONTENT");
         public final static Property CreateTime = new Property(4, java.util.Date.class, "createTime", false, "CREATE_TIME");
         public final static Property UpdateTime = new Property(5, java.util.Date.class, "updateTime", false, "UPDATE_TIME");
+        public final static Property IsNote = new Property(6, boolean.class, "isNote", false, "IS_NOTE");
     };
 
     private DaoSession daoSession;
@@ -53,7 +54,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
                 "\"title\" TEXT," + // 2: title
                 "\"CONTENT\" TEXT NOT NULL ," + // 3: content
                 "\"CREATE_TIME\" INTEGER," + // 4: createTime
-                "\"UPDATE_TIME\" INTEGER);"); // 5: updateTime
+                "\"UPDATE_TIME\" INTEGER," + // 5: updateTime
+                "\"IS_NOTE\" INTEGER NOT NULL );"); // 6: isNote
     }
 
     /** Drops the underlying database table. */
@@ -87,6 +89,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         if (updateTime != null) {
             stmt.bindLong(6, updateTime.getTime());
         }
+        stmt.bindLong(7, entity.getIsNote() ? 1L: 0L);
     }
 
     @Override
@@ -114,6 +117,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         if (updateTime != null) {
             stmt.bindLong(6, updateTime.getTime());
         }
+        stmt.bindLong(7, entity.getIsNote() ? 1L: 0L);
     }
 
     @Override
@@ -135,7 +139,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // title
             cursor.getString(offset + 3), // content
             cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // createTime
-            cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)) // updateTime
+            cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)), // updateTime
+            cursor.getShort(offset + 6) != 0 // isNote
         );
         return entity;
     }
@@ -148,6 +153,7 @@ public class NoteDao extends AbstractDao<Note, Long> {
         entity.setContent(cursor.getString(offset + 3));
         entity.setCreateTime(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
         entity.setUpdateTime(cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)));
+        entity.setIsNote(cursor.getShort(offset + 6) != 0);
      }
     
     @Override

@@ -60,6 +60,9 @@ public class Note implements Serializable {
     @ToMany(joinProperties = {@JoinProperty(name = "nid", referencedName = "noteId")})
     private List<NoteImage> noteImages;    //文章中的图片
 
+    @NonNull
+    private boolean isNote=false;           //类型是否为便签类型
+
     @Transient
     private boolean isMenuOpen;
 
@@ -206,16 +209,25 @@ public class Note implements Serializable {
         isMenuOpen = menuOpen;
     }
 
+    public boolean getIsNote() {
+        return this.isNote;
+    }
 
-    @Generated(hash = 1328469578)
+    public void setIsNote(boolean isNote) {
+        this.isNote = isNote;
+    }
+
+
+    @Generated(hash = 1866488667)
     public Note(Long id, @NotNull Long nid, String title, @NotNull String content,
-                Date createTime, Date updateTime) {
+            Date createTime, Date updateTime, boolean isNote) {
         this.id = id;
         this.nid = nid;
         this.title = title;
         this.content = content;
         this.createTime = createTime;
         this.updateTime = updateTime;
+        this.isNote = isNote;
     }
 
     @Generated(hash = 1272611929)

@@ -6,6 +6,8 @@
     <color name="colorAccent">#a03c50</color>
 
     <color name="colorCardBackground">#FFFFFF</color>
+    <color name="colorTransparent">#00000000</color>
+
 
     <color name="nightColorPrimary">#383838</color>
     <color name="nightColorPrimaryDark">#383838</color>
@@ -28,6 +30,7 @@
     <color name="colorTouchNormalLine">#56abe4</color>
     <color name="colorTouchPressLine">#2aa515</color>
     <color name="colorTouchErrorLine">#d81e06</color>
+    <color name="colorListBackground">#e9e7e8</color>
 
     <color name="theme_color_primary">#fb7299</color>
     <color name="theme_color_primary_dark">#b85671</color>
