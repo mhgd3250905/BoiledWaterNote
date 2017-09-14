@@ -135,6 +135,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:textColor="@color/colorAccent"
                 android:paddingStart="20dp"
                 android:layout_weight="1"
                 android:id="@id/tv_note_list_time"
@@ -151,6 +152,7 @@
 
 
             <TextView
+                android:textColor="@color/colorAccent"
                 android:layout_weight="3"
                 android:id="@id/tv_note_list_title"
                 android:layout_width="match_parent"

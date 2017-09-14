@@ -33,8 +33,11 @@ import butterknife.ButterKnife;
 
 
 public class NoteListFragment extends Fragment implements NoteListImpl {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String NOTE_TYPE_ARTICLE = "note_type_article";
+    public static final String NOTE_TYPE_NOTE = "note_type_note";
+    public static final String NOTE_TYPE_PRIVACY = "note_type_privacy";
+
+    private static final String NOTE_TYPE="note_type";
     @Bind(R.id.rv_note_list)
     VerticalRecyclerView rvNoteList;
     @Bind(R.id.et_note_edit)
@@ -47,8 +50,8 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     private NoteListPresenter noteListPresenter;
     private NoteEditPresenter noteEditPresenter;
 
-    private String mParam1;
-    private String mParam2;
+    private String noteType;
+
     //    private RefreshLayout refreshLayout;
     private MyLinearLayoutManager linearLayoutManager;
     private List<Note> mDataList;
@@ -57,11 +60,10 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     private DragItemCircleView lastDragItem;
 
 
-    public static NoteListFragment newInstance(String param1, String param2) {
+    public static NoteListFragment newInstance(String noteType) {
         NoteListFragment fragment = new NoteListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(NOTE_TYPE, noteType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,8 +72,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            noteType = getArguments().getString(NOTE_TYPE);
         }
     }
 
@@ -86,12 +87,12 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        noteListPresenter = new NoteListPresenter(this);                //获取操作类
+        noteListPresenter=new NoteListPresenter(this);
         noteEditPresenter=new NoteEditPresenter(getContext());
         mDataList = new ArrayList<>();                                  //初始化数据集
         initUI(view);       //初始化UI
         initEvent();        //设置各种事件
-        noteListPresenter.fectch();
+        noteListPresenter.showNotes(noteType);
     }
 
     /**
@@ -147,7 +148,6 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
             }
 
-
             //便签类型长按点击事件
             @Override
             public void onNoteItemLongClickListener(View view, int pos) {
@@ -170,7 +170,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             public boolean onTouch(View v, MotionEvent event) {
                 if (etNoteEdit.length()!=0){
                     NoteEditModel note=new NoteEditModel(etNoteEdit.getText().toString(), NoteEditModel.Flag.TEXT,null);
-                    if (noteEditPresenter.saveNote(true,note)){
+                    if (noteEditPresenter.saveNote(2,true,note)){
                         noteListPresenter.showLatestNote();
                         etNoteEdit.setText("");
                     }else{
@@ -190,10 +190,10 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         super.onActivityResult(requestCode, resultCode, data);
         //请求码是新建一个Note
         if (requestCode == Configs.REQUEST_START_NEW_NOTE) {
-            noteListPresenter.showNoteList();
+            noteListPresenter.showNotes(noteType);
         }
         if (requestCode == Configs.REQUEST_UPDATE_NOTE) {
-            noteListPresenter.showNoteList();
+            noteListPresenter.showNotes(noteType);
         }
     }
 
@@ -240,5 +240,6 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+//        noteListPresenter.detach();
     }
 }

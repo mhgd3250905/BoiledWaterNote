@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity
      * 添加进入时候默认的Fragment
      */
     private void addDefaultFragment() {
-        NoteListFragment noteListFragment = NoteListFragment.newInstance("a", "b");
+        NoteListFragment noteListFragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_ARTICLE);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fl_container, noteListFragment)
@@ -199,13 +199,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         //设置菜单点击事件
         navigationMenu.findItem(id).setChecked(true);
-        if (id == R.id.nav_article) {//文章
-        } else if (id == R.id.nav_note) {//笔记
 
+        Fragment fragment = null;
+
+        if (id == R.id.nav_article) {//文章
+            fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_ARTICLE);
+        } else if (id == R.id.nav_note) {//笔记
+            fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_NOTE);
         } else if (id == R.id.nav_image) {//图片
 
         } else if (id == R.id.nav_privacy) {//隐私
-
+            fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_PRIVACY);
         } else if (id == R.id.nav_recycle) {//回收站
 
         } else if (id == R.id.nav_about) {//关于
@@ -213,6 +217,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_setting) {//设置
 
         }
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fl_container, fragment)
+                .commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -27,6 +27,7 @@ import java.util.List;
 public class NoteEditPresenter implements NoteEditable {
     private final String TAG = NoteEditPresenter.class.getSimpleName();
     private Context context;
+
     public NoteEditPresenter(Context context) {
         this.context = context;
     }
@@ -37,7 +38,7 @@ public class NoteEditPresenter implements NoteEditable {
      * @param noteEditModels 内容字符串
      */
     @Override
-    public boolean saveNote(boolean isNote,List<NoteEditModel> noteEditModels) {
+    public boolean saveNote(int noteType, boolean isNote, List<NoteEditModel> noteEditModels) {
         boolean done = false;
 
         Gson gson = new Gson();
@@ -55,6 +56,7 @@ public class NoteEditPresenter implements NoteEditable {
         note.setCreateTime(new Date());
         note.setUpdateTime(new Date());
         note.setIsNote(isNote);
+        note.setNoteType(noteType);
 
         done = noteDao.insert(note) != -1;
         Log.i(TAG, "getNote: " + note.toString());
@@ -65,11 +67,12 @@ public class NoteEditPresenter implements NoteEditable {
 
     /**
      * 保存Note
+     *
      * @param noteEditModels
      * @return
      */
     @Override
-    public boolean saveNote(boolean isNote,NoteEditModel... noteEditModels) {
+    public boolean saveNote(int noteType, boolean isNote, NoteEditModel... noteEditModels) {
         boolean done = false;
         List<NoteEditModel> noteEditViewHolderList = new ArrayList<>();
 
@@ -92,6 +95,7 @@ public class NoteEditPresenter implements NoteEditable {
         note.setCreateTime(new Date());
         note.setUpdateTime(new Date());
         note.setIsNote(isNote);
+        note.setNoteType(noteType);
 
         done = noteDao.insert(note) != -1;
         Log.i(TAG, "getNote: " + note.toString());
@@ -101,11 +105,12 @@ public class NoteEditPresenter implements NoteEditable {
 
     /**
      * 更新笔记
+     *
      * @param noteEditModels
      * @return
      */
     @Override
-    public boolean updateNote(List<NoteEditModel> noteEditModels,Note note) {
+    public boolean updateNote(List<NoteEditModel> noteEditModels, Note note) {
 
         boolean done = false;
         try {
@@ -123,9 +128,9 @@ public class NoteEditPresenter implements NoteEditable {
 
             noteDao.update(note);
             Log.i(TAG, "getNote: " + note.toString());
-            done=true;
-        }catch (Exception e){
-            done=false;
+            done = true;
+        } catch (Exception e) {
+            done = false;
         }
         return done;
     }

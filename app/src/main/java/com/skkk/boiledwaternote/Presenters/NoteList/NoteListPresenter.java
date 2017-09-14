@@ -25,12 +25,10 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
         this.noteListImpl = noteListImpl;
     }
 
-    /**
-     * 展示数据
-     */
+
     @Override
-    public void fectch() {
-        List<Note> noteList = noteModle.queryAll();
+    public void showNotes(String noteType) {
+        List<Note> noteList = noteModle.query(noteType);
         if (noteList!=null){
             noteListImpl.showList(noteList);
         }
@@ -45,7 +43,7 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
     }
 
     @Override
-    public void showNoteList() {
+    public void showAllNote() {
         List<Note> noteList = noteModle.queryAll();
         noteListImpl.showList(noteList);
     }

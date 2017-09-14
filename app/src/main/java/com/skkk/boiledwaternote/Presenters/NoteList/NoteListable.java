@@ -9,7 +9,8 @@ import java.util.List;
  */
 
 public interface NoteListable {
+    void showNotes(String noteType);
     List<Note> getNotes();
-    void showNoteList();
+    void showAllNote();
     boolean deleteNote(Note note);
 }

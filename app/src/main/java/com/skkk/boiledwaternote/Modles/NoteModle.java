@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.skkk.boiledwaternote.Modles.gen.DaoSession;
 import com.skkk.boiledwaternote.Modles.gen.NoteDao;
+import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
+
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.List;
 
@@ -28,6 +31,26 @@ public class NoteModle implements ModleImpl<Note> {
     public List<Note> queryAll() {
         session = DBUtils.getInstance(context).getSession();
         List<Note> noteList = session.getNoteDao().queryBuilder().orderDesc(NoteDao.Properties.CreateTime).list();
+        return noteList;
+    }
+
+    @Override
+    public List<Note> query(String noteType) {
+        session = DBUtils.getInstance(context).getSession();
+        QueryBuilder<Note> noteQueryBuilder = session.getNoteDao().queryBuilder();
+        switch (noteType) {
+            case NoteListFragment.NOTE_TYPE_ARTICLE:
+                noteQueryBuilder.where(NoteDao.Properties.NoteType.eq(1));
+                break;
+            case NoteListFragment.NOTE_TYPE_NOTE:
+                noteQueryBuilder.where(NoteDao.Properties.NoteType.eq(2));
+                break;
+            case NoteListFragment.NOTE_TYPE_PRIVACY:
+                noteQueryBuilder.where(NoteDao.Properties.NoteType.eq(3));
+                break;
+
+        }
+        List<Note> noteList = noteQueryBuilder.orderDesc(NoteDao.Properties.CreateTime).list();
         return noteList;
     }
 
@@ -66,6 +89,8 @@ public class NoteModle implements ModleImpl<Note> {
             return false;
         }
     }
+
+
 
     @Override
     public Note queryLatestOne() {

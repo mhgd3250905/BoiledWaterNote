@@ -17,10 +17,6 @@ public abstract class BasePersenter<T> {
      */
     protected WeakReference<T> mViewRef;
 
-    /**
-     * 获取数据方法
-     */
-    public abstract void fectch();
 
     public void attachView(T view) {
         mViewRef = new WeakReference<T>(view);

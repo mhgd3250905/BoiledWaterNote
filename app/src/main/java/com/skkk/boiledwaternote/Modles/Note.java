@@ -63,6 +63,9 @@ public class Note implements Serializable {
     @NonNull
     private boolean isNote=false;           //类型是否为便签类型
 
+    @NonNull
+    private int noteType=1;                 //笔记类型1->article 2->note 3->privacy
+
     @Transient
     private boolean isMenuOpen;
 
@@ -217,10 +220,18 @@ public class Note implements Serializable {
         this.isNote = isNote;
     }
 
+    public int getNoteType() {
+        return this.noteType;
+    }
 
-    @Generated(hash = 1866488667)
+    public void setNoteType(int noteType) {
+        this.noteType = noteType;
+    }
+
+
+    @Generated(hash = 1829990822)
     public Note(Long id, @NotNull Long nid, String title, @NotNull String content,
-            Date createTime, Date updateTime, boolean isNote) {
+            Date createTime, Date updateTime, boolean isNote, int noteType) {
         this.id = id;
         this.nid = nid;
         this.title = title;
@@ -228,6 +239,7 @@ public class Note implements Serializable {
         this.createTime = createTime;
         this.updateTime = updateTime;
         this.isNote = isNote;
+        this.noteType = noteType;
     }
 
     @Generated(hash = 1272611929)
