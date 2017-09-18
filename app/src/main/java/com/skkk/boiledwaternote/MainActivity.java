@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationMenu = navigationView.getMenu();
+        navigationMenu.findItem(R.id.nav_all).setChecked(true);
     }
 
     /**
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity
      * 添加进入时候默认的Fragment
      */
     private void addDefaultFragment() {
-        NoteListFragment noteListFragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_ARTICLE);
+        NoteListFragment noteListFragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_NONE);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fl_container, noteListFragment)
@@ -202,7 +203,9 @@ public class MainActivity extends AppCompatActivity
 
         Fragment fragment = null;
 
-        if (id == R.id.nav_article) {//文章
+        if(id==R.id.nav_all) {
+            fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_NONE);
+        }else if (id == R.id.nav_article) {//文章
             fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_ARTICLE);
         } else if (id == R.id.nav_note) {//笔记
             fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_NOTE);
@@ -213,11 +216,16 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_recycle) {//回收站
 
         } else if (id == R.id.nav_about) {//关于
+            navigationMenu.findItem(id).setChecked(false);
 
         } else if (id == R.id.nav_setting) {//设置
+            navigationMenu.findItem(id).setChecked(false);
 
         }
 
+        if (fragment==null){
+            return true;
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fl_container, fragment)

@@ -33,6 +33,7 @@ import butterknife.ButterKnife;
 
 
 public class NoteListFragment extends Fragment implements NoteListImpl {
+    public static final String NOTE_TYPE_NONE = "note_type_none";
     public static final String NOTE_TYPE_ARTICLE = "note_type_article";
     public static final String NOTE_TYPE_NOTE = "note_type_note";
     public static final String NOTE_TYPE_PRIVACY = "note_type_privacy";
@@ -87,7 +88,8 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        noteListPresenter=new NoteListPresenter(this);
+        noteListPresenter=new NoteListPresenter();
+        noteListPresenter.attachView(this);
         noteEditPresenter=new NoteEditPresenter(getContext());
         mDataList = new ArrayList<>();                                  //初始化数据集
         initUI(view);       //初始化UI
@@ -145,7 +147,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //隐藏菜单上锁点击事件
             @Override
             public void onItemLockClickListener(View view, int pos) {
-
+                startActivity(new Intent(getContext(), Main2Activity.class));
             }
 
             //便签类型长按点击事件
@@ -197,18 +199,11 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
 
     @Override
     public void showList(List<Note> noteList) {
@@ -240,6 +235,6 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-//        noteListPresenter.detach();
+        noteListPresenter.detach();
     }
 }

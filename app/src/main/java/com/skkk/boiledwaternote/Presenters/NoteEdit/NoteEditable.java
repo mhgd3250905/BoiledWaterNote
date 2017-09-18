@@ -10,6 +10,7 @@ import java.util.List;
  */
 
 public interface NoteEditable {
+
     //分析内容字符串保存Note
     boolean saveNote(int noteType,boolean isNote,List<NoteEditModel> noteEditModels);
 

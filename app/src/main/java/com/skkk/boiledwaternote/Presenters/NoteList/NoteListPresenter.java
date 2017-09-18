@@ -18,19 +18,19 @@ import java.util.List;
 * 时    间：2017/5/28$ 19:02$.
 */
 public class NoteListPresenter extends BasePersenter<NoteListImpl> implements NoteListable{
-    private NoteListImpl noteListImpl;
+//    private NoteListImpl noteListImpl;
     private NoteModle noteModle=new NoteModle(MyApplication.getInstance().getApplicationContext());
 
-    public NoteListPresenter(NoteListImpl noteListImpl) {
-        this.noteListImpl = noteListImpl;
-    }
+//    public NoteListPresenter(NoteListImpl noteListImpl) {
+//        this.noteListImpl = noteListImpl;
+//    }
 
 
     @Override
     public void showNotes(String noteType) {
         List<Note> noteList = noteModle.query(noteType);
         if (noteList!=null){
-            noteListImpl.showList(noteList);
+            getView().showList(noteList);
         }
     }
 
@@ -45,12 +45,12 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
     @Override
     public void showAllNote() {
         List<Note> noteList = noteModle.queryAll();
-        noteListImpl.showList(noteList);
+        getView().showList(noteList);
     }
 
     public void showLatestNote(){
         Note note = noteModle.queryLatestOne();
-        noteListImpl.showLatestOne(note);
+        getView().showLatestOne(note);
     }
 
     /**

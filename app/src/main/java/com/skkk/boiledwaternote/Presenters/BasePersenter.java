@@ -33,4 +33,12 @@ public abstract class BasePersenter<T> {
             mViewRef=null;
         }
     }
+
+    /**
+     * 获取视图层
+     * @return
+     */
+    public T getView(){
+        return mViewRef.get();
+    }
 }

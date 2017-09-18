@@ -39,6 +39,8 @@ public class NoteModle implements ModleImpl<Note> {
         session = DBUtils.getInstance(context).getSession();
         QueryBuilder<Note> noteQueryBuilder = session.getNoteDao().queryBuilder();
         switch (noteType) {
+            case NoteListFragment.NOTE_TYPE_NONE:
+                break;
             case NoteListFragment.NOTE_TYPE_ARTICLE:
                 noteQueryBuilder.where(NoteDao.Properties.NoteType.eq(1));
                 break;
@@ -60,7 +62,7 @@ public class NoteModle implements ModleImpl<Note> {
         try {
             NoteDao noteDao = session.getNoteDao();
             long insert = noteDao.insert(note);
-            return (insert==-1)?true:false;
+            return (insert!=-1)?true:false;
         }catch (Exception e){
             return false;
         }
@@ -97,4 +99,7 @@ public class NoteModle implements ModleImpl<Note> {
         List<Note> notes = queryAll();
         return notes.get(0);
     }
+
+
+
 }
