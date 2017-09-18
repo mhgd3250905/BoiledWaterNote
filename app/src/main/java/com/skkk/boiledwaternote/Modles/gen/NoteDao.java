@@ -31,7 +31,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
         public final static Property CreateTime = new Property(4, java.util.Date.class, "createTime", false, "CREATE_TIME");
         public final static Property UpdateTime = new Property(5, java.util.Date.class, "updateTime", false, "UPDATE_TIME");
         public final static Property IsNote = new Property(6, boolean.class, "isNote", false, "IS_NOTE");
-        public final static Property NoteType = new Property(7, int.class, "noteType", false, "NOTE_TYPE");
+        public final static Property IsPrivacy = new Property(7, boolean.class, "isPrivacy", false, "IS_PRIVACY");
+        public final static Property NoteType = new Property(8, int.class, "noteType", false, "NOTE_TYPE");
     };
 
     private DaoSession daoSession;
@@ -57,7 +58,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
                 "\"CREATE_TIME\" INTEGER," + // 4: createTime
                 "\"UPDATE_TIME\" INTEGER," + // 5: updateTime
                 "\"IS_NOTE\" INTEGER NOT NULL ," + // 6: isNote
-                "\"NOTE_TYPE\" INTEGER NOT NULL );"); // 7: noteType
+                "\"IS_PRIVACY\" INTEGER NOT NULL ," + // 7: isPrivacy
+                "\"NOTE_TYPE\" INTEGER NOT NULL );"); // 8: noteType
     }
 
     /** Drops the underlying database table. */
@@ -92,7 +94,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
             stmt.bindLong(6, updateTime.getTime());
         }
         stmt.bindLong(7, entity.getIsNote() ? 1L: 0L);
-        stmt.bindLong(8, entity.getNoteType());
+        stmt.bindLong(8, entity.getIsPrivacy() ? 1L: 0L);
+        stmt.bindLong(9, entity.getNoteType());
     }
 
     @Override
@@ -121,7 +124,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
             stmt.bindLong(6, updateTime.getTime());
         }
         stmt.bindLong(7, entity.getIsNote() ? 1L: 0L);
-        stmt.bindLong(8, entity.getNoteType());
+        stmt.bindLong(8, entity.getIsPrivacy() ? 1L: 0L);
+        stmt.bindLong(9, entity.getNoteType());
     }
 
     @Override
@@ -145,7 +149,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
             cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // createTime
             cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)), // updateTime
             cursor.getShort(offset + 6) != 0, // isNote
-            cursor.getInt(offset + 7) // noteType
+            cursor.getShort(offset + 7) != 0, // isPrivacy
+            cursor.getInt(offset + 8) // noteType
         );
         return entity;
     }
@@ -159,7 +164,8 @@ public class NoteDao extends AbstractDao<Note, Long> {
         entity.setCreateTime(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
         entity.setUpdateTime(cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)));
         entity.setIsNote(cursor.getShort(offset + 6) != 0);
-        entity.setNoteType(cursor.getInt(offset + 7));
+        entity.setIsPrivacy(cursor.getShort(offset + 7) != 0);
+        entity.setNoteType(cursor.getInt(offset + 8));
      }
     
     @Override

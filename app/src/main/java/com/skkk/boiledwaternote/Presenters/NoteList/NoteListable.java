@@ -13,4 +13,5 @@ public interface NoteListable {
     List<Note> getNotes();
     void showAllNote();
     boolean deleteNote(Note note);
+    boolean updateNote(Note note);
 }

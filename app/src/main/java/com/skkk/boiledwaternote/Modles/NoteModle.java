@@ -40,15 +40,22 @@ public class NoteModle implements ModleImpl<Note> {
         QueryBuilder<Note> noteQueryBuilder = session.getNoteDao().queryBuilder();
         switch (noteType) {
             case NoteListFragment.NOTE_TYPE_NONE:
+                noteQueryBuilder.where(
+                        noteQueryBuilder.and(NoteDao.Properties.IsPrivacy.eq(false),
+                        noteQueryBuilder.or(NoteDao.Properties.NoteType.eq(1),
+                                NoteDao.Properties.NoteType.eq(2))));
                 break;
             case NoteListFragment.NOTE_TYPE_ARTICLE:
-                noteQueryBuilder.where(NoteDao.Properties.NoteType.eq(1));
+                noteQueryBuilder.where(
+                        noteQueryBuilder.and(NoteDao.Properties.IsPrivacy.eq(false),
+                                NoteDao.Properties.NoteType.eq(1)));
                 break;
             case NoteListFragment.NOTE_TYPE_NOTE:
-                noteQueryBuilder.where(NoteDao.Properties.NoteType.eq(2));
+                noteQueryBuilder.where(noteQueryBuilder.and(NoteDao.Properties.NoteType.eq(2),
+                        NoteDao.Properties.IsPrivacy.eq(false)));
                 break;
             case NoteListFragment.NOTE_TYPE_PRIVACY:
-                noteQueryBuilder.where(NoteDao.Properties.NoteType.eq(3));
+                noteQueryBuilder.where(NoteDao.Properties.IsPrivacy.eq(true));
                 break;
 
         }

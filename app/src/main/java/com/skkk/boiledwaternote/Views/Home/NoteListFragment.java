@@ -1,5 +1,6 @@
 package com.skkk.boiledwaternote.Views.Home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
 import com.skkk.boiledwaternote.R;
+import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     public static final String NOTE_TYPE_NOTE = "note_type_note";
     public static final String NOTE_TYPE_PRIVACY = "note_type_privacy";
 
-    private static final String NOTE_TYPE="note_type";
+    private static final String NOTE_TYPE = "note_type";
     @Bind(R.id.rv_note_list)
     VerticalRecyclerView rvNoteList;
     @Bind(R.id.et_note_edit)
@@ -88,9 +90,9 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        noteListPresenter=new NoteListPresenter();
+        noteListPresenter = new NoteListPresenter();
         noteListPresenter.attachView(this);
-        noteEditPresenter=new NoteEditPresenter(getContext());
+        noteEditPresenter = new NoteEditPresenter(getContext());
         mDataList = new ArrayList<>();                                  //初始化数据集
         initUI(view);       //初始化UI
         initEvent();        //设置各种事件
@@ -147,20 +149,53 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //隐藏菜单上锁点击事件
             @Override
             public void onItemLockClickListener(View view, int pos) {
-
+                final int notePos = pos;
+                DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
+                        "提醒", "是否将该笔记加入隐私仓库？",
+                        "好的", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mDataList = adapter.getDataList();
+                                Note note = mDataList.get(notePos);
+                                note.setIsPrivacy(true);//设置为隐私类型
+                                if (noteListPresenter.updateNote(note)) {
+                                    if (noteType.equals(NoteListFragment.NOTE_TYPE_NONE)
+                                            ||noteType.equals(NoteListFragment.NOTE_TYPE_ARTICLE)) {
+                                        mDataList.remove(notePos);
+                                        adapter.setDataList(mDataList);
+                                        adapter.notifyItemRemoved(notePos);
+                                    } else if (noteType.equals(NoteListFragment.NOTE_TYPE_PRIVACY)){
+                                        noteListPresenter.showNotes(NoteListFragment.NOTE_TYPE_PRIVACY);
+                                    }
+                                } else {
+                                    Toast.makeText(getContext(), R.string.note_list_save_privacy, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, "算了", null).show();
             }
 
             //便签类型长按点击事件
             @Override
             public void onNoteItemLongClickListener(View view, int pos) {
-                Note note = mDataList.get(pos);
-                if (noteListPresenter.deleteNote(note)) {
-                    mDataList.remove(pos);
-                    adapter.setDataList(mDataList);
-                    adapter.notifyItemRemoved(pos);
-                } else {
-                    Toast.makeText(getContext(), R.string.note_list_note_item_delete, Toast.LENGTH_SHORT).show();
-                }
+                final int notePos = pos;
+                DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
+                        "提醒", "是否删除快捷便签？",
+                        "好的", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mDataList = adapter.getDataList();
+                                Note note = mDataList.get(notePos);
+                                if (noteListPresenter.deleteNote(note)) {
+                                    mDataList.remove(notePos);
+                                    adapter.setDataList(mDataList);
+                                    adapter.notifyItemRemoved(notePos);
+                                } else {
+                                    Toast.makeText(getContext(), R.string.note_list_note_item_delete, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, "算了", null).show();
+
+
             }
         });
 
@@ -170,15 +205,15 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         ivNoteEditSave.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (etNoteEdit.length()!=0){
-                    NoteEditModel note=new NoteEditModel(etNoteEdit.getText().toString(), NoteEditModel.Flag.TEXT,null);
-                    if (noteEditPresenter.saveNote(2,true,note)){
+                if (etNoteEdit.length() != 0) {
+                    NoteEditModel note = new NoteEditModel(etNoteEdit.getText().toString(), NoteEditModel.Flag.TEXT, null);
+                    if (noteEditPresenter.saveNote(2, true, note)) {
                         noteListPresenter.showLatestNote();
                         etNoteEdit.setText("");
-                    }else{
+                    } else {
                         Toast.makeText(getContext(), "保存失败！", Toast.LENGTH_SHORT).show();
                     }
-                }else {
+                } else {
                     Toast.makeText(getContext(), "内容为空", Toast.LENGTH_SHORT).show();
                 }
                 return false;
@@ -226,7 +261,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     @Override
     public void showLatestOne(Note note) {
-        mDataList.add(0,note);
+        mDataList.add(0, note);
         adapter.notifyItemInserted(0);
         linearLayoutManager.scrollToPosition(0);
     }

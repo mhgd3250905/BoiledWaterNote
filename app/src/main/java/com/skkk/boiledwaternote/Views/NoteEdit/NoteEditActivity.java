@@ -104,7 +104,6 @@ public class NoteEditActivity extends AppCompatActivity{
         if (imm.isActive()) {
             imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
         }
-
     }
 
     /**

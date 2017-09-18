@@ -72,4 +72,24 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
         return done;
     }
 
+    /**
+     * 更新笔记
+     * @param note
+     * @return
+     */
+    @Override
+    public boolean updateNote(Note note) {
+        boolean done = false;
+        try {
+            DaoSession session = DBUtils.getInstance(MyApplication.getInstance().getApplicationContext()).getSession();
+            NoteDao noteDao = session.getNoteDao();
+            noteDao.update(note);
+            done = true;
+        }catch (Exception e){
+            e.printStackTrace();
+            done=false;
+        }
+        return done;
+    }
+
 }

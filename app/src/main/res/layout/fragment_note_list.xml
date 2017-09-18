@@ -6,46 +6,52 @@
     tools:context="com.skkk.boiledwaternote.Views.Home.NoteListFragment">
 
 
-    <com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView
-        android:id="@id/rv_note_list"
+    <LinearLayout
+        android:id="@id/ll_list_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9"
-        android:background="@color/colorWhite" />
+        android:layout_weight="9">
+
+        <com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView
+            android:id="@id/rv_note_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorWhite" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@id/rl_note_edit"
-        android:paddingBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="10dp">
 
         <EditText
-            android:textSize="18sp"
-            android:padding="5dp"
             android:id="@id/et_note_edit"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
             android:layout_toLeftOf="@id/iv_note_edit_save"
             android:background="@drawable/note_edit_bg_normal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:padding="5dp"
+            android:textSize="18sp" />
 
         <ImageView
-            android:paddingStart="2dp"
-            android:paddingEnd="2dp"
-            android:paddingBottom="5dp"
             android:id="@id/iv_note_edit_save"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/vector_drawable_record"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/et_note_edit"
-            android:layout_alignParentEnd="true" />
+            android:layout_marginEnd="10dp"
+            android:paddingBottom="5dp"
+            android:paddingEnd="2dp"
+            android:paddingStart="2dp"
+            android:src="@drawable/vector_drawable_save_note" />
 
     </RelativeLayout>
 

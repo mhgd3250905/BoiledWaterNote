@@ -220,7 +220,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_setting) {//设置
             navigationMenu.findItem(id).setChecked(false);
-
         }
 
         if (fragment==null){

@@ -23,6 +23,7 @@
     <string name="note_list_empty_title">无题</string>
     <string name="note_list_article_item_delete">删除笔记失败</string>
     <string name="note_list_note_item_delete">删除便签失败！</string>
+    <string name="note_list_save_privacy">保存到私密仓库失败！</string>
     <string name="title_activity_main2">Main2Activity</string>
 
 </resources>

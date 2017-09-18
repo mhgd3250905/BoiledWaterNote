@@ -88,7 +88,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         boolean isNote=dataList.get(position).getIsNote();
         //获取第一段文字作为标题
         String content = dataList.get(position).getContent();
-        String title = null;       //显示标题
+        String title = "";       //显示标题
+        String contentTitle="";  //内容标题
         String imagePath = null;   //图片路径
 
         if (isNote) {
@@ -108,12 +109,19 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             //获取并设置第一个Text
             for (int i = 0; i < noteEditModels.length; i++) {
                 if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.TEXT) {
-                    title = noteEditModels[i].getContent();
-                    break;
+                    if (contentTitle.isEmpty()){
+                        contentTitle=noteEditModels[i].getContent();
+                    }
+                    if (noteEditModels[i].isFormat_title()&& TextUtils.isEmpty(title)){
+                        title = noteEditModels[i].getContent();
+                    }
+                    if (!title.isEmpty()) {
+                        break;
+                    }
                 }
             }
-            if (!TextUtils.isEmpty(title)) {
-                holder.tvNoteListTitle.setText(Html.fromHtml(title).toString());
+            if (!TextUtils.isEmpty(title)|| !contentTitle.isEmpty()) {
+                holder.tvNoteListTitle.setText(Html.fromHtml(title.isEmpty()?contentTitle:title).toString());
             } else {
                 holder.tvNoteListTitle.setText(R.string.note_list_empty_title);
             }
@@ -146,18 +154,25 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             if (!TextUtils.isEmpty(content)) {
                 NoteEditModel[] noteEditModels = new Gson().fromJson(content, NoteEditModel[].class);
                 //获取并设置第一个Text
+                //获取并设置第一个Text
                 for (int i = 0; i < noteEditModels.length; i++) {
                     if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.TEXT) {
-                        title = noteEditModels[i].getContent();
-                        break;
+                        if (contentTitle.isEmpty()){
+                            contentTitle=noteEditModels[i].getContent();
+                        }
+                        if (noteEditModels[i].isFormat_title()&& TextUtils.isEmpty(title)){
+                            title = noteEditModels[i].getContent();
+                        }
+                        if (!title.isEmpty()) {
+                            break;
+                        }
                     }
                 }
-                if (!TextUtils.isEmpty(title)) {
-                    holder.tvArticleListTitle.setText(Html.fromHtml(title).toString());
+                if (!TextUtils.isEmpty(title)|| !contentTitle.isEmpty()) {
+                    holder.tvArticleListTitle.setText(Html.fromHtml(title.isEmpty()?contentTitle:title).toString());
                 } else {
                     holder.tvArticleListTitle.setText(R.string.note_list_empty_title);
                 }
-
                 //获取并设置第一个图片
                 for (int i = 0; i < noteEditModels.length; i++) {
                     if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.IMAGE) {
