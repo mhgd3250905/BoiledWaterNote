@@ -19,7 +19,7 @@ public class NoteEditModel {
     public boolean format_list=false;          //列表
     public boolean format_list_numbered=false; //数字列表
     public boolean format_quote=false;         //引用
-    public int format_size=1;                  //字体大小：0-p 1-h1 2-h2 3-h3
+    public boolean format_title=false;         //标题字体
     public boolean format_underlined=false;    //下划线
     public boolean format_strike_through = false;//删除线
     public boolean format_show_checkbox=false;  //勾选框
@@ -105,12 +105,12 @@ public class NoteEditModel {
         this.format_quote = format_quote;
     }
 
-    public int getFormat_size() {
-        return format_size;
+    public boolean isFormat_title() {
+        return format_title;
     }
 
-    public void setFormat_size(int format_size) {
-        this.format_size = format_size;
+    public void setFormat_title(boolean format_title) {
+        this.format_title = format_title;
     }
 
     public boolean isFormat_underlined() {

@@ -147,7 +147,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //隐藏菜单上锁点击事件
             @Override
             public void onItemLockClickListener(View view, int pos) {
-                startActivity(new Intent(getContext(), Main2Activity.class));
+
             }
 
             //便签类型长按点击事件

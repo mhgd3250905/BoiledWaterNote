@@ -50,7 +50,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     private NoteEditAdapter adapter;
     private Context context;
     private ImageView ivFormatAlignCenter, ivFormatBold, ivFormatItalic,
-            ivFormatList, ivFormatHorSeperate, ivFormatQuote, ivFormatSize,
+            ivFormatList, ivFormatHorSeperate, ivFormatQuote, ivFormatTitle,
             ivFormatUnderLine, ivFormatStrikeThrough,ivFormatCheckBox;
     private ImageView ivEditFormatNotice;
 
@@ -90,7 +90,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatList = (ImageView) findViewById(R.id.iv_format_list);
         ivFormatHorSeperate = (ImageView) findViewById(R.id.iv_format_hor_seperate);
         ivFormatQuote = (ImageView) findViewById(R.id.iv_format_quote);
-        ivFormatSize = (ImageView) findViewById(R.id.iv_format_size);
+        ivFormatTitle = (ImageView) findViewById(R.id.iv_format_title);
         ivFormatUnderLine = (ImageView) findViewById(R.id.iv_format_underlined);
         ivFormatStrikeThrough = (ImageView) findViewById(R.id.iv_format_strike_through);
         ivFormatCheckBox = (ImageView) findViewById(R.id.iv_format_checkbox);
@@ -101,7 +101,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatList.setOnClickListener(this);
         ivFormatHorSeperate.setOnClickListener(this);
         ivFormatQuote.setOnClickListener(this);
-        ivFormatSize.setOnClickListener(this);
+        ivFormatTitle.setOnClickListener(this);
         ivFormatUnderLine.setOnClickListener(this);
         ivFormatStrikeThrough.setOnClickListener(this);
         ivFormatCheckBox.setOnClickListener(this);
@@ -327,23 +327,6 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 /*
                 * 点击列表项目之后在下方添加一行
                 * */
-//                List<NoteEditModel> listItems = new ArrayList<>();
-//                NoteEditModel listModel=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
-//                listModel.setFormat_list(true);
-//                listItems.add(listModel);
-//                int pos=currentHolder.getCurrentPos();
-//                insertItems(listItems, pos+1);
-//                adapter.setFocusItemPos(pos+1);
-//                adapter.notifyDataSetChanged();
-//
-//                /*
-//                * 锁定光标
-//                * */
-//                if (pos < adapter.getItemCount() - 1) {
-//                    rvRichEdit.smoothScrollToPosition(pos);
-//                } else {
-//                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
-//                }
                 currentHolder.setFormat_list(!currentHolder.isFormat_list());
 
                 break;
@@ -366,95 +349,20 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 }
                 break;
 
-            case R.id.iv_format_size:
-                if (!isSelected) {
-                    int sizeType=currentHolder.myItemTextChangeListener.getFormat_size();
-                    if (sizeType<3) {
-                        sizeType++;
-                    }else {
-                        sizeType=0;
-                    }
-                    currentHolder.myItemTextChangeListener.setFormat_size(sizeType);
-                    ImageView imageView= (ImageView) v;
-                    switch (sizeType){
-                        case 0:
-                            imageView.setImageResource(R.drawable.format_size);
-                            break;
-                        case 1:
-                            imageView.setImageResource(R.drawable.vector_drawable_h1);
-                            break;
-                        case 2:
-                            imageView.setImageResource(R.drawable.vector_drawable_h2);
-                            break;
-                        case 3:
-                            imageView.setImageResource(R.drawable.vector_drawable_h3);
-                            break;
-                    }
-
-                } else {
-                    //获取选择区域内所有的StyleSpan
-                    StyleSpan[] spans = currentHolder.etItem.getText().getSpans(start, end, StyleSpan.class);
-                    List<StyleSpan> hasSpans = new ArrayList<>();
-                    for (int i = 0; i < spans.length; i++) {
-                        if (spans[i].getStyle() == Typeface.ITALIC) {
-                            hasSpans.add(spans[i]);
-                        }
-                    }
-                    if (hasSpans.size() != 0) {   //如果有ITALIC则设置为正常
-                        for (StyleSpan span : hasSpans) {
-                            currentHolder.removeSpan(span);
-                        }
-                    } else {               //如果不包含ITALIC那么就设置斜体
-                        currentHolder.setSpan(new StyleSpan(Typeface.ITALIC), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
-                }
+            case R.id.iv_format_title:
+                currentHolder.setFormat_title(!currentHolder.isFormat_title());
                 break;
 
             case R.id.iv_format_quote:
                 /*
                 * 点击列表项目之后在下方添加一行
                 * */
-//                List<NoteEditModel> quoteItems = new ArrayList<>();
-//                NoteEditModel qutoeModel=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
-//                qutoeModel.setFormat_quote(true);
-//                quoteItems.add(qutoeModel);
-//                int quotePos=currentHolder.getCurrentPos();
-//                insertItems(quoteItems, quotePos+1);
-//                adapter.setFocusItemPos(quotePos+1);
-//                adapter.notifyDataSetChanged();
-
-//                /*
-//                * 锁定光标
-//                * */
-//                if (quotePos < adapter.getItemCount() - 1) {
-//                    rvRichEdit.smoothScrollToPosition(quotePos);
-//                } else {
-//                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
-//                }
-
                 currentHolder.setFormat_quote(!currentHolder.isFormat_quote());
                 break;
             case R.id.iv_format_checkbox:
                 /*
                 * 点击列表项目之后在下方添加一行
                 * */
-//                List<NoteEditModel> checkItems = new ArrayList<>();
-//                NoteEditModel checkModle=new NoteEditModel("", NoteEditModel.Flag.TEXT,null);
-//                checkModle.setFormat_show_checkbox(true,false);
-//                checkItems.add(checkModle);
-//                int checkPos=currentHolder.getCurrentPos();
-//                insertItems(checkItems, checkPos+1);
-//                adapter.setFocusItemPos(checkPos+1);
-//                adapter.notifyDataSetChanged();
-//
-//                /*
-//                * 锁定光标
-//                * */
-//                if (checkPos < adapter.getItemCount() - 1) {
-//                    rvRichEdit.smoothScrollToPosition(checkPos);
-//                } else {
-//                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
-//                }
 
                 currentHolder.setForamtCheckBox(!currentHolder.isForamt_show_checkBox(),false);
                 break;
@@ -637,7 +545,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatItalic.setBackgroundColor(Color.TRANSPARENT);
         ivFormatList.setBackgroundColor(Color.TRANSPARENT);
         ivFormatQuote.setBackgroundColor(Color.TRANSPARENT);
-        ivFormatSize.setBackgroundColor(Color.TRANSPARENT);
+        ivFormatTitle.setBackgroundColor(Color.TRANSPARENT);
         ivFormatStrikeThrough.setBackgroundColor(Color.TRANSPARENT);
         ivFormatUnderLine.setBackgroundColor(Color.TRANSPARENT);
     }

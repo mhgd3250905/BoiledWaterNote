@@ -67,4 +67,5 @@
     <item name="iv_article_list_image" type="id">iv_article_list_image</item>
     <item name="ll_note_list_container_inside" type="id">ll_note_list_container_inside</item>
     <item name="rl_note_list_container" type="id">rl_note_list_container</item>
+    <item name="iv_format_title" type="id">iv_format_title</item>
 </resources>

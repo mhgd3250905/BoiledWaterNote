@@ -42,9 +42,8 @@
         android:layout_height="match_parent" />
 
     <ImageView
-        android:visibility="gone"
-        android:id="@id/iv_format_size"
-        android:src="@drawable/format_size"
+        android:id="@id/iv_format_title"
+        android:src="@drawable/format_title"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="match_parent" />

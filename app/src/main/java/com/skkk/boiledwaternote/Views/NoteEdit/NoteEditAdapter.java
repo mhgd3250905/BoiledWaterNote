@@ -169,6 +169,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.setForamtCheckBox(itemDate.isFormat_show_checkbox(), itemDate.isForamt_checkBox_check());
             //设置对齐方式
             holder.setFormat_align_center(itemDate.isFormat_align_center());
+            //设置标题文字
+            holder.setFormat_title(itemDate.isFormat_title());
 
 
             //设置指定的Item获取焦点
@@ -287,9 +289,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         /*
         * 当我们移动到最后一个Item的位置的时候就需要在后面添加一个文本Item
         * */
-        if (moveToPos>=mDataList.size()-1){
-            mDataList.add(new NoteEditModel("", NoteEditModel.Flag.TEXT,null));
-            notifyItemInserted(moveToPos+1);
+        if (moveToPos >= mDataList.size() - 1) {
+            mDataList.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+            notifyItemInserted(moveToPos + 1);
         }
         notifyDataSetChanged();
     }
@@ -376,9 +378,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public boolean format_bold = false;          //加粗
         public boolean format_italic = false;        //斜体
         public boolean format_list = false;          //列表
-        public boolean format_list_numbered = false; //数字列表
         public boolean format_quote = false;         //引用
-        public int format_size = 1;                  //字体大小：0-p 1-h1 2-h2 3-h3
+        public boolean format_title = false;         //标题样式
         public boolean format_underlined = false;    //下划线
         public boolean format_strike_through = false;    //下划线
         public boolean foramt_show_checkBox = false;       //勾选框
@@ -440,7 +441,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     * 如果按下了Enter按键
                     * */
                     if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                        if (isFormat_list() || isFormat_quote() || isForamt_show_checkBox()) {
+                        if (isFormat_list() || isFormat_quote() || isForamt_show_checkBox() || isFormat_title()) {
                             /*
                             * 如果此时这个Item是富文本引用或者列表类型
                             * 就初始化一个文本Item，当然内容为空
@@ -463,7 +464,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                     model.setFormat_quote(!isFormat_list());
                                     model.setFormat_show_checkbox(!isFormat_list(), !isFormat_list());
                                 }
-                            }  else if (isForamt_show_checkBox()) {
+                            } else if (isForamt_show_checkBox()) {
                                 /*
                                 * 如果富文本样式为列表，那么就需要在下方在添加一个列表
                                 * */
@@ -501,7 +502,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                         * 如果处于引用 列表 或者 勾选框富文本样式
                         * 那么从行首DEL就可以删除这个富文本样式
                         * */
-                        if (etItem.getSelectionStart()==0) {
+                        if (etItem.getSelectionStart() == 0) {
                             if (isFormat_list()) {
                                 /*
                                 * 如果富文本样式为List，那么就取消其富文本样式
@@ -556,7 +557,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             etItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    return isFormat_list() || isFormat_quote() || isForamt_show_checkBox();
+                    return isFormat_list() || isFormat_quote() || isForamt_show_checkBox() || isFormat_title();
                 }
             });
 
@@ -736,6 +737,38 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             return format_strike_through;
         }
 
+
+        /**
+         * 是否是标题样式
+         *
+         * @return
+         */
+        public boolean isFormat_title() {
+            return format_title;
+        }
+
+        /**
+         * 设置标题样式
+         *
+         * @param format_title
+         */
+        public void setFormat_title(boolean format_title) {
+            this.format_title = format_title;
+            if (format_title) {
+                setFormat_quote(!format_title);
+            }
+            if (format_title) {
+                setForamtCheckBox(!format_title, !format_title);
+            }
+            if (format_title) {
+                setFormat_list(!format_title);
+            }
+            //同步到数据列表
+            mDataList.get(currentPos).setFormat_title(format_title);
+            setFormat_align_center(format_title);
+            etItem.setTextSize(format_title ? 25 : 18);
+            etItem.setTypeface(format_title ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        }
 
         /**
          * 设置富文本列表样式

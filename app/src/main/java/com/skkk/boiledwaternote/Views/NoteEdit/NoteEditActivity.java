@@ -26,6 +26,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
@@ -43,7 +44,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class NoteEditActivity extends AppCompatActivity implements NoteEditImpl{
+public class NoteEditActivity extends AppCompatActivity{
 
     private final String TAG = NoteEditActivity.class.getSimpleName();
 
@@ -136,9 +137,16 @@ public class NoteEditActivity extends AppCompatActivity implements NoteEditImpl{
         tvDialogItemCamera = (TextView) popView.findViewById(R.id.tv_dialog_item_camera);
         tvDialogItemAlbum = (TextView) popView.findViewById(R.id.tv_dialog_item_album);
 
-
-
-
+        if (isNew){
+            revEdit.startNewEdit(true,null);
+        }else {
+            NoteEditModel[] models=new Gson().fromJson(updateNote.getContent(),NoteEditModel[].class);
+            mDataList=new ArrayList<>();
+            for (int i = 0; i < models.length; i++) {
+                mDataList.add(models[i]);
+            }
+            revEdit.startNewEdit(false,mDataList);
+        }
     }
 
 
@@ -347,13 +355,4 @@ public class NoteEditActivity extends AppCompatActivity implements NoteEditImpl{
         });
     }
 
-    @Override
-    public void showNote(Note note) {
-
-    }
-
-    @Override
-    public void saveNote(Note note) {
-
-    }
 }
