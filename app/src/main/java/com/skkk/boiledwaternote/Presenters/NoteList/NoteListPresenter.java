@@ -1,14 +1,14 @@
 package com.skkk.boiledwaternote.Presenters.NoteList;
 
-import com.skkk.boiledwaternote.Modles.DBUtils;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteModle;
-import com.skkk.boiledwaternote.Modles.gen.DaoSession;
-import com.skkk.boiledwaternote.Modles.gen.NoteDao;
 import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.Presenters.BasePersenter;
+import com.skkk.boiledwaternote.R;
+import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.Home.NoteListImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -17,20 +17,26 @@ import java.util.List;
 * 作    者：ksheng
 * 时    间：2017/5/28$ 19:02$.
 */
-public class NoteListPresenter extends BasePersenter<NoteListImpl> implements NoteListable{
-//    private NoteListImpl noteListImpl;
-    private NoteModle noteModle=new NoteModle(MyApplication.getInstance().getApplicationContext());
+public class NoteListPresenter extends BasePersenter<NoteListImpl> implements NoteListable {
+    //    private NoteListImpl noteListImpl;
+    private NoteModle noteModle = new NoteModle(MyApplication.getInstance().getApplicationContext());
+    private List<Note> mDataList;
+
 
 //    public NoteListPresenter(NoteListImpl noteListImpl) {
 //        this.noteListImpl = noteListImpl;
 //    }
 
 
+    public NoteListPresenter() {
+        mDataList = new ArrayList<>(); //初始化数据集
+    }
+
     @Override
     public void showNotes(String noteType) {
-        List<Note> noteList = noteModle.query(noteType);
-        if (noteList!=null){
-            getView().showList(noteList);
+        mDataList = noteModle.query(noteType);
+        if (mDataList != null) {
+            getView().showList(mDataList);
         }
     }
 
@@ -48,48 +54,65 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
         getView().showList(noteList);
     }
 
-    public void showLatestNote(){
+    public void insertLatestNote() {
         Note note = noteModle.queryLatestOne();
-        getView().showLatestOne(note);
+        mDataList.add(0, note);
+        getView().insertNote(0);
     }
 
     /**
      * 删除笔记
-     * @param note
+     *
+     * @param pos
      * @return
      */
     @Override
-    public boolean deleteNote(Note note) {
-        boolean done = false;
-        try {
-            DaoSession session = DBUtils.getInstance(MyApplication.getInstance().getApplicationContext()).getSession();
-            NoteDao noteDao = session.getNoteDao();
-            noteDao.delete(note);
-            done = true;
-        } catch (Exception e) {
-            done = false;
+    public void deleteNote(int pos) {
+        Note note = mDataList.get(pos);
+        boolean done = noteModle.deleteOne(note);
+        if (done) {
+            mDataList.remove(pos);
+            getView().resetAdapterData(mDataList);
+            getView().deleteNote(pos);
+        } else {
+            getView().showNotice(R.string.note_list_article_item_delete_failed);
         }
-        return done;
     }
 
     /**
      * 更新笔记
-     * @param note
+     *
+     * @param pos
      * @return
      */
     @Override
-    public boolean updateNote(Note note) {
-        boolean done = false;
-        try {
-            DaoSession session = DBUtils.getInstance(MyApplication.getInstance().getApplicationContext()).getSession();
-            NoteDao noteDao = session.getNoteDao();
-            noteDao.update(note);
-            done = true;
-        }catch (Exception e){
-            e.printStackTrace();
-            done=false;
+    public void updateNoteToPrivacy(int pos, String type) {
+        Note note = mDataList.get(pos);
+        note.setIsPrivacy(true);//设置为隐私类型
+        boolean done = noteModle.updateOne(note);
+        if (done) {
+            getView().resetAdapterData(mDataList);
+            if (type.equals(NoteListFragment.NOTE_TYPE_NONE)
+                    || type.equals(NoteListFragment.NOTE_TYPE_ARTICLE)) {
+                mDataList.remove(pos);
+                getView().resetAdapterData(mDataList);
+                getView().deleteNote(pos);
+            } else if (type.equals(NoteListFragment.NOTE_TYPE_PRIVACY)) {
+                showNotes(NoteListFragment.NOTE_TYPE_PRIVACY);
+            }
+        } else {
+            getView().showNotice(R.string.note_list_save_privacy_failed);
         }
-        return done;
+    }
+
+    @Override
+    public Note getNote(int pos) {
+        return mDataList.get(pos);
+    }
+
+    @Override
+    public void saveNote() {
+
     }
 
 }

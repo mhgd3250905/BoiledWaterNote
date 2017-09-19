@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.view.LayoutInflater;
@@ -57,7 +58,6 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     //    private RefreshLayout refreshLayout;
     private MyLinearLayoutManager linearLayoutManager;
-    private List<Note> mDataList;
     private NoteListAdapter adapter;
 
     private DragItemCircleView lastDragItem;
@@ -93,7 +93,6 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         noteListPresenter = new NoteListPresenter();
         noteListPresenter.attachView(this);
         noteEditPresenter = new NoteEditPresenter(getContext());
-        mDataList = new ArrayList<>();                                  //初始化数据集
         initUI(view);       //初始化UI
         initEvent();        //设置各种事件
         noteListPresenter.showNotes(noteType);
@@ -106,7 +105,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         linearLayoutManager = new MyLinearLayoutManager(getContext());
         rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
-        adapter = new NoteListAdapter(getContext(), mDataList);
+        adapter = new NoteListAdapter(getContext(), new ArrayList<Note>());
         rvNoteList.setAdapter(adapter);
     }
 
@@ -126,7 +125,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                     adapter.resetMenuStatus();
                     return;
                 }
-                Note note = mDataList.get(pos);
+                Note note = noteListPresenter.getNote(pos);
                 Intent intent = new Intent();
                 intent.setClass(getContext(), NoteEditActivity.class);
                 intent.putExtra(Configs.KEY_UPDATE_NOTE, note);
@@ -136,14 +135,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //隐藏菜单删除按钮点击事件
             @Override
             public void onItemDeleteClickListener(View view, int pos) {
-                Note note = mDataList.get(pos);
-                if (noteListPresenter.deleteNote(note)) {
-                    mDataList.remove(pos);
-                    adapter.setDataList(mDataList);
-                    adapter.notifyItemRemoved(pos);
-                } else {
-                    Toast.makeText(getContext(), R.string.note_list_article_item_delete, Toast.LENGTH_SHORT).show();
-                }
+                noteListPresenter.deleteNote(pos);
             }
 
             //隐藏菜单上锁点击事件
@@ -155,21 +147,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                         "好的", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mDataList = adapter.getDataList();
-                                Note note = mDataList.get(notePos);
-                                note.setIsPrivacy(true);//设置为隐私类型
-                                if (noteListPresenter.updateNote(note)) {
-                                    if (noteType.equals(NoteListFragment.NOTE_TYPE_NONE)
-                                            ||noteType.equals(NoteListFragment.NOTE_TYPE_ARTICLE)) {
-                                        mDataList.remove(notePos);
-                                        adapter.setDataList(mDataList);
-                                        adapter.notifyItemRemoved(notePos);
-                                    } else if (noteType.equals(NoteListFragment.NOTE_TYPE_PRIVACY)){
-                                        noteListPresenter.showNotes(NoteListFragment.NOTE_TYPE_PRIVACY);
-                                    }
-                                } else {
-                                    Toast.makeText(getContext(), R.string.note_list_save_privacy, Toast.LENGTH_SHORT).show();
-                                }
+                                noteListPresenter.updateNoteToPrivacy(notePos,noteType);
                             }
                         }, "算了", null).show();
             }
@@ -183,15 +161,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                         "好的", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mDataList = adapter.getDataList();
-                                Note note = mDataList.get(notePos);
-                                if (noteListPresenter.deleteNote(note)) {
-                                    mDataList.remove(notePos);
-                                    adapter.setDataList(mDataList);
-                                    adapter.notifyItemRemoved(notePos);
-                                } else {
-                                    Toast.makeText(getContext(), R.string.note_list_note_item_delete, Toast.LENGTH_SHORT).show();
-                                }
+                                noteListPresenter.deleteNote(notePos);
                             }
                         }, "算了", null).show();
 
@@ -208,7 +178,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                 if (etNoteEdit.length() != 0) {
                     NoteEditModel note = new NoteEditModel(etNoteEdit.getText().toString(), NoteEditModel.Flag.TEXT, null);
                     if (noteEditPresenter.saveNote(2, true, note)) {
-                        noteListPresenter.showLatestNote();
+                        noteListPresenter.insertLatestNote();
                         etNoteEdit.setText("");
                     } else {
                         Toast.makeText(getContext(), "保存失败！", Toast.LENGTH_SHORT).show();
@@ -240,31 +210,86 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         adapter.notifyDataSetChanged();
     }
 
+
+    /**
+     * 展示所有的笔记
+     * @param noteList
+     */
     @Override
     public void showList(List<Note> noteList) {
-        mDataList = noteList;
-        adapter.setDataList(mDataList);
+        adapter.setDataList(noteList);
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * 删除指定的Note
+     * @param pos
+     */
     @Override
     public void deleteNote(int pos) {
-        mDataList.remove(pos);
         adapter.notifyItemRemoved(pos);
-        adapter.notifyItemRangeChanged(pos, adapter.getItemCount() - pos);
     }
 
+    /**
+     * 删除批量Notes
+     * @param noteList
+     */
     @Override
     public void deletelist(List<Note> noteList) {
 
     }
 
+    /**
+     * 插入指定位置的Note
+     * @param pos
+     */
     @Override
-    public void showLatestOne(Note note) {
-        mDataList.add(0, note);
+    public void insertNote(int pos) {
         adapter.notifyItemInserted(0);
         linearLayoutManager.scrollToPosition(0);
     }
+
+
+    /**
+     * 清除便签编辑框的内容
+     */
+    @Override
+    public void clearNoteEditText() {
+        etNoteEdit.setText("");
+    }
+
+    /**
+     * 重置适配器中的内容
+     * @param dataList
+     */
+    @Override
+    public void resetAdapterData(List<Note> dataList) {
+        if (adapter!=null){
+            adapter.setDataList(dataList);
+        }
+    }
+
+    /**
+     * 显示提示内容
+     * @param strId
+     */
+    @Override
+    public void showNotice(@StringRes int strId) {
+        Toast.makeText(getContext(), strId, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 跳转到编辑笔记内容界面
+     * @param note
+     */
+    @Override
+    public void startActivity(Note note) {
+        Intent intent = new Intent();
+        intent.setClass(getContext(), NoteEditActivity.class);
+        intent.putExtra(Configs.KEY_UPDATE_NOTE, note);
+        getActivity().startActivityForResult(intent, Configs.REQUEST_UPDATE_NOTE);
+    }
+
 
     @Override
     public void onDestroyView() {

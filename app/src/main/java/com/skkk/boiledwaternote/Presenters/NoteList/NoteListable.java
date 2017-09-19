@@ -12,6 +12,8 @@ public interface NoteListable {
     void showNotes(String noteType);
     List<Note> getNotes();
     void showAllNote();
-    boolean deleteNote(Note note);
-    boolean updateNote(Note note);
+    void deleteNote(int pos);
+    void updateNoteToPrivacy(int pos, String type);
+    Note getNote(int pos);
+    void saveNote();
 }
