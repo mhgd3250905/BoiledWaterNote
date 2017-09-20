@@ -32,6 +32,7 @@ import com.skkk.boiledwaternote.CostomViews.DragItemView.MyDragItemView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
+import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 import static android.content.ContentValues.TAG;
+import static android.view.View.GONE;
 
 /**
  * RecyclerView数据适配器
@@ -49,6 +51,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private OnItemClickListener onItemClickListener;
     private boolean isItemResetAnim = false;
     private boolean itemClickable = true;
+    private String noteType="";
 
     interface OnDragItemStatusChange {
         void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
@@ -64,16 +67,19 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
         void onItemLockClickListener(View view, int pos);
 
-        void onNoteItemLongClickListener(View view,int pos);
+        void onItemUnlockClickListener(View view, int pos);
+
+        void onNoteItemLongClickListener(View view, int pos);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public NoteListAdapter(Context context, List<Note> dataList) {
+    public NoteListAdapter(Context context, List<Note> dataList, String noteType) {
         this.context = context;
         this.dataList = dataList;
+        this.noteType = noteType;
     }
 
     @Override
@@ -85,18 +91,18 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
-        boolean isNote=dataList.get(position).getIsNote();
+        boolean isNote = dataList.get(position).getIsNote();
         //获取第一段文字作为标题
         String content = dataList.get(position).getContent();
         String title = "";       //显示标题
-        String contentTitle="";  //内容标题
+        String contentTitle = "";  //内容标题
         String imagePath = null;   //图片路径
 
         if (isNote) {
             /*
             * 如果是笔记类型
             * */
-            holder.divItem.setVisibility(View.GONE);
+            holder.divItem.setVisibility(GONE);
             holder.rlListNoteContainer.setVisibility(View.VISIBLE);
 
             //显示距离此刻模式的时间显示方式
@@ -109,10 +115,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             //获取并设置第一个Text
             for (int i = 0; i < noteEditModels.length; i++) {
                 if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.TEXT) {
-                    if (contentTitle.isEmpty()){
-                        contentTitle=noteEditModels[i].getContent();
+                    if (contentTitle.isEmpty()) {
+                        contentTitle = noteEditModels[i].getContent();
                     }
-                    if (noteEditModels[i].isFormat_title()&& TextUtils.isEmpty(title)){
+                    if (noteEditModels[i].isFormat_title() && TextUtils.isEmpty(title)) {
                         title = noteEditModels[i].getContent();
                     }
                     if (!title.isEmpty()) {
@@ -120,8 +126,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                     }
                 }
             }
-            if (!TextUtils.isEmpty(title)|| !contentTitle.isEmpty()) {
-                holder.tvNoteListTitle.setText(Html.fromHtml(title.isEmpty()?contentTitle:title).toString());
+            if (!TextUtils.isEmpty(title) || !contentTitle.isEmpty()) {
+                holder.tvNoteListTitle.setText(Html.fromHtml(title.isEmpty() ? contentTitle : title).toString());
             } else {
                 holder.tvNoteListTitle.setText(R.string.note_list_empty_title);
             }
@@ -132,18 +138,18 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             holder.rlListNoteContainer.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    onItemClickListener.onNoteItemLongClickListener(v,holder.getAdapterPosition());
+                    onItemClickListener.onNoteItemLongClickListener(v, holder.getAdapterPosition());
                     return false;
                 }
             });
 
 
-        }else {
+        } else {
             /*
             * 如果是文章类型
             * */
             holder.divItem.setVisibility(View.VISIBLE);
-            holder.rlListNoteContainer.setVisibility(View.GONE);
+            holder.rlListNoteContainer.setVisibility(GONE);
 
             //显示距离此刻模式的时间显示方式
             CharSequence relativeDateTimeString = DateUtils
@@ -157,10 +163,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 //获取并设置第一个Text
                 for (int i = 0; i < noteEditModels.length; i++) {
                     if (noteEditModels[i].getItemFlag() == NoteEditModel.Flag.TEXT) {
-                        if (contentTitle.isEmpty()){
-                            contentTitle=noteEditModels[i].getContent();
+                        if (contentTitle.isEmpty()) {
+                            contentTitle = noteEditModels[i].getContent();
                         }
-                        if (noteEditModels[i].isFormat_title()&& TextUtils.isEmpty(title)){
+                        if (noteEditModels[i].isFormat_title() && TextUtils.isEmpty(title)) {
                             title = noteEditModels[i].getContent();
                         }
                         if (!title.isEmpty()) {
@@ -168,8 +174,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                         }
                     }
                 }
-                if (!TextUtils.isEmpty(title)|| !contentTitle.isEmpty()) {
-                    holder.tvArticleListTitle.setText(Html.fromHtml(title.isEmpty()?contentTitle:title).toString());
+                if (!TextUtils.isEmpty(title) || !contentTitle.isEmpty()) {
+                    holder.tvArticleListTitle.setText(Html.fromHtml(title.isEmpty() ? contentTitle : title).toString());
                 } else {
                     holder.tvArticleListTitle.setText(R.string.note_list_empty_title);
                 }
@@ -180,15 +186,43 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                         break;
                     }
                 }
+
+
                 if (!TextUtils.isEmpty(imagePath)) {
-                    holder.cvArticleListImage.setVisibility(View.VISIBLE);
+
+                    /*
+                     * 根据图片的宽高来设置相框的大小
+                     * */
+                    int imgWidth = ImageUtils.getBitmapWidth(imagePath, true);
+                    int imgHeight = ImageUtils.getBitmapWidth(imagePath, false);
+                    // w:h=mW:mH
+
+                    ViewGroup.LayoutParams layoutParams = holder.ivArticleListImage.getLayoutParams();
+                    if (imgHeight > imgWidth) {
+                        //竖直图片
+                        layoutParams.height = holder.llShow.getLayoutParams().height;
+                        layoutParams.width = imgWidth * holder.llShow.getLayoutParams().height / imgWidth;
+                    } else {
+                        //横向图片
+                        layoutParams.height = (int) context.getResources().getDimension(R.dimen.note_list_item_height);
+                        layoutParams.width = (int) (imgWidth * context.getResources().getDimension(R.dimen.note_list_item_height) / imgHeight);
+                    }
+                    holder.ivArticleListImage.setLayoutParams(layoutParams);
+
+                    holder.ivArticleListImage.setVisibility(View.VISIBLE);
                     Glide.with(context)
                             .load(imagePath)
                             .into(holder.ivArticleListImage);
                 } else {
-                    holder.cvArticleListImage.setVisibility(View.GONE);
+                    holder.ivArticleListImage.setVisibility(GONE);
                 }
             }
+            /*
+            * 设置隐私界面的上锁图标
+            * */
+                holder.ivLock.setVisibility(noteType.equals(NoteListFragment.NOTE_TYPE_PRIVACY)?View.GONE:View.VISIBLE);
+                holder.ivUnlock.setVisibility(noteType.equals(NoteListFragment.NOTE_TYPE_PRIVACY)?View.VISIBLE:View.GONE);
+
 
             if (onItemClickListener != null) {
                 holder.llShow.setOnClickListener(new View.OnClickListener() {
@@ -211,6 +245,13 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                     @Override
                     public void onClick(View v) {
                         onItemClickListener.onItemLockClickListener(v, holder.getAdapterPosition());
+                    }
+                });
+
+                holder.ivUnlock.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onItemClickListener.onItemUnlockClickListener(v, holder.getAdapterPosition());
                     }
                 });
             }
@@ -301,7 +342,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         return false;
     }
 
-    public void resetMenuStatus(){
+    public void resetMenuStatus() {
         notifyDataSetChanged();
     }
 
@@ -323,18 +364,21 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         public ImageView ivDelete;
         @Bind(R.id.iv_lock)
         public ImageView ivLock;
+        @Bind(R.id.iv_unlock)
+        public ImageView ivUnlock;
         @Bind(R.id.div_item)
         public MyDragItemView divItem;
         @Bind(R.id.iv_article_list_image)
         public ImageView ivArticleListImage;
-        @Bind(R.id.cv_article_list_image)
-        public CardView cvArticleListImage;
+        //        @Bind(R.id.cv_article_list_image)
+//        public CardView cvArticleListImage;
         @Bind(R.id.rl_note_list_container)
         public RelativeLayout rlListNoteContainer;
         @Bind(R.id.tv_note_list_title)
         public TextView tvNoteListTitle;
         @Bind(R.id.tv_note_list_time)
         public TextView tvNoteListTime;
+
 
         public MyViewHolder(View itemView) {
             super(itemView);

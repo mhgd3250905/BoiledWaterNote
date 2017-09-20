@@ -15,5 +15,6 @@ public interface NoteListable {
     void deleteNote(int pos);
     void updateNoteToPrivacy(int pos, String type);
     Note getNote(int pos);
-    void saveNote();
+    void saveNote(String noteContent);
+    void startEditActivity(int pos);
 }

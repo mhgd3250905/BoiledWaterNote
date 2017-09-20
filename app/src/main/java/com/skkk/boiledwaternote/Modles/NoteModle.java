@@ -2,12 +2,15 @@ package com.skkk.boiledwaternote.Modles;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Modles.gen.DaoSession;
 import com.skkk.boiledwaternote.Modles.gen.NoteDao;
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -107,6 +110,25 @@ public class NoteModle implements ModleImpl<Note> {
         return notes.get(0);
     }
 
+    public boolean saveNote(int noteType,boolean isNote,NoteEditModel... noteEditModels){
+        List<NoteEditModel> noteEditViewHolderList = new ArrayList<>();
+
+        for (int i = 0; i < noteEditModels.length; i++) {
+            noteEditViewHolderList.add(noteEditModels[i]);
+        }
+
+        Gson gson = new Gson();
+        String contentJson = gson.toJson(noteEditViewHolderList);
+
+        Note note = new Note();
+        note.setNid(System.currentTimeMillis());
+        note.setContent(contentJson);
+        note.setCreateTime(new Date());
+        note.setUpdateTime(new Date());
+        note.setIsNote(isNote);
+        note.setNoteType(noteType);
+        return saveOne(note);
+    }
 
 
 }

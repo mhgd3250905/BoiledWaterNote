@@ -225,7 +225,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             }
 
 
-                        /*
+            /*
             * 根据图片的宽高来设置相框的大小
             * */
             int imgWidth = ImageUtils.getBitmapWidth(itemDate.getImagePath(), true);
@@ -234,15 +234,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             ViewGroup.LayoutParams layoutParams = holder.ivItemImage.getLayoutParams();
             if (imgHeight > imgWidth) {
                 layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
-                layoutParams.height = (int) context.getResources().getDimension(R.dimen.item_edit_image_height_ver);
+                layoutParams.height = layoutParams.width*imgHeight/imgWidth;
             } else {
                 layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
-                layoutParams.height = (int) context.getResources().getDimension(R.dimen.item_edit_image_height_hor);
+                layoutParams.height = layoutParams.width*imgHeight/imgWidth;
             }
             holder.flBombMenuContainer.setLayoutParams(layoutParams);
             holder.ivItemImage.setLayoutParams(layoutParams);
             holder.ivItemImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
 
             Glide.with(context)
                     .load(itemDate.getImagePath())
@@ -786,6 +785,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (format_list) {
                 setForamtCheckBox(!format_list, !format_list);
             }
+            if(format_list){
+                setFormat_title(!format_list);
+            }
             //同步到数据列表
             mDataList.get(currentPos).setFormat_list(format_list);
             ivTextPonit.setVisibility(format_list ? View.VISIBLE : GONE);
@@ -815,6 +817,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             }
             if (format_quote) {
                 setForamtCheckBox(!format_quote, !format_quote);
+            }
+            if(format_quote){
+                setFormat_title(!format_quote);
             }
             //同步数据列表
             mDataList.get(currentPos).setFormat_quote(format_quote);
@@ -849,7 +854,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 setFormat_quote(!foramt_show_checkBox);
             }
             if (foramt_show_checkBox) {
-                setFormat_quote(!foramt_show_checkBox);
+                setFormat_list(!foramt_show_checkBox);
+            }
+            if (foramt_show_checkBox) {
+                setFormat_title(!foramt_show_checkBox);
             }
             //同步到数据列表
             mDataList.get(currentPos).setFormat_show_checkbox(foramt_show_checkBox, foramt_checkBox_checked);

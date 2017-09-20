@@ -25,5 +25,6 @@
     <string name="note_list_note_item_delete_failed">删除便签失败！</string>
     <string name="note_list_save_privacy_failed">保存到私密仓库失败！</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="note_save_failed">保存失败！</string>
 
 </resources>

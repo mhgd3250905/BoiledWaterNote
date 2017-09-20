@@ -69,4 +69,5 @@
     <item name="rl_note_list_container" type="id">rl_note_list_container</item>
     <item name="iv_format_title" type="id">iv_format_title</item>
     <item name="ll_list_container" type="id">ll_list_container</item>
+    <item name="iv_unlock" type="id">iv_unlock</item>
 </resources>

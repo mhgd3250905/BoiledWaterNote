@@ -1,6 +1,7 @@
 package com.skkk.boiledwaternote.Presenters.NoteList;
 
 import com.skkk.boiledwaternote.Modles.Note;
+import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.Modles.NoteModle;
 import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.Presenters.BasePersenter;
@@ -80,7 +81,7 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
     }
 
     /**
-     * 更新笔记
+     * 更新笔记到隐私
      *
      * @param pos
      * @return
@@ -105,14 +106,37 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
         }
     }
 
+    /**
+     * 获取指定位置的Note
+     * @param pos
+     * @return
+     */
     @Override
     public Note getNote(int pos) {
         return mDataList.get(pos);
     }
 
+    /**
+     * 保存笔记,并且更新界面
+     */
     @Override
-    public void saveNote() {
+    public void saveNote(String noteContent) {
+        NoteEditModel noteEditModel = new NoteEditModel(noteContent, NoteEditModel.Flag.TEXT, null);
+        if (noteModle.saveNote(2, true, noteEditModel)) {
+            insertLatestNote();
+            getView().clearNoteEditText();
+        } else {
+            getView().showNotice(R.string.note_save_failed);
+        }
+    }
 
+    /**
+     * 跳转的笔记编辑界面
+     * @param pos
+     */
+    @Override
+    public void startEditActivity(int pos) {
+        getView().startActivity(getNote(pos));
     }
 
 }

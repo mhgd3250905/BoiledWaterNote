@@ -21,7 +21,6 @@ import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
-import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
 import com.skkk.boiledwaternote.R;
@@ -105,7 +104,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         linearLayoutManager = new MyLinearLayoutManager(getContext());
         rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
-        adapter = new NoteListAdapter(getContext(), new ArrayList<Note>());
+        adapter = new NoteListAdapter(getContext(), new ArrayList<Note>(),noteType);
         rvNoteList.setAdapter(adapter);
     }
 
@@ -125,11 +124,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                     adapter.resetMenuStatus();
                     return;
                 }
-                Note note = noteListPresenter.getNote(pos);
-                Intent intent = new Intent();
-                intent.setClass(getContext(), NoteEditActivity.class);
-                intent.putExtra(Configs.KEY_UPDATE_NOTE, note);
-                getActivity().startActivityForResult(intent, Configs.REQUEST_UPDATE_NOTE);
+                noteListPresenter.startEditActivity(pos);
             }
 
             //隐藏菜单删除按钮点击事件
@@ -150,6 +145,11 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                                 noteListPresenter.updateNoteToPrivacy(notePos,noteType);
                             }
                         }, "算了", null).show();
+            }
+
+            @Override
+            public void onItemUnlockClickListener(View view, int pos) {
+
             }
 
             //便签类型长按点击事件
@@ -176,13 +176,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (etNoteEdit.length() != 0) {
-                    NoteEditModel note = new NoteEditModel(etNoteEdit.getText().toString(), NoteEditModel.Flag.TEXT, null);
-                    if (noteEditPresenter.saveNote(2, true, note)) {
-                        noteListPresenter.insertLatestNote();
-                        etNoteEdit.setText("");
-                    } else {
-                        Toast.makeText(getContext(), "保存失败！", Toast.LENGTH_SHORT).show();
-                    }
+                    noteListPresenter.saveNote(etNoteEdit.getText().toString());
                 } else {
                     Toast.makeText(getContext(), "内容为空", Toast.LENGTH_SHORT).show();
                 }
