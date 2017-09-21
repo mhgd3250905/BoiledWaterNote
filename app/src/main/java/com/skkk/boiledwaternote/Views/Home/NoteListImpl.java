@@ -19,4 +19,5 @@ public interface NoteListImpl {
     void resetAdapterData(List<Note> dataList);
     void showNotice(@StringRes int strId);
     void startActivity(Note note);
+    void changNoteType();
 }

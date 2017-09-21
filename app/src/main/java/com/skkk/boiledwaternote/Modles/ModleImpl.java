@@ -12,10 +12,8 @@ import java.util.List;
 * 时    间：2017/6/11$ 15:24$.
 */
 interface ModleImpl<T> {
-    List<T> queryAll();
-    boolean saveOne(T t);
+    boolean saveOne(int type,T t);
     boolean updateOne(T t);
     boolean deleteOne(T t);
-    List<T> query(String noteType);
-    T queryLatestOne();
+    List<T> query(int noteType);
 }

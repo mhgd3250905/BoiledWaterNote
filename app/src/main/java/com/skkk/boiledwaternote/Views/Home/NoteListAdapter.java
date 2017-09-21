@@ -51,7 +51,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private OnItemClickListener onItemClickListener;
     private boolean isItemResetAnim = false;
     private boolean itemClickable = true;
-    private String noteType="";
+    private int noteType = Note.NoteType.ALL_NOTE.getValue();
 
     interface OnDragItemStatusChange {
         void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
@@ -76,7 +76,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         this.onItemClickListener = onItemClickListener;
     }
 
-    public NoteListAdapter(Context context, List<Note> dataList, String noteType) {
+    public NoteListAdapter(Context context, List<Note> dataList, int noteType) {
         this.context = context;
         this.dataList = dataList;
         this.noteType = noteType;
@@ -91,14 +91,13 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
-        boolean isNote = dataList.get(position).getIsNote();
         //获取第一段文字作为标题
         String content = dataList.get(position).getContent();
         String title = "";       //显示标题
         String contentTitle = "";  //内容标题
         String imagePath = null;   //图片路径
 
-        if (isNote) {
+        if (dataList.get(position).getNoteType()== Note.NoteType.NOTE_NOTE.getValue()) {
             /*
             * 如果是笔记类型
             * */
@@ -200,12 +199,12 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                     ViewGroup.LayoutParams layoutParams = holder.ivArticleListImage.getLayoutParams();
                     if (imgHeight > imgWidth) {
                         //竖直图片
-                        layoutParams.height = holder.llShow.getLayoutParams().height;
-                        layoutParams.width = imgWidth * holder.llShow.getLayoutParams().height / imgWidth;
+                        layoutParams.height = (int) context.getResources().getDimension(R.dimen.note_list_item_height);
+                        layoutParams.width = (int) (context.getResources().getDimension(R.dimen.note_list_item_height) * imgWidth/imgHeight);
                     } else {
                         //横向图片
                         layoutParams.height = (int) context.getResources().getDimension(R.dimen.note_list_item_height);
-                        layoutParams.width = (int) (imgWidth * context.getResources().getDimension(R.dimen.note_list_item_height) / imgHeight);
+                        layoutParams.width = (int) (context.getResources().getDimension(R.dimen.note_list_item_height) * imgWidth/imgHeight);
                     }
                     holder.ivArticleListImage.setLayoutParams(layoutParams);
 
@@ -220,8 +219,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             /*
             * 设置隐私界面的上锁图标
             * */
-                holder.ivLock.setVisibility(noteType.equals(NoteListFragment.NOTE_TYPE_PRIVACY)?View.GONE:View.VISIBLE);
-                holder.ivUnlock.setVisibility(noteType.equals(NoteListFragment.NOTE_TYPE_PRIVACY)?View.VISIBLE:View.GONE);
+            holder.ivLock.setVisibility(noteType == Note.NoteType.PRIVACY_NOTE.getValue() ? View.GONE : View.VISIBLE);
+            holder.ivUnlock.setVisibility(noteType == Note.NoteType.PRIVACY_NOTE.getValue() ? View.VISIBLE : View.GONE);
 
 
             if (onItemClickListener != null) {

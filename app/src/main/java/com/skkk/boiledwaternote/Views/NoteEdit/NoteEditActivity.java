@@ -216,7 +216,7 @@ public class NoteEditActivity extends AppCompatActivity{
     public void onBackPressed() {
         //获取我们写的笔记类
         if (isNew) {
-            if (!presenter.saveNote(1,false,revEdit.getRichText())) {
+            if (!presenter.saveNote(Note.NoteType.ARTICLE_NOTE.getValue(),false,revEdit.getRichText())) {
                 Toast.makeText(this, "添加笔记失败", Toast.LENGTH_SHORT).show();
             }
         } else {

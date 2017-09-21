@@ -12,7 +12,6 @@ import com.skkk.boiledwaternote.Modles.gen.DaoSession;
 import com.skkk.boiledwaternote.Modles.gen.NoteDao;
 import com.skkk.boiledwaternote.Modles.gen.NoteImageDao;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,52 +55,51 @@ public class NoteEditPresenter implements NoteEditable {
         note.setContent(contentJson);
         note.setCreateTime(new Date());
         note.setUpdateTime(new Date());
-        note.setIsNote(isNote);
         note.setNoteType(noteType);
 
-        boolean save = noteModlel.saveOne(note);
+        boolean save = noteModlel.saveOne(noteType,note);
         Log.i(TAG, "getNote: " + note.toString());
         return save;
 
     }
 
 
-    /**
-     * 保存Note
-     *
-     * @param noteEditModels
-     * @return
-     */
-    @Override
-    public boolean saveNote(int noteType, boolean isNote, NoteEditModel... noteEditModels) {
-        List<NoteEditModel> noteEditViewHolderList = new ArrayList<>();
-
-        for (int i = 0; i < noteEditModels.length; i++) {
-            noteEditViewHolderList.add(noteEditModels[i]);
-        }
-
-        Gson gson = new Gson();
-        String contentJson = gson.toJson(noteEditViewHolderList);
-        Log.i(TAG, "saveNote: json---------------------->" + "\n" + contentJson);
-
-        //获取数据库操作类
-        DaoSession session = DBUtils.getInstance(context).getSession();
-        NoteDao noteDao = session.getNoteDao();
-        NoteImageDao noteImageDao = session.getNoteImageDao();
-
-        Note note = new Note();
-        note.setNid(System.currentTimeMillis());
-        note.setContent(contentJson);
-        note.setCreateTime(new Date());
-        note.setUpdateTime(new Date());
-        note.setIsNote(isNote);
-        note.setNoteType(noteType);
-
-        boolean save = noteModlel.saveOne(note);
-        Log.i(TAG, "getNote: " + note.toString());
-        return save;
-
-    }
+//    /**
+//     * 保存Note
+//     *
+//     * @param noteEditModels
+//     * @return
+//     */
+//    @Override
+//    public boolean saveNote(int noteType, boolean isNote, NoteEditModel... noteEditModels) {
+//        List<NoteEditModel> noteEditViewHolderList = new ArrayList<>();
+//
+//        for (int i = 0; i < noteEditModels.length; i++) {
+//            noteEditViewHolderList.add(noteEditModels[i]);
+//        }
+//
+//        Gson gson = new Gson();
+//        String contentJson = gson.toJson(noteEditViewHolderList);
+//        Log.i(TAG, "saveNote: json---------------------->" + "\n" + contentJson);
+//
+//        //获取数据库操作类
+//        DaoSession session = DBUtils.getInstance(context).getSession();
+//        NoteDao noteDao = session.getNoteDao();
+//        NoteImageDao noteImageDao = session.getNoteImageDao();
+//
+//        Note note = new Note();
+//        note.setNid(System.currentTimeMillis());
+//        note.setContent(contentJson);
+//        note.setCreateTime(new Date());
+//        note.setUpdateTime(new Date());
+//        note.setIsNote(isNote);
+//        note.setNoteType(noteType);
+//
+//        boolean save = noteModlel.saveOne(note);
+//        Log.i(TAG, "getNote: " + note.toString());
+//        return save;
+//
+//    }
 
     /**
      * 更新笔记

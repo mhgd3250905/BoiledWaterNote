@@ -6,7 +6,6 @@ import com.skkk.boiledwaternote.Modles.NoteModle;
 import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.Presenters.BasePersenter;
 import com.skkk.boiledwaternote.R;
-import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.Home.NoteListImpl;
 
 import java.util.ArrayList;
@@ -28,37 +27,41 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
 //        this.noteListImpl = noteListImpl;
 //    }
 
-
     public NoteListPresenter() {
         mDataList = new ArrayList<>(); //初始化数据集
     }
 
+    /**
+     * 显示指定类型的笔记
+     * @param noteType
+     */
     @Override
-    public void showNotes(String noteType) {
+    public void showNotes(int noteType) {
         mDataList = noteModle.query(noteType);
-        if (mDataList != null) {
+        if (mDataList !=null) {
             getView().showList(mDataList);
         }
     }
 
-    @Override
-    public List<Note> getNotes() {
-//        DaoSession session = DBUtils.getInstance(MyApplication.getInstance().getApplicationContext()).getSession();
-//        NoteDao noteDao = session.getNoteDao();
-//        List<Note> list = noteDao.queryBuilder().orderDesc(NoteDao.Properties.CreateTime).list();
-        return null;
-    }
 
+
+    /**
+     * 显示所有的笔记
+     */
     @Override
     public void showAllNote() {
-        List<Note> noteList = noteModle.queryAll();
+        List<Note> noteList = noteModle.query(Note.NoteType.ALL_NOTE.getValue());
         getView().showList(noteList);
     }
 
-    public void insertLatestNote() {
-        Note note = noteModle.queryLatestOne();
-        mDataList.add(0, note);
-        getView().insertNote(0);
+
+    public void insertLatestNote(int noteType) {
+        List<Note> queryList = noteModle.query(noteType);
+        if (queryList.size()>0){
+            mDataList.add(0, queryList.get(0));
+            getView().insertNote(0);
+        }
+
     }
 
     /**
@@ -87,19 +90,19 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
      * @return
      */
     @Override
-    public void updateNoteToPrivacy(int pos, String type) {
+    public void updateNoteToPrivacy(int pos, int showNoteType) {
         Note note = mDataList.get(pos);
-        note.setIsPrivacy(true);//设置为隐私类型
+        note.setNoteType(Note.NoteType.PRIVACY_NOTE.getValue());
         boolean done = noteModle.updateOne(note);
         if (done) {
             getView().resetAdapterData(mDataList);
-            if (type.equals(NoteListFragment.NOTE_TYPE_NONE)
-                    || type.equals(NoteListFragment.NOTE_TYPE_ARTICLE)) {
+            if (showNoteType== Note.NoteType.ALL_NOTE.getValue()
+                    || showNoteType== Note.NoteType.ARTICLE_NOTE.getValue()) {
                 mDataList.remove(pos);
                 getView().resetAdapterData(mDataList);
                 getView().deleteNote(pos);
-            } else if (type.equals(NoteListFragment.NOTE_TYPE_PRIVACY)) {
-                showNotes(NoteListFragment.NOTE_TYPE_PRIVACY);
+            } else if (showNoteType== Note.NoteType.PRIVACY_NOTE.getValue()) {
+                showNotes(showNoteType);
             }
         } else {
             getView().showNotice(R.string.note_list_save_privacy_failed);
@@ -122,8 +125,8 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
     @Override
     public void saveNote(String noteContent) {
         NoteEditModel noteEditModel = new NoteEditModel(noteContent, NoteEditModel.Flag.TEXT, null);
-        if (noteModle.saveNote(2, true, noteEditModel)) {
-            insertLatestNote();
+        if (noteModle.saveOne(Note.NoteType.NOTE_NOTE.getValue(), true, noteEditModel)) {
+            insertLatestNote(Note.NoteType.NOTE_NOTE.getValue());
             getView().clearNoteEditText();
         } else {
             getView().showNotice(R.string.note_save_failed);
@@ -138,5 +141,21 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
     public void startEditActivity(int pos) {
         getView().startActivity(getNote(pos));
     }
+
+    /**
+     * 显示指定类型的笔记
+     * @param noteType
+     */
+    @Override
+    public void showSpecialTypeNotes(int noteType) {
+        List<Note> articles = noteModle.query(noteType);
+        getView().showList(articles);
+    }
+
+    @Override
+    public void showAllImages() {
+
+    }
+
 
 }

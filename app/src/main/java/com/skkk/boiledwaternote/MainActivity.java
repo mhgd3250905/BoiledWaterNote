@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity
      * 添加进入时候默认的Fragment
      */
     private void addDefaultFragment() {
-        NoteListFragment noteListFragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_NONE);
+        NoteListFragment noteListFragment = NoteListFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fl_container, noteListFragment)
@@ -201,18 +202,18 @@ public class MainActivity extends AppCompatActivity
         //设置菜单点击事件
         navigationMenu.findItem(id).setChecked(true);
 
-        Fragment fragment = null;
+        NoteListFragment fragment = null;
 
         if(id==R.id.nav_all) {
-            fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_NONE);
+            fragment = NoteListFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         }else if (id == R.id.nav_article) {//文章
-            fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_ARTICLE);
+            fragment = NoteListFragment.getInstance(Note.NoteType.ARTICLE_NOTE.getValue());
         } else if (id == R.id.nav_note) {//笔记
-            fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_NOTE);
+            fragment = NoteListFragment.getInstance(Note.NoteType.NOTE_NOTE.getValue());
         } else if (id == R.id.nav_image) {//图片
 
         } else if (id == R.id.nav_privacy) {//隐私
-            fragment = NoteListFragment.newInstance(NoteListFragment.NOTE_TYPE_PRIVACY);
+            fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
         } else if (id == R.id.nav_recycle) {//回收站
 
         } else if (id == R.id.nav_about) {//关于
@@ -225,6 +226,10 @@ public class MainActivity extends AppCompatActivity
         if (fragment==null){
             return true;
         }
+
+        //切换笔记类型
+        fragment.changNoteType();
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fl_container, fragment)

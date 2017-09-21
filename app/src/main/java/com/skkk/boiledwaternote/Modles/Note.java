@@ -66,10 +66,30 @@ public class Note implements Serializable {
     @NonNull boolean isPrivacy=false;       //是否为隐秘类型
 
     @NonNull
-    private int noteType=1;                 //笔记类型1->article 2->note 3->privacy
+    private int noteType= NoteType.ARTICLE_NOTE.getValue();                 //笔记类型1->article 2->note 3->privacy
 
     @Transient
     private boolean isMenuOpen;
+
+    /**
+     * 笔记类型枚举类
+     */
+    public enum NoteType{
+        ALL_NOTE(0),
+        ARTICLE_NOTE(1),
+        NOTE_NOTE(2),
+        PRIVACY_NOTE(3);
+        int typeCode;
+
+        private NoteType(int typeCode) {
+            this.typeCode=typeCode;
+        }
+
+        public int getValue(){
+            return typeCode;
+        }
+    }
+
 
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.

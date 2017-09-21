@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Configs;
-import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
@@ -53,19 +52,33 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     private NoteListPresenter noteListPresenter;
     private NoteEditPresenter noteEditPresenter;
 
-    private String noteType;
+    private int noteType;//传入的笔记类型
 
     //    private RefreshLayout refreshLayout;
     private MyLinearLayoutManager linearLayoutManager;
     private NoteListAdapter adapter;
 
-    private DragItemCircleView lastDragItem;
+    /*
+    * 设置单例模式
+    * */
+    private volatile static NoteListFragment instance;
 
+    public static NoteListFragment getInstance(int noteType) {
+        if (instance==null){
+            synchronized (NoteListFragment.class){
+                if (instance==null){
+                    instance=newInstance(noteType);
+                }
+            }
+        }
+        instance.setNoteType(noteType);
+        return instance;
+    }
 
-    public static NoteListFragment newInstance(String noteType) {
+    public static NoteListFragment newInstance(int noteType) {
         NoteListFragment fragment = new NoteListFragment();
         Bundle args = new Bundle();
-        args.putString(NOTE_TYPE, noteType);
+        args.putInt(NOTE_TYPE, noteType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,7 +87,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            noteType = getArguments().getString(NOTE_TYPE);
+            noteType = getArguments().getInt(NOTE_TYPE);
         }
     }
 
@@ -92,7 +105,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         noteListPresenter = new NoteListPresenter();
         noteListPresenter.attachView(this);
         noteEditPresenter = new NoteEditPresenter(getContext());
-        initUI(view);       //初始化UI
+        initUI();       //初始化UI
         initEvent();        //设置各种事件
         noteListPresenter.showNotes(noteType);
     }
@@ -100,7 +113,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     /**
      * 初始化UI
      */
-    private void initUI(View view) {
+    private void initUI() {
         linearLayoutManager = new MyLinearLayoutManager(getContext());
         rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
@@ -284,6 +297,21 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         getActivity().startActivityForResult(intent, Configs.REQUEST_UPDATE_NOTE);
     }
 
+    /**
+     * 切换笔记类型
+     */
+    @Override
+    public void changNoteType() {
+        noteListPresenter.showSpecialTypeNotes(noteType);
+    }
+
+    public int getNoteType() {
+        return noteType;
+    }
+
+    public void setNoteType(int noteType) {
+        this.noteType = noteType;
+    }
 
     @Override
     public void onDestroyView() {
