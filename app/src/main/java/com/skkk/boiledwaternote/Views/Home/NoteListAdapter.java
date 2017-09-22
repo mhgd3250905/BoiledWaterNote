@@ -25,14 +25,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyDragItemView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
-import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
 
 import java.util.List;
 
@@ -41,6 +39,7 @@ import butterknife.ButterKnife;
 
 import static android.content.ContentValues.TAG;
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 /**
  * RecyclerView数据适配器
@@ -97,12 +96,12 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         String contentTitle = "";  //内容标题
         String imagePath = null;   //图片路径
 
-        if (dataList.get(position).getNoteType()== Note.NoteType.NOTE_NOTE.getValue()) {
+        if (dataList.get(position).getNoteType() == Note.NoteType.NOTE_NOTE.getValue()) {
             /*
             * 如果是笔记类型
             * */
             holder.divItem.setVisibility(GONE);
-            holder.rlListNoteContainer.setVisibility(View.VISIBLE);
+            holder.rlListNoteContainer.setVisibility(VISIBLE);
 
             //显示距离此刻模式的时间显示方式
             CharSequence relativeDateTimeString = DateUtils
@@ -147,7 +146,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             /*
             * 如果是文章类型
             * */
-            holder.divItem.setVisibility(View.VISIBLE);
+            holder.divItem.setVisibility(VISIBLE);
             holder.rlListNoteContainer.setVisibility(GONE);
 
             //显示距离此刻模式的时间显示方式
@@ -188,39 +187,49 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
 
                 if (!TextUtils.isEmpty(imagePath)) {
-
-                    /*
-                     * 根据图片的宽高来设置相框的大小
-                     * */
-                    int imgWidth = ImageUtils.getBitmapWidth(imagePath, true);
-                    int imgHeight = ImageUtils.getBitmapWidth(imagePath, false);
-                    // w:h=mW:mH
-
-                    ViewGroup.LayoutParams layoutParams = holder.ivArticleListImage.getLayoutParams();
-                    if (imgHeight > imgWidth) {
-                        //竖直图片
-                        layoutParams.height = (int) context.getResources().getDimension(R.dimen.note_list_item_height);
-                        layoutParams.width = (int) (context.getResources().getDimension(R.dimen.note_list_item_height) * imgWidth/imgHeight);
-                    } else {
-                        //横向图片
-                        layoutParams.height = (int) context.getResources().getDimension(R.dimen.note_list_item_height);
-                        layoutParams.width = (int) (context.getResources().getDimension(R.dimen.note_list_item_height) * imgWidth/imgHeight);
-                    }
-                    holder.ivArticleListImage.setLayoutParams(layoutParams);
-
-                    holder.ivArticleListImage.setVisibility(View.VISIBLE);
-                    Glide.with(context)
-                            .load(imagePath)
-                            .into(holder.ivArticleListImage);
+//                    /*
+//                     * 根据图片的宽高来设置相框的大小
+//                     * */
+//                    int imgWidth = ImageUtils.getBitmapWidth(imagePath, true);
+//                    int imgHeight = ImageUtils.getBitmapWidth(imagePath, false);
+//                    // w:h=mW:mH
+//
+//                    ViewGroup.LayoutParams layoutParams = holder.ivArticleListImage.getLayoutParams();
+//                    if (imgHeight > imgWidth) {
+//                        //竖直图片
+//                        layoutParams.height = (int) context.getResources().getDimension(R.dimen.note_list_item_height);
+//                        layoutParams.width = (int) (context.getResources().getDimension(R.dimen.note_list_item_height) * imgWidth/imgHeight);
+//                    } else {
+//                        //横向图片
+//                        layoutParams.height = (int) context.getResources().getDimension(R.dimen.note_list_item_height);
+//                        layoutParams.width = (int) (context.getResources().getDimension(R.dimen.note_list_item_height) * imgWidth/imgHeight);
+//                    }
+//                    holder.ivArticleListImage.setLayoutParams(layoutParams);
+//
+//                    holder.ivArticleListImage.setVisibility(View.VISIBLE);
+//                    Glide.with(context)
+//                            .load(imagePath)
+//                            .into(holder.ivArticleListImage);
+                    holder.ivArticleListImageFlag.setVisibility(VISIBLE);
                 } else {
-                    holder.ivArticleListImage.setVisibility(GONE);
+                    holder.ivArticleListImageFlag.setVisibility(GONE);
                 }
             }
-            /*
+
+
+//            holder.ivLock.setVisibility(noteType == Note.NoteType.PRIVACY_NOTE.getValue() ? View.GONE : View.VISIBLE);
+//            holder.ivUnlock.setVisibility(noteType == Note.NoteType.PRIVACY_NOTE.getValue() ? View.VISIBLE : View.GONE);
+
+
+             /*
             * 设置隐私界面的上锁图标
             * */
-            holder.ivLock.setVisibility(noteType == Note.NoteType.PRIVACY_NOTE.getValue() ? View.GONE : View.VISIBLE);
-            holder.ivUnlock.setVisibility(noteType == Note.NoteType.PRIVACY_NOTE.getValue() ? View.VISIBLE : View.GONE);
+            if (dataList.get(position).getNoteType() == Note.NoteType.PRIVACY_NOTE.getValue()) {
+                holder.ivLock.setImageResource(R.drawable.vector_drawable_unlock);
+            } else {
+                holder.ivLock.setImageResource(R.drawable.vector_drawable_lock);
+
+            }
 
 
             if (onItemClickListener != null) {
@@ -243,16 +252,21 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 holder.ivLock.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onItemClickListener.onItemLockClickListener(v, holder.getAdapterPosition());
+                        if (dataList.get(position).getNoteType()== Note.NoteType.PRIVACY_NOTE.getValue()){
+                            onItemClickListener.onItemUnlockClickListener(v, holder.getAdapterPosition());
+
+                        }else {
+                            onItemClickListener.onItemLockClickListener(v, holder.getAdapterPosition());
+
+                        }
                     }
                 });
 
-                holder.ivUnlock.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onItemClickListener.onItemUnlockClickListener(v, holder.getAdapterPosition());
-                    }
-                });
+//                holder.ivUnlock.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                    }
+//                });
             }
 
 
@@ -345,6 +359,14 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         notifyDataSetChanged();
     }
 
+    public int getNoteType() {
+        return noteType;
+    }
+
+    public void setNoteType(int noteType) {
+        this.noteType = noteType;
+    }
+
 
 //    public void setHaveItemOpen(boolean haveItemOpen) {
 //        this.haveItemOpen = haveItemOpen;
@@ -363,8 +385,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         public ImageView ivDelete;
         @Bind(R.id.iv_lock)
         public ImageView ivLock;
-        @Bind(R.id.iv_unlock)
-        public ImageView ivUnlock;
+//        @Bind(R.id.iv_unlock)
+//        public ImageView ivUnlock;
         @Bind(R.id.div_item)
         public MyDragItemView divItem;
         @Bind(R.id.iv_article_list_image)
@@ -377,6 +399,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         public TextView tvNoteListTitle;
         @Bind(R.id.tv_note_list_time)
         public TextView tvNoteListTime;
+        @Bind(R.id.iv_article_list_image_flag)
+        public ImageView ivArticleListImageFlag;
 
 
         public MyViewHolder(View itemView) {

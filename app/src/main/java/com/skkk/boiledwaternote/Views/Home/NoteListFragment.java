@@ -155,14 +155,22 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                         "好的", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                noteListPresenter.updateNoteToPrivacy(notePos,noteType);
+                                noteListPresenter.updateNoteToPrivacy(notePos);
                             }
                         }, "算了", null).show();
             }
 
             @Override
             public void onItemUnlockClickListener(View view, int pos) {
-
+                final int notePos = pos;
+                DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
+                        "提醒", "是否将该笔记从隐私仓库移除？",
+                        "好的", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                noteListPresenter.updateNoteFromPrivacy(notePos);
+                            }
+                        }, "算了", null).show();
             }
 
             //便签类型长按点击事件
@@ -311,6 +319,9 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     public void setNoteType(int noteType) {
         this.noteType = noteType;
+        if (noteListPresenter!=null){
+            noteListPresenter.showNotes(noteType);
+        }
     }
 
     @Override

@@ -70,4 +70,5 @@
     <item name="iv_format_title" type="id">iv_format_title</item>
     <item name="ll_list_container" type="id">ll_list_container</item>
     <item name="iv_unlock" type="id">iv_unlock</item>
+    <item name="iv_article_list_image_flag" type="id">iv_article_list_image_flag</item>
 </resources>

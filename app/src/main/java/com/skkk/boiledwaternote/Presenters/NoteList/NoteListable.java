@@ -10,7 +10,8 @@ public interface NoteListable {
     void showNotes(int noteType);
     void showAllNote();
     void deleteNote(int pos);
-    void updateNoteToPrivacy(int pos, int showNoteType);
+    void updateNoteToPrivacy(int pos);
+    void updateNoteFromPrivacy(int pos);
     Note getNote(int pos);
     void saveNote(String noteContent);
     void startEditActivity(int pos);

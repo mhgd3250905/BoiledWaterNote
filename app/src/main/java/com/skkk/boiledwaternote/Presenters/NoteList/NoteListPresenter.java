@@ -33,16 +33,16 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
 
     /**
      * 显示指定类型的笔记
+     *
      * @param noteType
      */
     @Override
     public void showNotes(int noteType) {
         mDataList = noteModle.query(noteType);
-        if (mDataList !=null) {
+        if (mDataList != null) {
             getView().showList(mDataList);
         }
     }
-
 
 
     /**
@@ -57,7 +57,7 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
 
     public void insertLatestNote(int noteType) {
         List<Note> queryList = noteModle.query(noteType);
-        if (queryList.size()>0){
+        if (queryList.size() > 0) {
             mDataList.add(0, queryList.get(0));
             getView().insertNote(0);
         }
@@ -90,20 +90,36 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
      * @return
      */
     @Override
-    public void updateNoteToPrivacy(int pos, int showNoteType) {
+    public void updateNoteToPrivacy(int pos) {
         Note note = mDataList.get(pos);
         note.setNoteType(Note.NoteType.PRIVACY_NOTE.getValue());
         boolean done = noteModle.updateOne(note);
         if (done) {
             getView().resetAdapterData(mDataList);
-            if (showNoteType== Note.NoteType.ALL_NOTE.getValue()
-                    || showNoteType== Note.NoteType.ARTICLE_NOTE.getValue()) {
-                mDataList.remove(pos);
-                getView().resetAdapterData(mDataList);
-                getView().deleteNote(pos);
-            } else if (showNoteType== Note.NoteType.PRIVACY_NOTE.getValue()) {
-                showNotes(showNoteType);
-            }
+            mDataList.remove(pos);
+            getView().resetAdapterData(mDataList);
+            getView().deleteNote(pos);
+        } else {
+            getView().showNotice(R.string.note_list_save_privacy_failed);
+        }
+    }
+
+    /**
+     * 更新笔记到隐私
+     *
+     * @param pos
+     * @return
+     */
+    @Override
+    public void updateNoteFromPrivacy(int pos) {
+        Note note = mDataList.get(pos);
+        note.setNoteType(Note.NoteType.ARTICLE_NOTE.getValue());
+        boolean done = noteModle.updateOne(note);
+        if (done) {
+            getView().resetAdapterData(mDataList);
+            mDataList.remove(pos);
+            getView().resetAdapterData(mDataList);
+            getView().deleteNote(pos);
         } else {
             getView().showNotice(R.string.note_list_save_privacy_failed);
         }
@@ -111,6 +127,7 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
 
     /**
      * 获取指定位置的Note
+     *
      * @param pos
      * @return
      */
@@ -135,6 +152,7 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
 
     /**
      * 跳转的笔记编辑界面
+     *
      * @param pos
      */
     @Override
@@ -144,6 +162,7 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
 
     /**
      * 显示指定类型的笔记
+     *
      * @param noteType
      */
     @Override
