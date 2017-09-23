@@ -2,6 +2,7 @@ package com.skkk.boiledwaternote;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -12,12 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
+import com.skkk.boiledwaternote.Utils.Utils.SoftInputUtils;
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 
@@ -40,6 +44,10 @@ public class MainActivity extends AppCompatActivity
     NavigationView navView;
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+    @Bind(R.id.ll_edit_container)
+    LinearLayout llEditContainer;
+    @Bind(R.id.activity_main_container)
+    CoordinatorLayout activityMainContainer;
     private Menu navigationMenu;
     private NoteEditPresenter presenter;
 
@@ -65,7 +73,18 @@ public class MainActivity extends AppCompatActivity
         //侧滑菜单
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                SoftInputUtils.toggleSoftInput(MainActivity.this);
+                super.onDrawerOpened(drawerView);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -204,9 +223,9 @@ public class MainActivity extends AppCompatActivity
 
         NoteListFragment fragment = null;
 
-        if(id==R.id.nav_all) {
+        if (id == R.id.nav_all) {
             fragment = NoteListFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
-        }else if (id == R.id.nav_article) {//文章
+        } else if (id == R.id.nav_article) {//文章
             fragment = NoteListFragment.getInstance(Note.NoteType.ARTICLE_NOTE.getValue());
         } else if (id == R.id.nav_note) {//笔记
             fragment = NoteListFragment.getInstance(Note.NoteType.NOTE_NOTE.getValue());
@@ -223,7 +242,7 @@ public class MainActivity extends AppCompatActivity
             navigationMenu.findItem(id).setChecked(false);
         }
 
-        if (fragment==null){
+        if (fragment == null) {
             return true;
         }
 

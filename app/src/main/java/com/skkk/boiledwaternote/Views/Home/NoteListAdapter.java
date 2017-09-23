@@ -186,6 +186,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 }
 
 
+                /*
+                * 显示图片标记
+                * */
                 if (!TextUtils.isEmpty(imagePath)) {
 //                    /*
 //                     * 根据图片的宽高来设置相框的大小
@@ -216,11 +219,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 }
             }
 
-
-//            holder.ivLock.setVisibility(noteType == Note.NoteType.PRIVACY_NOTE.getValue() ? View.GONE : View.VISIBLE);
-//            holder.ivUnlock.setVisibility(noteType == Note.NoteType.PRIVACY_NOTE.getValue() ? View.VISIBLE : View.GONE);
-
-
              /*
             * 设置隐私界面的上锁图标
             * */
@@ -230,7 +228,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 holder.ivLock.setImageResource(R.drawable.vector_drawable_lock);
 
             }
-
 
             if (onItemClickListener != null) {
                 holder.llShow.setOnClickListener(new View.OnClickListener() {
@@ -262,11 +259,6 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                     }
                 });
 
-//                holder.ivUnlock.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                    }
-//                });
             }
 
 
