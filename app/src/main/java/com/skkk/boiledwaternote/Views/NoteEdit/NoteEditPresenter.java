@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.Presenters.NoteEdit;
+package com.skkk.boiledwaternote.Views.NoteEdit;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,7 +10,6 @@ import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.Modles.NoteModle;
 import com.skkk.boiledwaternote.Modles.gen.DaoSession;
 import com.skkk.boiledwaternote.Modles.gen.NoteDao;
-import com.skkk.boiledwaternote.Modles.gen.NoteImageDao;
 
 import java.util.Date;
 import java.util.List;
@@ -48,7 +47,6 @@ public class NoteEditPresenter implements NoteEditable {
         //获取数据库操作类
         DaoSession session = DBUtils.getInstance(context).getSession();
         NoteDao noteDao = session.getNoteDao();
-        NoteImageDao noteImageDao = session.getNoteImageDao();
 
         Note note = new Note();
         note.setNid(System.currentTimeMillis());

@@ -17,8 +17,8 @@ import java.util.List;
 * 时    间：2017/8/14$ 21:01$.
 */
 public abstract class BaseAdapter<T,V extends BaseViewHolder> extends RecyclerView.Adapter<V>{
-    private List<T> mDataList;
-    private Context context;
+    protected List<T> mDataList;
+    protected Context context;
 
     public BaseAdapter(Context context, List<T> mDataList) {
         this.context = context;
@@ -28,7 +28,7 @@ public abstract class BaseAdapter<T,V extends BaseViewHolder> extends RecyclerVi
     @Override
     public V onCreateViewHolder(ViewGroup parent, int viewType) {
         V v=getCostumViewHolder(parent,viewType);
-        return null;
+        return v;
     }
 
     @Override
@@ -47,7 +47,7 @@ public abstract class BaseAdapter<T,V extends BaseViewHolder> extends RecyclerVi
      * @param viewType
      * @return
      */
-    abstract V getCostumViewHolder(ViewGroup parent, int viewType);
+    protected abstract V getCostumViewHolder(ViewGroup parent, int viewType);
 
     /**
      * 设置ViewHolder绑定事件
@@ -104,5 +104,16 @@ public abstract class BaseAdapter<T,V extends BaseViewHolder> extends RecyclerVi
      */
     public void remove(int index){
         mDataList.remove(index);
+    }
+
+    /*
+    * 设置数据集
+    * */
+    public List<T> getmDataList() {
+        return mDataList;
+    }
+
+    public void setmDataList(List<T> mDataList) {
+        this.mDataList = mDataList;
     }
 }

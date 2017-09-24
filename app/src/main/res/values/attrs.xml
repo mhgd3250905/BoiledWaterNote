@@ -17,4 +17,9 @@
             </attr>
         </declare-styleable>
 
+        <declare-styleable name="CheckImageView">
+            <attr name="imageSrc" format="integer"/>
+            <attr name="imageCheckedSrc" format="integer"/>
+        </declare-styleable>
+
 </resources>

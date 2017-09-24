@@ -153,4 +153,47 @@ public class NoteEditModel {
     public void setForamt_checkBox_check(boolean foramt_checkBox_check) {
         this.foramt_checkBox_check = foramt_checkBox_check;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NoteEditModel model = (NoteEditModel) o;
+
+        if (format_align_center != model.format_align_center) return false;
+        if (format_bold != model.format_bold) return false;
+        if (format_italic != model.format_italic) return false;
+        if (format_list != model.format_list) return false;
+        if (format_list_numbered != model.format_list_numbered) return false;
+        if (format_quote != model.format_quote) return false;
+        if (format_title != model.format_title) return false;
+        if (format_underlined != model.format_underlined) return false;
+        if (format_strike_through != model.format_strike_through) return false;
+        if (format_show_checkbox != model.format_show_checkbox) return false;
+        if (foramt_checkBox_check != model.foramt_checkBox_check) return false;
+        if (!content.equals(model.content)) return false;
+        if (itemFlag != model.itemFlag) return false;
+        return imagePath.equals(model.imagePath);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = content.hashCode();
+        result = 31 * result + itemFlag.hashCode();
+        result = 31 * result + imagePath.hashCode();
+        result = 31 * result + (format_align_center ? 1 : 0);
+        result = 31 * result + (format_bold ? 1 : 0);
+        result = 31 * result + (format_italic ? 1 : 0);
+        result = 31 * result + (format_list ? 1 : 0);
+        result = 31 * result + (format_list_numbered ? 1 : 0);
+        result = 31 * result + (format_quote ? 1 : 0);
+        result = 31 * result + (format_title ? 1 : 0);
+        result = 31 * result + (format_underlined ? 1 : 0);
+        result = 31 * result + (format_strike_through ? 1 : 0);
+        result = 31 * result + (format_show_checkbox ? 1 : 0);
+        result = 31 * result + (foramt_checkBox_check ? 1 : 0);
+        return result;
+    }
 }

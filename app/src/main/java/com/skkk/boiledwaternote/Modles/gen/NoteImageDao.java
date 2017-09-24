@@ -30,6 +30,7 @@ public class NoteImageDao extends AbstractDao<NoteImage, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property NoteId = new Property(1, Long.class, "noteId", false, "NOTE_ID");
         public final static Property Path = new Property(2, String.class, "path", false, "PATH");
+        public final static Property NoteType = new Property(3, int.class, "noteType", false, "NOTE_TYPE");
     };
 
     private DaoSession daoSession;
@@ -51,7 +52,8 @@ public class NoteImageDao extends AbstractDao<NoteImage, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"IMAGE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"NOTE_ID\" INTEGER," + // 1: noteId
-                "\"PATH\" TEXT);"); // 2: path
+                "\"PATH\" TEXT," + // 2: path
+                "\"NOTE_TYPE\" INTEGER NOT NULL );"); // 3: noteType
     }
 
     /** Drops the underlying database table. */
@@ -78,6 +80,7 @@ public class NoteImageDao extends AbstractDao<NoteImage, Long> {
         if (path != null) {
             stmt.bindString(3, path);
         }
+        stmt.bindLong(4, entity.getNoteType());
     }
 
     @Override
@@ -98,6 +101,7 @@ public class NoteImageDao extends AbstractDao<NoteImage, Long> {
         if (path != null) {
             stmt.bindString(3, path);
         }
+        stmt.bindLong(4, entity.getNoteType());
     }
 
     @Override
@@ -116,7 +120,8 @@ public class NoteImageDao extends AbstractDao<NoteImage, Long> {
         NoteImage entity = new NoteImage( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // noteId
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // path
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // path
+            cursor.getInt(offset + 3) // noteType
         );
         return entity;
     }
@@ -126,6 +131,7 @@ public class NoteImageDao extends AbstractDao<NoteImage, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setNoteId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setPath(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setNoteType(cursor.getInt(offset + 3));
      }
     
     @Override

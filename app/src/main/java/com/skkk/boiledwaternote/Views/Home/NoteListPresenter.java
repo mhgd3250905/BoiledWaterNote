@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.Presenters.NoteList;
+package com.skkk.boiledwaternote.Views.Home;
 
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -6,7 +6,6 @@ import com.skkk.boiledwaternote.Modles.NoteModle;
 import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.Presenters.BasePersenter;
 import com.skkk.boiledwaternote.R;
-import com.skkk.boiledwaternote.Views.Home.NoteListImpl;
 
 import java.util.ArrayList;
 import java.util.List;

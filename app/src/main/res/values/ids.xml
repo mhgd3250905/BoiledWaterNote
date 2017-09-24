@@ -72,4 +72,10 @@
     <item name="iv_unlock" type="id">iv_unlock</item>
     <item name="iv_article_list_image_flag" type="id">iv_article_list_image_flag</item>
     <item name="activity_main_container" type="id">activity_main_container</item>
+    <item name="iv_note_iamge_checked_bg" type="id">iv_note_iamge_checked_bg</item>
+    <item name="iv_note_image" type="id">iv_note_image</item>
+    <item name="rv_note_image" type="id">rv_note_image</item>
+    <item name="cl_image_container" type="id">cl_image_container</item>
+    <item name="fab_note_iamge" type="id">fab_note_iamge</item>
+    <item name="rl_note_iamge_checked_container" type="id">rl_note_iamge_checked_container</item>
 </resources>

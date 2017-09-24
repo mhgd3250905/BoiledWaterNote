@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.Presenters.NoteEdit;
+package com.skkk.boiledwaternote.Views.NoteEdit;
 
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;

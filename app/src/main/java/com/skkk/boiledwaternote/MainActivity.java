@@ -20,10 +20,10 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Modles.Note;
-import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
-import com.skkk.boiledwaternote.Utils.Utils.SoftInputUtils;
+import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
+import com.skkk.boiledwaternote.Views.NoteImage.NoteImageFragment;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity
     CoordinatorLayout activityMainContainer;
     private Menu navigationMenu;
     private NoteEditPresenter presenter;
+    private Fragment fragment;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,6 @@ public class MainActivity extends AppCompatActivity
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
-                SoftInputUtils.toggleSoftInput(MainActivity.this);
                 super.onDrawerOpened(drawerView);
             }
 
@@ -120,10 +121,10 @@ public class MainActivity extends AppCompatActivity
      * 添加进入时候默认的Fragment
      */
     private void addDefaultFragment() {
-        NoteListFragment noteListFragment = NoteListFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
+        fragment = NoteListFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fl_container, noteListFragment)
+                .replace(R.id.fl_container, fragment)
                 .commit();
     }
 
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-
+        this.menu = menu;
         return true;
     }
 
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity
         //设置菜单点击事件
         navigationMenu.findItem(id).setChecked(true);
 
-        NoteListFragment fragment = null;
+        fragment = null;
 
         if (id == R.id.nav_all) {
             fragment = NoteListFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
@@ -230,7 +231,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_note) {//笔记
             fragment = NoteListFragment.getInstance(Note.NoteType.NOTE_NOTE.getValue());
         } else if (id == R.id.nav_image) {//图片
-
+            fragment= NoteImageFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         } else if (id == R.id.nav_privacy) {//隐私
             fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
         } else if (id == R.id.nav_recycle) {//回收站
@@ -246,8 +247,12 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        MenuItem addItem = menu.findItem(R.id.action_add);
+        addItem.setVisible(fragment instanceof NoteListFragment);
+
+
         //切换笔记类型
-        fragment.changNoteType();
+//        fragment.changNoteType();
 
         getSupportFragmentManager()
                 .beginTransaction()

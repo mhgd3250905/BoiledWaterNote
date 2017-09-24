@@ -5,10 +5,12 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Modles.gen.DaoSession;
 import com.skkk.boiledwaternote.Modles.gen.NoteDao;
+import com.skkk.boiledwaternote.Views.NoteImage.ImageModle;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +25,7 @@ import static com.skkk.boiledwaternote.Modles.gen.NoteDao.Properties.NoteType;
 * 作    者：ksheng
 * 时    间：2017/6/11$ 15:43$.
 */
-public class NoteModle implements ModleImpl<Note> {
+public class NoteModle implements NoteModleImpl<Note> {
     private Context context;
     private DaoSession session;
 
@@ -103,6 +105,76 @@ public class NoteModle implements ModleImpl<Note> {
 
         List<Note> noteList = noteQueryBuilder.orderDesc(NoteDao.Properties.CreateTime).list();
         return noteList;
+    }
+
+    /**
+     * 查找所有的图片
+     * @return
+     */
+    @Override
+    public List<NoteEditModel> queryAllImages(int type) {
+        List<NoteEditModel> modelList=new ArrayList<>();
+        List<Note> allNotes = query(type);
+        String content;
+        for (Note note : allNotes) {
+            content="";
+            content = note.getContent();
+            NoteEditModel[] models = new Gson().fromJson(content, NoteEditModel[].class);
+            for (NoteEditModel model : models) {
+                if (model.getItemFlag()== NoteEditModel.Flag.IMAGE){
+                    modelList.add(model);
+                }
+            }
+        }
+        return modelList;
+    }
+
+    /**
+     * 删除一个图片
+     * @return
+     */
+    @Override
+    public boolean deleteImage(ImageModle imageModle,int type) {
+        boolean done=false;
+        List<Note> allNotes = query(type);
+        String content;//笔记内容
+        for (Note note : allNotes) {
+            content="";
+            content = note.getContent();
+            NoteEditModel[] models = new Gson().fromJson(content, NoteEditModel[].class);
+            List<NoteEditModel> modelList = Arrays.asList(models);
+            /*
+            * 如果条目中有这个图片条目就直接删除掉
+            * */
+            List<NoteEditModel> newModleList=new ArrayList<>();
+            newModleList.addAll(modelList);
+            for (int i = 0; i < modelList.size(); i++) {
+                NoteEditModel model = modelList.get(i);
+                NoteEditModel model1 = imageModle.getnoteEditModel();
+                if (modelList.get(i).equals(imageModle.getnoteEditModel())){
+                    newModleList.remove(i);
+                    note.setContent(new Gson().toJson(newModleList));
+                    done = updateOne(note);
+                    break;
+                }
+            }
+        }
+        return done;
+    }
+
+    /**
+     * 删除批量图片
+     * @return
+     */
+    @Override
+    public boolean deleteAllImages(List<ImageModle> modelList,int type) {
+        boolean done=true;
+        for (int i = 0; i < modelList.size(); i++) {
+            if (!deleteImage(modelList.get(i),type)){
+                done=false;
+            }
+        }
+        return done;
     }
 
     /**

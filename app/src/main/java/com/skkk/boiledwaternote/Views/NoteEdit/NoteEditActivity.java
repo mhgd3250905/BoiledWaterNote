@@ -32,7 +32,6 @@ import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCa
 import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
-import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.AnimatorUtils;
 import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;

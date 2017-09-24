@@ -2,7 +2,6 @@ package com.skkk.boiledwaternote.Utils.Utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.IBinder;
 import android.view.inputmethod.InputMethodManager;
 
 /**
@@ -23,11 +22,5 @@ public class SoftInputUtils {
         }
     }
 
-    public static void hideSoftInput(Activity activity, IBinder token) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm.isActive()) {
-            imm.hideSoftInputFromInputMethod(token, 0);
-        }
-    }
 
 }

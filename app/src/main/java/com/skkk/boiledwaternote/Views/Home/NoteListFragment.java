@@ -20,8 +20,7 @@ import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
-import com.skkk.boiledwaternote.Presenters.NoteEdit.NoteEditPresenter;
-import com.skkk.boiledwaternote.Presenters.NoteList.NoteListPresenter;
+import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
@@ -34,10 +33,6 @@ import butterknife.ButterKnife;
 
 
 public class NoteListFragment extends Fragment implements NoteListImpl {
-    public static final String NOTE_TYPE_NONE = "note_type_none";
-    public static final String NOTE_TYPE_ARTICLE = "note_type_article";
-    public static final String NOTE_TYPE_NOTE = "note_type_note";
-    public static final String NOTE_TYPE_PRIVACY = "note_type_privacy";
 
     private static final String NOTE_TYPE = "note_type";
     @Bind(R.id.rv_note_list)
@@ -71,6 +66,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                 }
             }
         }
+        instance.attachPresenter();
         instance.setNoteType(noteType);
         return instance;
     }
@@ -105,7 +101,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         noteListPresenter = new NoteListPresenter();
         noteListPresenter.attachView(this);
         noteEditPresenter = new NoteEditPresenter(getContext());
-        initUI();       //初始化UI
+        initUI();           //初始化UI
         initEvent();        //设置各种事件
         noteListPresenter.showNotes(noteType);
     }
@@ -313,6 +309,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         noteListPresenter.showSpecialTypeNotes(noteType);
     }
 
+
     public int getNoteType() {
         return noteType;
     }
@@ -321,6 +318,12 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         this.noteType = noteType;
         if (noteListPresenter!=null){
             noteListPresenter.showNotes(noteType);
+        }
+    }
+
+    public void attachPresenter(){
+        if (noteListPresenter!=null){
+            noteListPresenter.attachView(this);
         }
     }
 

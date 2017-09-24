@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.Presenters.NoteList;
+package com.skkk.boiledwaternote.Views.Home;
 
 import com.skkk.boiledwaternote.Modles.Note;
 
