@@ -86,8 +86,9 @@ public class NoteImagePresent extends BasePersenter<NoteImageImpl> implements No
      * 跳转到图片详情
      */
     @Override
-    public void startPreviewActivity() {
-
+    public void startPreviewActivity(int pos) {
+        ImageModle imageModle = imageModleList.get(pos);
+        getView().startToPreviewActivity(imageModle);
     }
 
     @Override

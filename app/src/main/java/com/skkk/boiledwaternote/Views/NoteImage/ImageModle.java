@@ -2,6 +2,7 @@ package com.skkk.boiledwaternote.Views.NoteImage;
 
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 * 作    者：ksheng
 * 时    间：2017/9/24$ 22:07$.
 */
-public class ImageModle {
+public class ImageModle implements Serializable{
     private boolean needDelete;
     private NoteEditModel noteEditModel;
 

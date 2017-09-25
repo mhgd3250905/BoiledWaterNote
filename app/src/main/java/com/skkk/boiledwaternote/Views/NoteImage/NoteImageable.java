@@ -19,7 +19,7 @@ public interface NoteImageable {
     boolean deleteImage(int pos,int noteType);
     boolean deleteAllImage(List<ImageModle> deleteImages,int noteType);
     NoteEditModel getImage();
-    void startPreviewActivity();
+    void startPreviewActivity(int pos);
     void changeEditStatus(int pos,boolean curIsEdit);
     void changeItemDeleteStatus(NoteImageViewHolder holder,boolean changeToFalse);
 }

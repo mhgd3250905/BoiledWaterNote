@@ -14,6 +14,8 @@
     <color name="nightColorAccent">#dc7878</color>
     <color name="nightColorCardBackground">#454545</color>
 
+    <color name="transparentColor">#55000000</color>
+
 
     <color name="colorLightBlue">#3ffffF</color>
     <color name="colorBlackBody">#cc000000</color>

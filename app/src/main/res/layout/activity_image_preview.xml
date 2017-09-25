@@ -2,43 +2,35 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_image_preview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGray"
     android:fitsSystemWindows="true"
-    tools:context="com.skkk.boiledwaternote.MainActivity">
+    tools:context="com.skkk.boiledwaternote.Views.NoteImage.ImagePreviewActivity">
 
     <LinearLayout
-        android:id="@id/ll_edit_container"
+        android:id="@id/ll_image_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
-
-            <ImageView
-                android:padding="8dp"
-                android:layout_marginEnd="30dp"
-                android:src="@drawable/app_title_white"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
 
         </android.support.v7.widget.Toolbar>
 
-    </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_main" />
-
+        <uk.co.senab.photoview.PhotoView
+            android:id="@id/ivImagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:scaleType="centerInside"
+            android:src="@mipmap/ic_launcher" />
     </LinearLayout>
-
 
 </android.support.design.widget.CoordinatorLayout>

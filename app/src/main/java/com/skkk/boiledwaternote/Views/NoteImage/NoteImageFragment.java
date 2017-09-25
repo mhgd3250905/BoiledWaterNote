@@ -1,5 +1,6 @@
 package com.skkk.boiledwaternote.Views.NoteImage;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Collect;
+import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.R;
 
@@ -111,7 +113,7 @@ public class NoteImageFragment extends Fragment implements NoteImageImpl {
         adapter.setImageClickListener(new Collect.OnImageFragmentItemClickListener() {
             @Override
             public void onImagePreviewClickListener(NoteImageViewHolder holder) {
-                noteImagePresent.startPreviewActivity();
+                noteImagePresent.startPreviewActivity(holder.getAdapterPosition());
             }
 
             @Override
@@ -179,7 +181,9 @@ public class NoteImageFragment extends Fragment implements NoteImageImpl {
      */
     @Override
     public void startToPreviewActivity(ImageModle modle) {
-
+        Intent intent=new Intent(getContext(),ImagePreviewActivity.class);
+        intent.putExtra(Configs.KEY_PREVIEW_IMAGE,modle);
+        getActivity().startActivity(intent);
     }
 
     /**

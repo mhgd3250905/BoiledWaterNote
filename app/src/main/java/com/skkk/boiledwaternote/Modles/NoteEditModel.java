@@ -1,5 +1,7 @@
 package com.skkk.boiledwaternote.Modles;
 
+import java.io.Serializable;
+
 /**
  * Created by admin on 2017/4/23.
  */
@@ -9,7 +11,7 @@ package com.skkk.boiledwaternote.Modles;
 * 作    者：ksheng
 * 时    间：2017/4/23$ 19:21$.
 */
-public class NoteEditModel {
+public class NoteEditModel implements Serializable {
     private String content;
     public Flag itemFlag;
     public String imagePath;

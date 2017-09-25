@@ -31,5 +31,6 @@
 
     <string name="title_activity_main2">Main2Activity</string>
     <string name="note_save_failed">保存失败！</string>
+    <string name="title_activity_image_preview">ImagePreviewActivity</string>
 
 </resources>
