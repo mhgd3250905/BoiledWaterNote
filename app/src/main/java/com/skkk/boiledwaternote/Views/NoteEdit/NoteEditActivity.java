@@ -72,7 +72,6 @@ public class NoteEditActivity extends AppCompatActivity{
     private List<NoteEditModel> mDataList;
     private MyItemTouchHelperCallback callback;
     private ItemTouchHelper itemTouchHelper;
-    private NoteEditAdapter adapter;
     private LinearLayoutManager layoutManager;
     private NoteEditPresenter presenter;
     private InputMethodManager imm;
@@ -210,7 +209,7 @@ public class NoteEditActivity extends AppCompatActivity{
             }
         });
 
-        adapter.setOnImageItemClickListener(new NoteEditAdapter.OnImageItemClickListener() {
+        revEdit.setOnImageItemClickListener(new NoteEditAdapter.OnImageItemClickListener() {
             @Override
             public void onImageClickListener(int pos, View v,NoteEditModel model) {
                 Intent intent=new Intent(NoteEditActivity.this,ImagePreviewActivity.class);

@@ -54,6 +54,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             ivFormatUnderLine, ivFormatStrikeThrough,ivFormatCheckBox;
     private ImageView ivEditFormatNotice;
 
+    private NoteEditAdapter.OnImageItemClickListener onImageItemClickListener;
+
     private MyItemTouchHelperCallback callback;
     private ItemTouchHelper itemTouchHelper;
 
@@ -186,6 +188,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 return false;
             }
         });
+
+        adapter.setOnImageItemClickListener(onImageItemClickListener);
     }
 
     /**
@@ -548,5 +552,9 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatTitle.setBackgroundColor(Color.TRANSPARENT);
         ivFormatStrikeThrough.setBackgroundColor(Color.TRANSPARENT);
         ivFormatUnderLine.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    public void setOnImageItemClickListener(NoteEditAdapter.OnImageItemClickListener onImageItemClickListener) {
+        this.onImageItemClickListener = onImageItemClickListener;
     }
 }
