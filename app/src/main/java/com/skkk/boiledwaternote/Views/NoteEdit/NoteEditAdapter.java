@@ -63,6 +63,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private List<NoteEditModel> mDataList;                                      //数据
     private OnStartDragListener onStartDragListener;                            //拖拽监听
     private OnItemEditHasFocusListener onItemEditHasFocusListener;              //Item编辑焦点监听
+    private OnImageItemClickListener onImageItemClickListener;
     private OnKeyDownFinishListener onKeyDownFinishListener;                    //换行删除按键处理完毕监听
     private NoteEditViewHolder currentHolder;                                   //当前ViewHolder
     private boolean alignCenterText = false;                                    //ItemEdit文字是否居中对齐
@@ -72,6 +73,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private int moveToPos;
 
 
+    public interface OnImageItemClickListener{
+        void onImageClickListener(int pos,View v,NoteEditModel noteEditModel);
+    }
+
+
     public interface OnItemEditHasFocusListener {
         void onItemEditHasFocusListener(View view, int pos);
     }
@@ -79,7 +85,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
-
         void onDelFinishListner(int pos);
     }
 
@@ -115,7 +120,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         }
 
 
-        NoteEditModel itemDate = mDataList.get(position);             //获取dateBean
+        final NoteEditModel itemDate = mDataList.get(position);             //获取dateBean
 
         //判断我们加载的到底是什么类型的数据
         if (itemDate.getItemFlag() == NoteEditModel.Flag.TEXT) {     //如果是文本Item
@@ -247,6 +252,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     .load(itemDate.getImagePath())
                     .into(holder.ivItemImage);
 
+            if (onImageItemClickListener!=null){
+                holder.ivItemImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onImageItemClickListener.onImageClickListener(holder.getAdapterPosition(),v,itemDate);
+                    }
+                });
+            }
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.SEPARATED) {
             /*
             * 分隔线
@@ -340,6 +353,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         this.onStartDragListener = onStartDragListener;
     }
 
+    public void setOnImageItemClickListener(OnImageItemClickListener onImageItemClickListener) {
+        this.onImageItemClickListener = onImageItemClickListener;
+    }
 
     /**
      * ViewHolder

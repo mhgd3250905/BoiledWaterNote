@@ -50,7 +50,6 @@ public class ImagePreviewActivity extends AppCompatActivity {
      */
     private void initUI() {
         //toolbar
-//        setSupportActionBar(toolbar);
         toolbar.setTitle("");
         toolbar.setNavigationIcon(R.drawable.back_arrow);
         //添加菜单

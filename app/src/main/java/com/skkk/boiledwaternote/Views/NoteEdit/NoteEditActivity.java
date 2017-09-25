@@ -35,6 +35,7 @@ import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.AnimatorUtils;
 import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
+import com.skkk.boiledwaternote.Views.NoteImage.ImagePreviewActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -84,6 +85,7 @@ public class NoteEditActivity extends AppCompatActivity{
     private TextView tvDialogItemCamera;
     private TextView tvDialogItemAlbum;
     private PopupWindow popupWindow;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,6 +207,15 @@ public class NoteEditActivity extends AppCompatActivity{
                 if (popupWindow != null) {
                     popupWindow.dismiss();
                 }
+            }
+        });
+
+        adapter.setOnImageItemClickListener(new NoteEditAdapter.OnImageItemClickListener() {
+            @Override
+            public void onImageClickListener(int pos, View v,NoteEditModel model) {
+                Intent intent=new Intent(NoteEditActivity.this,ImagePreviewActivity.class);
+                intent.putExtra(Configs.KEY_PREVIEW_IMAGE,model);
+                startActivity(intent);
             }
         });
 
@@ -352,5 +363,6 @@ public class NoteEditActivity extends AppCompatActivity{
             }
         });
     }
+
 
 }
