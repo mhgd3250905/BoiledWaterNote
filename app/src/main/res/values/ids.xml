@@ -80,4 +80,14 @@
     <item name="rl_note_iamge_checked_container" type="id">rl_note_iamge_checked_container</item>
     <item name="ivImagePreview" type="id">ivImagePreview</item>
     <item name="ll_image_container" type="id">ll_image_container</item>
+    <item name="rl_note_item_iamge_checked_container" type="id">
+        rl_note_item_iamge_checked_container
+    </item>
+    <item name="iv_note_item_iamge_checked_delete" type="id">iv_note_item_iamge_checked_delete
+    </item>
+    <item name="iv_note_item_iamge_checked_move" type="id">iv_note_item_iamge_checked_move</item>
+    <item name="iv_note_item_iamge_checked_preview" type="id">iv_note_item_iamge_checked_preview
+    </item>
+    <item name="iv_note_imaghe_checked" type="id">iv_note_imaghe_checked</item>
+    <item name="iv_note_image_checked" type="id">iv_note_image_checked</item>
 </resources>

@@ -2,7 +2,6 @@ package com.skkk.boiledwaternote.CostomViews.RecyclerEditView;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -96,7 +95,7 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
             lastHolder.ivSwipeNotice.setVisibility(View.GONE);
         }
         NoteEditAdapter.NoteEditViewHolder holder = (NoteEditAdapter.NoteEditViewHolder) viewHolder;
-        holder.bmItemImage.setBackgroundColor(Color.TRANSPARENT);
+        holder.ivNoteImageChecked.setVisibility(View.GONE);
         itemTouchHelperAdapter.onItemMoveDone();
     }
 

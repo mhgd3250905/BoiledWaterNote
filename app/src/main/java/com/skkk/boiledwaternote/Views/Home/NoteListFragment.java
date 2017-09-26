@@ -298,6 +298,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         Intent intent = new Intent();
         intent.setClass(getContext(), NoteEditActivity.class);
         intent.putExtra(Configs.KEY_UPDATE_NOTE, note);
+        intent.putExtra(Configs.KEY_NOTE_TYPE, noteType);
         getActivity().startActivityForResult(intent, Configs.REQUEST_UPDATE_NOTE);
     }
 

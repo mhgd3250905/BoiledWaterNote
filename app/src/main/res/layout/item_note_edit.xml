@@ -12,18 +12,18 @@
         android:visibility="visible">
 
         <CheckBox
-            style="@style/FormatCheckBox"
-            android:layout_marginStart="5dp"
             android:id="@id/cb_text_check"
+            style="@style/FormatCheckBox"
             android:layout_width="24dp"
-            android:layout_height="24dp" />
+            android:layout_height="24dp"
+            android:layout_marginStart="5dp" />
 
         <ImageView
-            android:background="@drawable/vector_drawable_quote"
             android:id="@id/iv_text_quote"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginLeft="5dp"
+            android:background="@drawable/vector_drawable_quote"
             android:visibility="visible" />
 
         <ImageView
@@ -35,7 +35,6 @@
             android:visibility="visible" />
 
         <EditText
-            android:inputType=""
             android:id="@id/tv_item_recylcer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,6 +42,7 @@
             android:layout_marginRight="@dimen/item_edit_text_margin_horization"
             android:background="@null"
             android:gravity="left|top"
+            android:inputType=""
             android:minHeight="@dimen/item_edit_min_height"
             android:text=""
             android:textSize="@dimen/iedit_text_size" />
@@ -77,53 +77,60 @@
                 android:src="@mipmap/ic_launcher"
                 android:visibility="visible" />
 
-            <FrameLayout
-                android:id="@id/fl_menu_container"
+            <ImageView
+                android:id="@id/iv_note_image_checked"
                 android:layout_width="540px"
                 android:layout_height="800px"
-                android:layout_alignParentTop="true">
+                android:layout_alignParentTop="true"
+                android:src="@color/transparentColor" />
 
-                <com.skkk.boiledwaternote.CostomViews.BombMenu
-                    android:id="@id/bm_item_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/cv_item_img"
-                    android:layout_alignParentTop="true">
+            <!--<FrameLayout-->
+            <!--android:id="@id/fl_menu_container"-->
+            <!--android:layout_width="540px"-->
+            <!--android:layout_height="800px"-->
+            <!--android:layout_alignParentTop="true">-->
 
-                    <ImageView
-                        android:id="@id/iv_item_move_edit"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_mode_edit"
-                        android:translationZ="5dp" />
+            <!--<com.skkk.boiledwaternote.CostomViews.BombMenu-->
+            <!--android:id="@id/bm_item_image"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignBottom="@+id/cv_item_img"-->
+            <!--android:layout_alignParentTop="true">-->
 
-                    <ImageView
-                        android:id="@id/iv_item_move_delete"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_delete"
-                        android:translationZ="5dp" />
+            <!--<ImageView-->
+            <!--android:id="@id/iv_item_move_edit"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:padding="5dp"-->
+            <!--android:src="@drawable/ic_mode_edit"-->
+            <!--android:translationZ="5dp" />-->
 
-                    <ImageView
-                        android:id="@id/iv_item_move"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:padding="5dp"
-                        android:src="@drawable/ic_swap_vertical"
-                        android:translationZ="5dp" />
+            <!--<ImageView-->
+            <!--android:id="@id/iv_item_move_delete"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:padding="5dp"-->
+            <!--android:src="@drawable/ic_delete"-->
+            <!--android:translationZ="5dp" />-->
 
-                    <ImageView
-                        android:id="@id/iv_item_menu"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:elevation="10dp"
-                        android:src="@drawable/ic_arrow_drop_down"
-                        android:visibility="visible" />
+            <!--<ImageView-->
+            <!--android:id="@id/iv_item_move"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:padding="5dp"-->
+            <!--android:src="@drawable/ic_swap_vertical"-->
+            <!--android:translationZ="5dp" />-->
 
-                </com.skkk.boiledwaternote.CostomViews.BombMenu>
-            </FrameLayout>
+            <!--<ImageView-->
+            <!--android:id="@id/iv_item_menu"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:elevation="10dp"-->
+            <!--android:src="@drawable/ic_arrow_drop_down"-->
+            <!--android:visibility="visible" />-->
+
+            <!--</com.skkk.boiledwaternote.CostomViews.BombMenu>-->
+            <!--</FrameLayout>-->
 
         </android.support.v7.widget.CardView>
 
@@ -139,17 +146,18 @@
         android:visibility="gone" />
 
     <RelativeLayout
-        android:padding="8dp"
         android:id="@id/rl_item_separated"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:layout_marginBottom="5dp"
         android:orientation="horizontal"
+        android:padding="8dp"
         android:visibility="visible">
+
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorGray"/>
+            android:background="@color/colorGray" />
 
     </RelativeLayout>
 

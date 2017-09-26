@@ -1,16 +1,20 @@
 package com.skkk.boiledwaternote.Views.NoteImage;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
+import com.skkk.boiledwaternote.Modles.NoteModle;
 import com.skkk.boiledwaternote.R;
+import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,17 +29,20 @@ public class ImagePreviewActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     private ImageModle imageModle;
+    private int noteType;
+
+    private NoteModle noteModle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_preview);
         ButterKnife.bind(this);
+        noteModle=new NoteModle(this);
         initData();
         initUI();
         initEvent();
     }
-
 
 
     /**
@@ -43,6 +50,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
      */
     private void initData() {
         imageModle = (ImageModle) getIntent().getSerializableExtra(Configs.KEY_PREVIEW_IMAGE);
+        noteType=getIntent().getIntExtra(Configs.KEY_NOTE_TYPE,0);
     }
 
     /**
@@ -84,9 +92,20 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
                     return true;
                 } else if (id == R.id.action_image_delete) {
-
+                    DialogUtils.showDialog(ImagePreviewActivity.this, R.drawable.vector_drawable_notice,
+                            "提醒", "是否将该笔记从隐私仓库移除？",
+                            "好的", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (!noteModle.deleteImage(imageModle,noteType)){
+                                        Toast.makeText(ImagePreviewActivity.this, R.string.image_list_delete_failed, Toast.LENGTH_SHORT).show();
+//                                        RxBus.getInstance().post(1);
+                                        onBackPressed();
+                                    }
+                                }
+                            }, "算了", null).show();
                     return true;
-                }else if (id==android.R.id.home){
+                } else if (id == android.R.id.home) {
                     onBackPressed();
                 }
                 return false;

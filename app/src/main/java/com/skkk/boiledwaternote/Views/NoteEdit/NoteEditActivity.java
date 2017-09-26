@@ -35,6 +35,7 @@ import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.AnimatorUtils;
 import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
+import com.skkk.boiledwaternote.Views.NoteImage.ImageModle;
 import com.skkk.boiledwaternote.Views.NoteImage.ImagePreviewActivity;
 
 import java.io.File;
@@ -84,6 +85,8 @@ public class NoteEditActivity extends AppCompatActivity{
     private TextView tvDialogItemCamera;
     private TextView tvDialogItemAlbum;
     private PopupWindow popupWindow;
+    private int noteType;
+
 
 
     @Override
@@ -97,7 +100,7 @@ public class NoteEditActivity extends AppCompatActivity{
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
 
-        initSetting();      //获取传入数据
+        initData();      //获取传入数据
         initUI();           //初始化UI
         initEvent();        //初始化各种事件
 
@@ -109,11 +112,12 @@ public class NoteEditActivity extends AppCompatActivity{
     /**
      * 获取传入数据
      */
-    private void initSetting() {
+    private void initData() {
         Intent intent = getIntent();
         isNew = (intent.getSerializableExtra(Configs.KEY_UPDATE_NOTE) == null);
         if (!isNew) {
             updateNote = (Note) intent.getSerializableExtra(Configs.KEY_UPDATE_NOTE);
+            noteType = intent.getIntExtra(Configs.KEY_NOTE_TYPE,0);
         }
     }
 
@@ -213,11 +217,25 @@ public class NoteEditActivity extends AppCompatActivity{
             @Override
             public void onImageClickListener(int pos, View v,NoteEditModel model) {
                 Intent intent=new Intent(NoteEditActivity.this,ImagePreviewActivity.class);
-                intent.putExtra(Configs.KEY_PREVIEW_IMAGE,model);
+                intent.putExtra(Configs.KEY_PREVIEW_IMAGE,new ImageModle(model,false));
+                intent.putExtra(Configs.KEY_NOTE_TYPE,noteType);
                 startActivity(intent);
             }
         });
 
+        /*
+        * 设置事件监听
+        * */
+//        RxBus.getInstance().toFlowable(Integer.class)
+//                .toObservable()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<Integer>() {
+//                    @Override
+//                    public void accept(Integer integer) throws Exception {
+//                        Log.i(TAG, "accept: "+integer);
+//                        revEdit.refreshRichText();
+//                    }
+//                });
     }
 
 

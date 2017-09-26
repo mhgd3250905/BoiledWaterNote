@@ -503,6 +503,14 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     }
 
     /**
+     * 刷新数据
+     */
+    @Override
+    public void refreshRichText() {
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
      * 加载数据
      *
      * @param richTexts
@@ -556,5 +564,6 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     public void setOnImageItemClickListener(NoteEditAdapter.OnImageItemClickListener onImageItemClickListener) {
         this.onImageItemClickListener = onImageItemClickListener;
+        adapter.setOnImageItemClickListener(onImageItemClickListener);
     }
 }

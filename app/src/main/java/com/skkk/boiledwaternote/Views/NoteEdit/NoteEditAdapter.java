@@ -23,16 +23,12 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.skkk.boiledwaternote.CostomViews.BombMenu;
-import com.skkk.boiledwaternote.CostomViews.OnMenuItemClickListener;
-import com.skkk.boiledwaternote.CostomViews.OnMenuItemTouchListener;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdapter;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -44,6 +40,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION_CODES.N;
@@ -73,8 +70,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private int moveToPos;
 
 
-    public interface OnImageItemClickListener{
-        void onImageClickListener(int pos,View v,NoteEditModel noteEditModel);
+    public interface OnImageItemClickListener {
+        void onImageClickListener(int pos, View v, NoteEditModel noteEditModel);
     }
 
 
@@ -85,6 +82,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
+
         void onDelFinishListner(int pos);
     }
 
@@ -195,36 +193,35 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.ivTextQuote.setVisibility(GONE);
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
+            holder.ivNoteImageChecked.setVisibility(GONE);
 
-            holder.bmItemImage.setmMenuItemClickListener(new OnMenuItemClickListener() {
-                @Override
-                public void onItemClickListener(int pos, View v) {
-                    switch (pos) {
-                        case 0:
-                            break;
-                        case 1:
-                            mDataList.remove(position);
-                            notifyItemRemoved(position);
-                            notifyItemRangeChanged(position, getItemCount());
-                            break;
-                    }
-                }
-            });
-
-            holder.bmItemImage.setmMenuItemTouchListener(new OnMenuItemTouchListener() {
-                @Override
-                public void onItemTouchListener(int pos, View v) {
-                    //当触摸到滑动按钮的时候
-                    onStartDragListener.onStartDragListener(viewHolder);
-                }
-
-                @Override
-                public void onItemTouchLeaveListener(int pos, View v) {
-
-                }
-            });
-
-
+//            holder.bmItemImage.setmMenuItemClickListener(new OnMenuItemClickListener() {
+//                @Override
+//                public void onItemClickListener(int pos, View v) {
+//                    switch (pos) {
+//                        case 0:
+//                            break;
+//                        case 1:
+//                            mDataList.remove(position);
+//                            notifyItemRemoved(position);
+//                            notifyItemRangeChanged(position, getItemCount());
+//                            break;
+//                    }
+//                }
+//            });
+//
+//            holder.bmItemImage.setmMenuItemTouchListener(new OnMenuItemTouchListener() {
+//                @Override
+//                public void onItemTouchListener(int pos, View v) {
+//                    //当触摸到滑动按钮的时候
+//                    onStartDragListener.onStartDragListener(viewHolder);
+//                }
+//
+//                @Override
+//                public void onItemTouchLeaveListener(int pos, View v) {
+//
+//                }
+//            });
             if (itemDate.getImagePath() == null) {
                 return;
             }
@@ -239,27 +236,65 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             ViewGroup.LayoutParams layoutParams = holder.ivItemImage.getLayoutParams();
             if (imgHeight > imgWidth) {
                 layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
-                layoutParams.height = layoutParams.width*imgHeight/imgWidth;
+                layoutParams.height = layoutParams.width * imgHeight / imgWidth;
             } else {
                 layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
-                layoutParams.height = layoutParams.width*imgHeight/imgWidth;
+                layoutParams.height = layoutParams.width * imgHeight / imgWidth;
             }
-            holder.flBombMenuContainer.setLayoutParams(layoutParams);
+            holder.ivNoteImageChecked.setLayoutParams(layoutParams);
             holder.ivItemImage.setLayoutParams(layoutParams);
             holder.ivItemImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
+            /*
+            * 设置图片
+            * */
             Glide.with(context)
                     .load(itemDate.getImagePath())
                     .into(holder.ivItemImage);
+            /*
+            * 设置高斯模糊背景图
+            * */
+            Glide.with(context)
+                    .load(itemDate.getImagePath())
+                    .crossFade(1000)
+                    .bitmapTransform(new BlurTransformation(context,23,4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
+                    .into(holder.ivNoteImageChecked);
 
-            if (onImageItemClickListener!=null){
+
+            if (onImageItemClickListener != null) {
                 holder.ivItemImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onImageItemClickListener.onImageClickListener(holder.getAdapterPosition(),v,itemDate);
+                        onImageItemClickListener.onImageClickListener(holder.getAdapterPosition(), v, itemDate);
                     }
                 });
             }
+
+            /*
+            * 设置图片点击事件
+            * */
+            holder.ivItemImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onImageItemClickListener != null) {
+                        onImageItemClickListener.onImageClickListener(holder.getAdapterPosition(), v, itemDate);
+                    }
+                }
+            });
+
+            /*
+            * 设置图片长按拖拽
+            * */
+            holder.ivItemImage.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //当触摸到滑动按钮的时候
+                    holder.ivNoteImageChecked.setVisibility(View.VISIBLE);
+                    onStartDragListener.onStartDragListener(viewHolder);
+                    return true;
+                }
+            });
+
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.SEPARATED) {
             /*
             * 分隔线
@@ -377,10 +412,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public ImageView ivItemImage;           //图片框
         @Bind(R.id.cv_item_img)
         public CardView cvItemImg;              //图片容器
-        @Bind(R.id.bm_item_image)
-        public BombMenu bmItemImage;            //弹射菜单
-        @Bind(R.id.fl_menu_container)
-        public FrameLayout flBombMenuContainer; //弹射菜单容器
+        //        @Bind(R.id.bm_item_image)
+//        public BombMenu bmItemImage;            //弹射菜单
+        @Bind(R.id.iv_note_image_checked)
+        public ImageView ivNoteImageChecked; //弹射菜单容器
         @Bind(R.id.iv_swipe_notice)
         public View ivSwipeNotice;              //拖拽切换的时候的提示图标
         @Bind(R.id.rl_item_separated)
@@ -801,7 +836,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (format_list) {
                 setForamtCheckBox(!format_list, !format_list);
             }
-            if(format_list){
+            if (format_list) {
                 setFormat_title(!format_list);
             }
             //同步到数据列表
@@ -834,7 +869,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (format_quote) {
                 setForamtCheckBox(!format_quote, !format_quote);
             }
-            if(format_quote){
+            if (format_quote) {
                 setFormat_title(!format_quote);
             }
             //同步数据列表

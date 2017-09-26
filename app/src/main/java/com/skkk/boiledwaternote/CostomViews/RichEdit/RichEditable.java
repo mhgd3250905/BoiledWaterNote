@@ -12,6 +12,8 @@ import java.util.List;
 public interface RichEditable {
     //开始崭新的编辑文本
     void resetRichText();
+    //刷新编辑文本
+    void refreshRichText();
     //加载传入的富文本
     void loadRichText(List<NoteEditModel> richTexts);
     //获取数据
