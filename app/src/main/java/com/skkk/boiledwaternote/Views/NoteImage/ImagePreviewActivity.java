@@ -37,6 +37,12 @@ public class ImagePreviewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_preview);
+
+//        WindowManager.LayoutParams attrs = getWindow().getAttributes();
+//        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+//        getWindow().setAttributes(attrs);
+
+
         ButterKnife.bind(this);
         noteModle = new NoteModle(this);
         initData();
@@ -93,7 +99,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
                     return true;
                 } else if (id == R.id.action_image_delete) {
                     DialogUtils.showDialog(ImagePreviewActivity.this, R.drawable.vector_drawable_notice,
-                            "提醒", "是否将该笔记从隐私仓库移除？",
+                            "提醒", "是否删除该图片？",
                             "好的", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {

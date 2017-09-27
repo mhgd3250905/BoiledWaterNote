@@ -10,13 +10,13 @@
 
     <LinearLayout
         android:background="@color/colorBlackBody77"
-
         android:id="@id/ll_image_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
+            android:background="@color/colorPrimaryDark"
             android:id="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"

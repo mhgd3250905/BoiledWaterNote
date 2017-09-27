@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdapter;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
+import com.skkk.boiledwaternote.CostomViews.RichEdit.SelectionEditText;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
@@ -68,6 +69,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private boolean itemFormatList = false;                                     //设置List格式为List
     private int separatedImageResouseId;
     private int moveToPos;
+    private SelectionEditText.OnSelectionChangeListener onSelectionChangeListener;
 
 
     public interface OnImageItemClickListener {
@@ -154,6 +156,17 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     if (onItemEditHasFocusListener != null && hasFocus) {
                         onItemEditHasFocusListener.onItemEditHasFocusListener(v, position);
                     }
+                }
+            });
+
+            //设置焦点变化监听
+            holder.etItem.setOnSelectionChangeListener(new SelectionEditText.OnSelectionChangeListener() {
+                @Override
+                public void onSelectionChangeListener(int selStart, int selEnd) {
+                    if (onSelectionChangeListener!=null){
+                        onSelectionChangeListener(selStart,selEnd);
+                    }
+                    Log.d(TAG, "onSelectionChangeListener() called with: selStart = [" + selStart + "], selEnd = [" + selEnd + "]");
                 }
             });
 
@@ -393,13 +406,21 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
     /**
+     * 设置焦点监听
+     * @param onSelectionChangeListener
+     */
+    public void setOnSelectionChangeListener(SelectionEditText.OnSelectionChangeListener onSelectionChangeListener) {
+        this.onSelectionChangeListener = onSelectionChangeListener;
+    }
+
+    /**
      * ViewHolder
      */
     public class NoteEditViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.ll_edit_container)
         public LinearLayout llEditContainer;    //edit文本区域
         @Bind(R.id.tv_item_recylcer)
-        public EditText etItem;                 //编辑文本框
+        public SelectionEditText etItem;                 //编辑文本框
         @Bind(R.id.iv_text_point)
         public ImageView ivTextPonit;           //编辑栏位列表图标
         @Bind(R.id.cb_text_check)
@@ -475,6 +496,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     }
                 }
             });
+
 
             //设置文本变化监听
             this.myItemTextChangeListener = myItemTextChangeListener;

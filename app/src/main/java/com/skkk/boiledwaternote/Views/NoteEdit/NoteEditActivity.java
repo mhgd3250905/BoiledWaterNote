@@ -16,6 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +33,7 @@ import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
+import com.skkk.boiledwaternote.CostomViews.RichEdit.SelectionEditText;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
@@ -45,7 +49,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class NoteEditActivity extends AppCompatActivity{
+public class NoteEditActivity extends AppCompatActivity {
 
     private final String TAG = NoteEditActivity.class.getSimpleName();
 
@@ -88,7 +92,6 @@ public class NoteEditActivity extends AppCompatActivity{
     private int noteType;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +120,7 @@ public class NoteEditActivity extends AppCompatActivity{
         isNew = (intent.getSerializableExtra(Configs.KEY_UPDATE_NOTE) == null);
         if (!isNew) {
             updateNote = (Note) intent.getSerializableExtra(Configs.KEY_UPDATE_NOTE);
-            noteType = intent.getIntExtra(Configs.KEY_NOTE_TYPE,0);
+            noteType = intent.getIntExtra(Configs.KEY_NOTE_TYPE, 0);
         }
     }
 
@@ -140,15 +143,15 @@ public class NoteEditActivity extends AppCompatActivity{
         tvDialogItemCamera = (TextView) popView.findViewById(R.id.tv_dialog_item_camera);
         tvDialogItemAlbum = (TextView) popView.findViewById(R.id.tv_dialog_item_album);
 
-        if (isNew){
-            revEdit.startNewEdit(true,null);
-        }else {
-            NoteEditModel[] models=new Gson().fromJson(updateNote.getContent(),NoteEditModel[].class);
-            mDataList=new ArrayList<>();
+        if (isNew) {
+            revEdit.startNewEdit(true, null);
+        } else {
+            NoteEditModel[] models = new Gson().fromJson(updateNote.getContent(), NoteEditModel[].class);
+            mDataList = new ArrayList<>();
             for (int i = 0; i < models.length; i++) {
                 mDataList.add(models[i]);
             }
-            revEdit.startNewEdit(false,mDataList);
+            revEdit.startNewEdit(false, mDataList);
         }
     }
 
@@ -213,13 +216,34 @@ public class NoteEditActivity extends AppCompatActivity{
             }
         });
 
+        /**
+         * 设置图片点击事件
+         */
         revEdit.setOnImageItemClickListener(new NoteEditAdapter.OnImageItemClickListener() {
             @Override
-            public void onImageClickListener(int pos, View v,NoteEditModel model) {
-                Intent intent=new Intent(NoteEditActivity.this,ImagePreviewActivity.class);
-                intent.putExtra(Configs.KEY_PREVIEW_IMAGE,new ImageModle(model,false));
-                intent.putExtra(Configs.KEY_NOTE_TYPE,noteType);
-                startActivityForResult(intent,Configs.REQUEST_DELETE_IMAGE);
+            public void onImageClickListener(int pos, View v, NoteEditModel model) {
+                Intent intent = new Intent(NoteEditActivity.this, ImagePreviewActivity.class);
+                intent.putExtra(Configs.KEY_PREVIEW_IMAGE, new ImageModle(model, false));
+                intent.putExtra(Configs.KEY_NOTE_TYPE, noteType);
+                startActivityForResult(intent, Configs.REQUEST_DELETE_IMAGE);
+            }
+        });
+
+        revEdit.setOnSelectionChangeListener(new SelectionEditText.OnSelectionChangeListener() {
+            @Override
+            public void onSelectionChangeListener(int selStart, int selEnd) {
+                NoteEditAdapter.NoteEditViewHolder holder = revEdit.getCurrentHolder();
+                SelectionEditText et = holder.etItem;
+                if (selStart == selEnd) {//未选中
+                    if (selStart == 0 && selEnd == 0) {
+                        Editable text = et.getText();
+                        StyleSpan[] spans = text.getSpans(0, 1, StyleSpan.class);
+                        Log.i(TAG, "onSelectionChangeListener: -->"+spans.length);
+                    }
+                } else {
+
+                }
+
             }
         });
 
@@ -240,12 +264,11 @@ public class NoteEditActivity extends AppCompatActivity{
     }
 
 
-
     @Override
     public void onBackPressed() {
         //获取我们写的笔记类
         if (isNew) {
-            if (!presenter.saveNote(Note.NoteType.ARTICLE_NOTE.getValue(),false,revEdit.getRichText())) {
+            if (!presenter.saveNote(Note.NoteType.ARTICLE_NOTE.getValue(), false, revEdit.getRichText())) {
                 Toast.makeText(this, "添加笔记失败", Toast.LENGTH_SHORT).show();
             }
         } else {

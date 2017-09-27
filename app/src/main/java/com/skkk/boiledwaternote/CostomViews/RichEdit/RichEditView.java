@@ -54,7 +54,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             ivFormatUnderLine, ivFormatStrikeThrough,ivFormatCheckBox;
     private ImageView ivEditFormatNotice;
 
-    private NoteEditAdapter.OnImageItemClickListener onImageItemClickListener;
+    private NoteEditAdapter.OnImageItemClickListener onImageItemClickListener;//图片点击事件
+    private SelectionEditText.OnSelectionChangeListener onSelectionChangeListener;//光标焦点变化监听
 
     private MyItemTouchHelperCallback callback;
     private ItemTouchHelper itemTouchHelper;
@@ -175,6 +176,10 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             }
         });
 
+        if (onSelectionChangeListener!=null) {
+            adapter.setOnSelectionChangeListener(onSelectionChangeListener);
+        }
+
 
         rvRichEdit.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -254,7 +259,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
      */
     @Override
     public void onClick(View v) {
-        NoteEditAdapter.NoteEditViewHolder currentHolder = adapter.getCurrentHolder();
+        NoteEditAdapter.NoteEditViewHolder currentHolder = getCurrentHolder();
         if (currentHolder == null) {
             return;
         }
@@ -433,6 +438,14 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     }
 
     /**
+     * 获取当前的Holder
+     * @return
+     */
+    public NoteEditAdapter.NoteEditViewHolder getCurrentHolder() {
+        return adapter.getCurrentHolder();
+    }
+
+    /**
      * bottomBar的按键动画
      *
      * @param v
@@ -578,10 +591,19 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         refreshRichText();
     }
 
+    /**
+     * 设置图片点击事件监听
+     * @param onImageItemClickListener
+     */
     public void setOnImageItemClickListener(NoteEditAdapter.OnImageItemClickListener onImageItemClickListener) {
         this.onImageItemClickListener = onImageItemClickListener;
         adapter.setOnImageItemClickListener(onImageItemClickListener);
     }
 
-
+    /**
+     * 设置光标变化监听
+     */
+    public void setOnSelectionChangeListener(SelectionEditText.OnSelectionChangeListener onSelectionChangeListener) {
+        this.onSelectionChangeListener = onSelectionChangeListener;
+    }
 }
