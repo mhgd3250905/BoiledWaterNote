@@ -562,8 +562,26 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatUnderLine.setBackgroundColor(Color.TRANSPARENT);
     }
 
+    @Override
+    public void deleteImage(String imagePath) {
+        List<NoteEditModel> modelList = adapter.getmDataList();
+        for (int i = 0; i < modelList.size(); i++) {
+            NoteEditModel modle= modelList.get(i);
+            if (modle.getItemFlag()== NoteEditModel.Flag.IMAGE){
+                if (modle.getImagePath().equals(imagePath)){
+                    modelList.remove(modle);
+                    break;
+                }
+            }
+        }
+        adapter.setmDataList(modelList);
+        refreshRichText();
+    }
+
     public void setOnImageItemClickListener(NoteEditAdapter.OnImageItemClickListener onImageItemClickListener) {
         this.onImageItemClickListener = onImageItemClickListener;
         adapter.setOnImageItemClickListener(onImageItemClickListener);
     }
+
+
 }

@@ -1,13 +1,13 @@
 package com.skkk.boiledwaternote.Views.NoteImage;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.skkk.boiledwaternote.Configs;
@@ -38,7 +38,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_preview);
         ButterKnife.bind(this);
-        noteModle=new NoteModle(this);
+        noteModle = new NoteModle(this);
         initData();
         initUI();
         initEvent();
@@ -50,7 +50,7 @@ public class ImagePreviewActivity extends AppCompatActivity {
      */
     private void initData() {
         imageModle = (ImageModle) getIntent().getSerializableExtra(Configs.KEY_PREVIEW_IMAGE);
-        noteType=getIntent().getIntExtra(Configs.KEY_NOTE_TYPE,0);
+        noteType = getIntent().getIntExtra(Configs.KEY_NOTE_TYPE, 0);
     }
 
     /**
@@ -97,11 +97,13 @@ public class ImagePreviewActivity extends AppCompatActivity {
                             "好的", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (!noteModle.deleteImage(imageModle,noteType)){
-                                        Toast.makeText(ImagePreviewActivity.this, R.string.image_list_delete_failed, Toast.LENGTH_SHORT).show();
-//                                        RxBus.getInstance().post(1);
-                                        onBackPressed();
-                                    }
+                                    noteModle.deleteImage(imageModle, noteType);
+                                    Intent intent=new Intent();
+                                    intent.putExtra(Configs.KEY_PREVIEW_IMAGE,imageModle);
+                                    setResult(RESULT_OK,intent);
+                                    onBackPressed();
+
+
                                 }
                             }, "算了", null).show();
                     return true;

@@ -22,4 +22,6 @@ public interface RichEditable {
     void setFocusEnable(boolean focus);
     //重置底部富文本状态
     void resetBottomBarStatus();
+    //删除图片
+    void deleteImage(String imagePath);
 }

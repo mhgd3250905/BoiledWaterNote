@@ -45,8 +45,7 @@
         <!-- <activity android:name=".TestActivity"></activity> -->
         <activity
             android:name=".Views.NoteImage.ImagePreviewActivity"
-            android:label="@string/title_activity_image_preview"
-            android:theme="@style/TransparentTheme" />
+            android:label="@string/title_activity_image_preview" />
     </application>
 
 </manifest>

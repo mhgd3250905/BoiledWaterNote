@@ -219,9 +219,10 @@ public class NoteEditActivity extends AppCompatActivity{
                 Intent intent=new Intent(NoteEditActivity.this,ImagePreviewActivity.class);
                 intent.putExtra(Configs.KEY_PREVIEW_IMAGE,new ImageModle(model,false));
                 intent.putExtra(Configs.KEY_NOTE_TYPE,noteType);
-                startActivity(intent);
+                startActivityForResult(intent,Configs.REQUEST_DELETE_IMAGE);
             }
         });
+
 
         /*
         * 设置事件监听
@@ -237,6 +238,7 @@ public class NoteEditActivity extends AppCompatActivity{
 //                    }
 //                });
     }
+
 
 
     @Override
@@ -298,6 +300,10 @@ public class NoteEditActivity extends AppCompatActivity{
 
                         revEdit.insertItems(albumItems, revEdit.getCurrentHolderPosition() + 1);
                     }
+                    break;
+                case Configs.REQUEST_DELETE_IMAGE:
+                    ImageModle imaegModle = (ImageModle) data.getSerializableExtra(Configs.KEY_PREVIEW_IMAGE);
+                    revEdit.deleteImage(imaegModle.getnoteEditModel().getImagePath());
                     break;
             }
 
