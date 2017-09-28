@@ -1,7 +1,15 @@
 package com.skkk.boiledwaternote;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -20,11 +28,14 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Modles.Note;
-import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
+import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
+import com.skkk.boiledwaternote.Utils.Utils.PermissionsUtils;
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
+import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Views.NoteImage.NoteImageFragment;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,6 +44,14 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final int PERMISSIONS_GRANTED = 0; // 权限授权
+    public static final int PERMISSIONS_DENIED = 1; // 权限拒绝
+
+    private static final int PERMISSION_REQUEST_CODE = 0; // 系统权限管理页面的参数
+    private static final String EXTRA_PERMISSIONS = "com.skkk.boiledwaternote.permission.extra_permission"; // 权限参数
+    private static final String PACKAGE_URL_SCHEME = "package:"; // 方案
+
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -53,16 +72,109 @@ public class MainActivity extends AppCompatActivity
     private Fragment fragment;
     private Menu menu;
 
+    // 所需的全部权限
+    private static final String[] PERMISSIONS = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+    private ArrayList<String> needRequestPermissions = new ArrayList<>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         presenter = new NoteEditPresenter(this);
+        initPermissions();      //检测权限
         initUI();               //初始化UI
         initEvent();            //初始化各种事件
         addDefaultFragment();   //添加进入时候默认的Fragment
     }
+
+    /**
+     * 检测权限
+     */
+    private void initPermissions() {
+        if (PermissionsUtils.lacksPermissions(MainActivity.this, PERMISSIONS)) {
+            requestPermissions(PERMISSIONS);
+        }
+    }
+
+    // 请求权限兼容低版本
+    @TargetApi(Build.VERSION_CODES.M)
+    private void requestPermissions(String... permissions) {
+        requestPermissions(permissions, PERMISSION_REQUEST_CODE);
+    }
+
+//    @TargetApi(M)
+//    public void requestContactsLocation() {
+//        List<String> permissionsList = new ArrayList<>();
+//        permissionsList.add(READ_CONTACTS);
+//        permissionsList.add(ACCESS_FINE_LOCATION);
+//        requestPermissions(permissionsList.toArray(new String[permissionsList.size()]), REQUEST_READ_CONTACTS_LOCATION);
+//    }
+
+
+    /**
+     * 用户权限处理,
+     * 如果全部获取, 则直接过.
+     * 如果权限缺失, 则提示Dialog.
+     *
+     * @param requestCode  请求码
+     * @param permissions  权限
+     * @param grantResults 结果
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        if (requestCode == PERMISSION_REQUEST_CODE) {
+//            Map<String, Integer> perms = new HashMap<>();
+//            for (int i = 0; i < permissions.length; i++) {
+//                if (grantResults[i]==PERMISSIONS_DENIED) {
+//                    needRequestPermissions.add(permissions[i]);
+//                }
+//            }
+//        }
+
+            if (requestCode == PERMISSION_REQUEST_CODE && hasAllPermissionsGranted(grantResults)) {
+
+            } else {
+                DialogUtils.showDialog(MainActivity.this, R.drawable.vector_drawable_notice,
+                        "提醒", "当前应用缺少必要权限，\n请点击\"设置\"-\"权限\"打开所需要的权限。",
+                        "设置", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
+                                startActivity(intent);
+                            }
+                        }, "算了", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+
+                            }
+                        }).show();
+            }
+    }
+
+
+    /**
+     * 判断是否包含所有的权限
+     *
+     * @param grantResults
+     * @return
+     */
+
+    private boolean hasAllPermissionsGranted(@NonNull int[] grantResults) {
+        for (int grantResult : grantResults) {
+            if (grantResult == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * 初始化UI
@@ -231,7 +343,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_note) {//笔记
             fragment = NoteListFragment.getInstance(Note.NoteType.NOTE_NOTE.getValue());
         } else if (id == R.id.nav_image) {//图片
-            fragment= NoteImageFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
+            fragment = NoteImageFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         } else if (id == R.id.nav_privacy) {//隐私
             fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
         } else if (id == R.id.nav_recycle) {//回收站
@@ -264,4 +376,6 @@ public class MainActivity extends AppCompatActivity
         return true;
         //17621750601
     }
+
+
 }
