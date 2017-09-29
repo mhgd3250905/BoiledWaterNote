@@ -16,9 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +30,6 @@ import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
-import com.skkk.boiledwaternote.CostomViews.RichEdit.SelectionEditText;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
@@ -102,6 +98,11 @@ public class NoteEditActivity extends AppCompatActivity {
 //        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
+//        WindowManager manager = this.getWindowManager();
+//        DisplayMetrics outMetrics = new DisplayMetrics();
+//        manager.getDefaultDisplay().getMetrics(outMetrics);
+//        int width2 = outMetrics.widthPixels;
+//
 
         initData();      //获取传入数据
         initUI();           //初始化UI
@@ -133,6 +134,7 @@ public class NoteEditActivity extends AppCompatActivity {
      * 初始化UI
      */
     private void initUI() {
+
         tbNoteEdit.setTitle("");
         tbNoteEdit.setNavigationIcon(R.drawable.back_arrow);
         //添加菜单
@@ -226,24 +228,6 @@ public class NoteEditActivity extends AppCompatActivity {
                 intent.putExtra(Configs.KEY_PREVIEW_IMAGE, new ImageModle(model, false));
                 intent.putExtra(Configs.KEY_NOTE_TYPE, noteType);
                 startActivityForResult(intent, Configs.REQUEST_DELETE_IMAGE);
-            }
-        });
-
-        revEdit.setOnSelectionChangeListener(new SelectionEditText.OnSelectionChangeListener() {
-            @Override
-            public void onSelectionChangeListener(int selStart, int selEnd) {
-                NoteEditAdapter.NoteEditViewHolder holder = revEdit.getCurrentHolder();
-                SelectionEditText et = holder.etItem;
-                if (selStart == selEnd) {//未选中
-                    if (selStart == 0 && selEnd == 0) {
-                        Editable text = et.getText();
-                        StyleSpan[] spans = text.getSpans(0, 1, StyleSpan.class);
-                        Log.i(TAG, "onSelectionChangeListener: -->"+spans.length);
-                    }
-                } else {
-
-                }
-
             }
         });
 

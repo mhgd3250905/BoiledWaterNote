@@ -20,6 +20,7 @@ import android.app.Application;
 */
 public class MyApplication extends Application{
     private static MyApplication instance;
+    private static int editScopeWidth=0;
 
 
     @Override
@@ -32,5 +33,16 @@ public class MyApplication extends Application{
         return instance;
     }
 
+    /*
+    * 获取或设置屏幕宽（全局变量）
+    * */
+
+    public static int getEditScopeWidth() {
+        return editScopeWidth;
+    }
+
+    public static void setEditScopeWidth(int editScopeWidth) {
+        MyApplication.editScopeWidth = editScopeWidth;
+    }
 }
 

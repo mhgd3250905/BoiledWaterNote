@@ -28,7 +28,7 @@ public class PermissionsUtils {
     }
 
     // 判断是否缺少权限
-    private static boolean lacksPermission(Context context,String permission) {
+    public static boolean lacksPermission(Context context,String permission) {
         return ContextCompat.checkSelfPermission(context.getApplicationContext(), permission)
                 == PackageManager.PERMISSION_DENIED;
     }

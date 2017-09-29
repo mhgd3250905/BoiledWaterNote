@@ -86,10 +86,16 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         presenter = new NoteEditPresenter(this);
-        initPermissions();      //检测权限
         initUI();               //初始化UI
         initEvent();            //初始化各种事件
         addDefaultFragment();   //添加进入时候默认的Fragment
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initPermissions();
     }
 
     /**
@@ -104,16 +110,16 @@ public class MainActivity extends AppCompatActivity
     // 请求权限兼容低版本
     @TargetApi(Build.VERSION_CODES.M)
     private void requestPermissions(String... permissions) {
-        requestPermissions(permissions, PERMISSION_REQUEST_CODE);
+        needRequestPermissions.clear();
+        for (int i = 0; i < PERMISSIONS.length; i++) {
+            if (PermissionsUtils.lacksPermission(this, PERMISSIONS[i])) {
+                needRequestPermissions.add(PERMISSIONS[i]);
+            }
+        }
+        String[] permissionArr = new String[needRequestPermissions.size()];
+        needRequestPermissions.toArray(permissionArr);
+        requestPermissions(permissionArr, PERMISSION_REQUEST_CODE);
     }
-
-//    @TargetApi(M)
-//    public void requestContactsLocation() {
-//        List<String> permissionsList = new ArrayList<>();
-//        permissionsList.add(READ_CONTACTS);
-//        permissionsList.add(ACCESS_FINE_LOCATION);
-//        requestPermissions(permissionsList.toArray(new String[permissionsList.size()]), REQUEST_READ_CONTACTS_LOCATION);
-//    }
 
 
     /**
@@ -136,26 +142,26 @@ public class MainActivity extends AppCompatActivity
 //            }
 //        }
 
-            if (requestCode == PERMISSION_REQUEST_CODE && hasAllPermissionsGranted(grantResults)) {
+        if (requestCode == PERMISSION_REQUEST_CODE && hasAllPermissionsGranted(grantResults)) {
 
-            } else {
-                DialogUtils.showDialog(MainActivity.this, R.drawable.vector_drawable_notice,
-                        "提醒", "当前应用缺少必要权限，\n请点击\"设置\"-\"权限\"打开所需要的权限。",
-                        "设置", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
-                                startActivity(intent);
-                            }
-                        }, "算了", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
+        } else {
+            DialogUtils.showDialog(MainActivity.this, R.drawable.vector_drawable_notice,
+                    "提醒", "当前应用缺少必要权限，\n请点击\"设置\"-\"权限\"打开所需要的权限。",
+                    "设置", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            intent.setData(Uri.parse(PACKAGE_URL_SCHEME + getPackageName()));
+                            startActivity(intent);
+                        }
+                    }, "算了", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
 
-                            }
-                        }).show();
-            }
+                        }
+                    }).show();
+        }
     }
 
 

@@ -2,6 +2,7 @@ package com.skkk.boiledwaternote.CostomViews.RichEdit;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.EditText;
 
 /**
@@ -15,6 +16,7 @@ import android.widget.EditText;
 * 时    间：2017/9/27$ 23:47$.
 */
 public class SelectionEditText extends EditText {
+    private static final String TAG = "SelectionEditText";
     private OnSelectionChangeListener onSelectionChangeListener;
 
     public interface OnSelectionChangeListener {
@@ -39,6 +41,7 @@ public class SelectionEditText extends EditText {
 
     @Override
     protected void onSelectionChanged(int selStart, int selEnd) {
+        Log.i(TAG, "onSelectionChanged: selStart: "+selStart+",selEnd: "+selEnd);
         super.onSelectionChanged(selStart, selEnd);
         if (onSelectionChangeListener!=null){
             onSelectionChangeListener.onSelectionChangeListener(selStart,selEnd);

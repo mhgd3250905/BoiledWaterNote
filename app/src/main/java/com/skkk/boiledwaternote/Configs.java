@@ -1,5 +1,7 @@
 package com.skkk.boiledwaternote;
 
+import android.text.Editable;
+
 /**
  * Created by admin on 2017/5/29.
  */
@@ -19,5 +21,9 @@ public class Configs {
     public static final String KEY_UPDATE_NOTE="key_update_note";           //更新笔记
     public static final String KEY_PREVIEW_IMAGE="key_preview_image";       //预览的图片
     public static final String KEY_NOTE_TYPE="key_note_type";  //预览的图片类型
+
+    public interface OnSelectionChangeListener {
+        void onSelectionChangeListener(Editable s, int selStart, int selEnd);
+    }
 
 }

@@ -29,10 +29,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdapter;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.CostomViews.RichEdit.SelectionEditText;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
+import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
 
@@ -69,7 +71,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private boolean itemFormatList = false;                                     //设置List格式为List
     private int separatedImageResouseId;
     private int moveToPos;
-    private SelectionEditText.OnSelectionChangeListener onSelectionChangeListener;
+    private Configs.OnSelectionChangeListener onSelectionChangeListener;
 
 
     public interface OnImageItemClickListener {
@@ -160,15 +162,15 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             });
 
             //设置焦点变化监听
-            holder.etItem.setOnSelectionChangeListener(new SelectionEditText.OnSelectionChangeListener() {
-                @Override
-                public void onSelectionChangeListener(int selStart, int selEnd) {
-                    if (onSelectionChangeListener!=null){
-                        onSelectionChangeListener(selStart,selEnd);
+            if (onSelectionChangeListener != null) {
+                holder.etItem.setOnSelectionChangeListener(new SelectionEditText.OnSelectionChangeListener() {
+                    @Override
+                    public void onSelectionChangeListener(int selStart, int selEnd) {
+                        onSelectionChangeListener.onSelectionChangeListener(holder.etItem.getText(),selStart,selEnd);
                     }
-                    Log.d(TAG, "onSelectionChangeListener() called with: selStart = [" + selStart + "], selEnd = [" + selEnd + "]");
-                }
-            });
+                });
+            }
+
 
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -208,37 +210,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.rlItemSeparated.setVisibility(GONE);
             holder.ivNoteImageChecked.setVisibility(GONE);
 
-//            holder.bmItemImage.setmMenuItemClickListener(new OnMenuItemClickListener() {
-//                @Override
-//                public void onItemClickListener(int pos, View v) {
-//                    switch (pos) {
-//                        case 0:
-//                            break;
-//                        case 1:
-//                            mDataList.remove(position);
-//                            notifyItemRemoved(position);
-//                            notifyItemRangeChanged(position, getItemCount());
-//                            break;
-//                    }
-//                }
-//            });
-//
-//            holder.bmItemImage.setmMenuItemTouchListener(new OnMenuItemTouchListener() {
-//                @Override
-//                public void onItemTouchListener(int pos, View v) {
-//                    //当触摸到滑动按钮的时候
-//                    onStartDragListener.onStartDragListener(viewHolder);
-//                }
-//
-//                @Override
-//                public void onItemTouchLeaveListener(int pos, View v) {
-//
-//                }
-//            });
             if (itemDate.getImagePath() == null) {
                 return;
             }
-
 
             /*
             * 根据图片的宽高来设置相框的大小
@@ -246,13 +220,23 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             int imgWidth = ImageUtils.getBitmapWidth(itemDate.getImagePath(), true);
             int imgHeight = ImageUtils.getBitmapWidth(itemDate.getImagePath(), false);
 
+            Log.i(TAG, "图片宽: "+imgWidth+",图片高: "+imgHeight);
+
+            int editWidth = MyApplication.getEditScopeWidth();
+
             ViewGroup.LayoutParams layoutParams = holder.ivItemImage.getLayoutParams();
             if (imgHeight > imgWidth) {
-                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
+//                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
+                layoutParams.width = editWidth;
                 layoutParams.height = layoutParams.width * imgHeight / imgWidth;
+                Log.i(TAG, "相框宽: "+layoutParams.width+",相框高: "+layoutParams.height );
+
             } else {
-                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
+//                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
+                layoutParams.width = editWidth;
                 layoutParams.height = layoutParams.width * imgHeight / imgWidth;
+                Log.i(TAG, "相框宽: "+imgWidth+",相框高: "+imgHeight);
+
             }
             holder.ivNoteImageChecked.setLayoutParams(layoutParams);
             holder.ivItemImage.setLayoutParams(layoutParams);
@@ -270,7 +254,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             Glide.with(context)
                     .load(itemDate.getImagePath())
                     .crossFade(1000)
-                    .bitmapTransform(new BlurTransformation(context,23,4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
+                    .bitmapTransform(new BlurTransformation(context, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
                     .into(holder.ivNoteImageChecked);
 
 
@@ -407,9 +391,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     /**
      * 设置焦点监听
+     *
      * @param onSelectionChangeListener
      */
-    public void setOnSelectionChangeListener(SelectionEditText.OnSelectionChangeListener onSelectionChangeListener) {
+    public void setOnSelectionChangeListener(Configs.OnSelectionChangeListener onSelectionChangeListener) {
         this.onSelectionChangeListener = onSelectionChangeListener;
     }
 
@@ -835,6 +820,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (format_title) {
                 setFormat_list(!format_title);
             }
+//            if (format_title) {
+//                etItem.getText().clearSpans();
+//            }
             //同步到数据列表
             mDataList.get(currentPos).setFormat_title(format_title);
             setFormat_align_center(format_title);

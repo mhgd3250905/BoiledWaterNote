@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
+import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
@@ -30,6 +32,8 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 
 public class NoteListFragment extends Fragment implements NoteListImpl {
@@ -115,6 +119,15 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
         adapter = new NoteListAdapter(getContext(), new ArrayList<Note>(),noteType);
         rvNoteList.setAdapter(adapter);
+
+        rvNoteList.post(new Runnable() {
+            @Override
+            public void run() {
+                int editScopeWidth = rvNoteList.getMeasuredWidth() - rvNoteList.getPaddingLeft() - rvNoteList.getPaddingRight();
+                MyApplication.setEditScopeWidth(editScopeWidth);
+                Log.i(TAG, "编辑框宽： "+editScopeWidth);
+            }
+        });
     }
 
 

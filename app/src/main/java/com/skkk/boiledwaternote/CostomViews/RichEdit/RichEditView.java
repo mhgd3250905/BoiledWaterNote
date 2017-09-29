@@ -12,6 +12,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
@@ -24,6 +25,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -51,7 +53,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     private Context context;
     private ImageView ivFormatAlignCenter, ivFormatBold, ivFormatItalic,
             ivFormatList, ivFormatHorSeperate, ivFormatQuote, ivFormatTitle,
-            ivFormatUnderLine, ivFormatStrikeThrough,ivFormatCheckBox;
+            ivFormatUnderLine, ivFormatStrikeThrough, ivFormatCheckBox;
     private ImageView ivEditFormatNotice;
 
     private NoteEditAdapter.OnImageItemClickListener onImageItemClickListener;//图片点击事件
@@ -161,7 +163,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             @Override
             public void onItemEditHasFocusListener(View view, int pos) {
                 //在接收到焦点的时候重置底部富文本状态
-//                resetBottomBarStatus();
+                resetBottomBarStatus();
                 NoteEditModel model = adapter.getmDataList().get(pos);
                 if (model.getItemFlag() == NoteEditModel.Flag.TEXT) {
                     if (model.isFormat_quote() || model.isFormat_list()) {
@@ -176,9 +178,36 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             }
         });
 
-        if (onSelectionChangeListener!=null) {
-            adapter.setOnSelectionChangeListener(onSelectionChangeListener);
-        }
+        /*
+        * 根据此时的文字状态显示富文本提示
+        * */
+        adapter.setOnSelectionChangeListener(new Configs.OnSelectionChangeListener() {
+            @Override
+            public void onSelectionChangeListener(Editable s, int selStart, int selEnd) {
+                boolean isBold = false;
+                boolean isItalic = false;
+                boolean isUnderLined = false;
+                boolean isStrikeThrough = false;
+                if (selStart == selEnd) {
+                    StyleSpan[] styleSpen = s.getSpans(selStart - 1, selStart, StyleSpan.class);
+                    for (int i = 0; i < styleSpen.length; i++) {
+                        if (styleSpen[i].getStyle() == Typeface.BOLD) {
+                            isBold=true;
+                        } else if (styleSpen[i].getStyle() == Typeface.ITALIC) {
+                            isItalic=true;
+                        }
+                    }
+                    UnderlineSpan[] underlineSpen = s.getSpans(selStart - 1, selStart, UnderlineSpan.class);
+                    isUnderLined = underlineSpen.length > 0;
+                    StrikethroughSpan[] strikethroughSpen = s.getSpans(selStart - 1, selStart, StrikethroughSpan.class);
+                    isStrikeThrough = strikethroughSpen.length > 0;
+                    ivFormatBold.setBackgroundColor(isBold?Color.LTGRAY:Color.TRANSPARENT);
+                    ivFormatItalic.setBackgroundColor(isItalic?Color.LTGRAY:Color.TRANSPARENT);
+                    ivFormatUnderLine.setBackgroundColor(isUnderLined?Color.LTGRAY:Color.TRANSPARENT);
+                    ivFormatStrikeThrough.setBackgroundColor(isStrikeThrough?Color.LTGRAY:Color.TRANSPARENT);
+                }
+            }
+        });
 
 
         rvRichEdit.setOnTouchListener(new OnTouchListener() {
@@ -344,8 +373,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 List<NoteEditModel> cameraItems = new ArrayList<>();
                 cameraItems.add(new NoteEditModel(null, NoteEditModel.Flag.SEPARATED, null));
                 cameraItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
-                insertItems(cameraItems, currentHolder.getCurrentPos()+1);
-                adapter.setFocusItemPos(currentHolder.getCurrentPos()+2);
+                insertItems(cameraItems, currentHolder.getCurrentPos() + 1);
+                adapter.setFocusItemPos(currentHolder.getCurrentPos() + 2);
                 adapter.notifyDataSetChanged();
 
                 /*
@@ -373,7 +402,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 * 点击列表项目之后在下方添加一行
                 * */
 
-                currentHolder.setForamtCheckBox(!currentHolder.isForamt_show_checkBox(),false);
+                currentHolder.setForamtCheckBox(!currentHolder.isForamt_show_checkBox(), false);
                 break;
 
             case R.id.iv_format_underlined:         //设置文字下划线
@@ -439,6 +468,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 获取当前的Holder
+     *
      * @return
      */
     public NoteEditAdapter.NoteEditViewHolder getCurrentHolder() {
@@ -493,16 +523,17 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 获取当前选中的Item的位置
+     *
      * @return
      */
-    public int getCurrentHolderPosition(){
-        if (null==adapter.getCurrentHolder()){
+    public int getCurrentHolderPosition() {
+        if (null == adapter.getCurrentHolder()) {
             return 0;
         }
         return adapter.getCurrentHolder().getCurrentPos();
     }
 
-    public List<NoteEditModel> getCurrentDataList(){
+    public List<NoteEditModel> getCurrentDataList() {
         return adapter.getmDataList();
     }
 
@@ -579,9 +610,9 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     public void deleteImage(String imagePath) {
         List<NoteEditModel> modelList = adapter.getmDataList();
         for (int i = 0; i < modelList.size(); i++) {
-            NoteEditModel modle= modelList.get(i);
-            if (modle.getItemFlag()== NoteEditModel.Flag.IMAGE){
-                if (modle.getImagePath().equals(imagePath)){
+            NoteEditModel modle = modelList.get(i);
+            if (modle.getItemFlag() == NoteEditModel.Flag.IMAGE) {
+                if (modle.getImagePath().equals(imagePath)) {
                     modelList.remove(modle);
                     break;
                 }
@@ -593,6 +624,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 设置图片点击事件监听
+     *
      * @param onImageItemClickListener
      */
     public void setOnImageItemClickListener(NoteEditAdapter.OnImageItemClickListener onImageItemClickListener) {
@@ -600,10 +632,10 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         adapter.setOnImageItemClickListener(onImageItemClickListener);
     }
 
-    /**
-     * 设置光标变化监听
-     */
-    public void setOnSelectionChangeListener(SelectionEditText.OnSelectionChangeListener onSelectionChangeListener) {
-        this.onSelectionChangeListener = onSelectionChangeListener;
-    }
+//    /**
+//     * 设置光标变化监听
+//     */
+//    public void setOnSelectionChangeListener(SelectionEditText.OnSelectionChangeListener onSelectionChangeListener) {
+//        this.onSelectionChangeListener = onSelectionChangeListener;
+//    }
 }
