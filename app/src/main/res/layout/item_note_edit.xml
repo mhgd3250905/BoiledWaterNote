@@ -34,7 +34,7 @@
             android:src="@drawable/vector_drawable_point"
             android:visibility="visible" />
 
-        <com.skkk.boiledwaternote.CostomViews.RichEdit.SelectionEditText
+        <com.skkk.boiledwaternote.CostomViews.ClickableEdit.ClickableEditText
             android:id="@id/tv_item_recylcer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

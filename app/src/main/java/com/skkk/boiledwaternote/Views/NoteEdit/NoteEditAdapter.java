@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,9 +29,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.skkk.boiledwaternote.Configs;
+import com.skkk.boiledwaternote.CostomViews.ClickableEdit.ClickableEditText;
+import com.skkk.boiledwaternote.CostomViews.ClickableEdit.OnRegularClickListener;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.ItemTouchHelperAdapter;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
-import com.skkk.boiledwaternote.CostomViews.RichEdit.SelectionEditText;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.R;
@@ -72,6 +72,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private int separatedImageResouseId;
     private int moveToPos;
     private Configs.OnSelectionChangeListener onSelectionChangeListener;
+    private OnRegularClickListener onRegularClickListener;
 
 
     public interface OnImageItemClickListener {
@@ -161,14 +162,21 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
             });
 
-            //设置焦点变化监听
-            if (onSelectionChangeListener != null) {
-                holder.etItem.setOnSelectionChangeListener(new SelectionEditText.OnSelectionChangeListener() {
-                    @Override
-                    public void onSelectionChangeListener(int selStart, int selEnd) {
-                        onSelectionChangeListener.onSelectionChangeListener(holder.etItem.getText(),selStart,selEnd);
-                    }
-                });
+//            //设置焦点变化监听
+//            if (onSelectionChangeListener != null) {
+//                holder.etItem.setOnSelectionChangeListener(new SelectionEditText.OnSelectionChangeListener() {
+//                    @Override
+//                    public void onSelectionChangeListener(int selStart, int selEnd) {
+//                        onSelectionChangeListener.onSelectionChangeListener(holder.etItem.getText(),selStart,selEnd);
+//                    }
+//                });
+//            }
+
+            /**
+             * 设置正则识别点击事件
+             */
+            if (onRegularClickListener!=null) {
+                holder.etItem.setRegularClickListener(onRegularClickListener);
             }
 
 
@@ -258,14 +266,15 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     .into(holder.ivNoteImageChecked);
 
 
-            if (onImageItemClickListener != null) {
                 holder.ivItemImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onImageItemClickListener.onImageClickListener(holder.getAdapterPosition(), v, itemDate);
+                        if (onImageItemClickListener != null) {
+                            onImageItemClickListener.onImageClickListener(holder.getAdapterPosition(), v, itemDate);
+                        }
+
                     }
                 });
-            }
 
             /*
             * 设置图片点击事件
@@ -399,13 +408,25 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
     /**
+     * 正则表达式特殊文本点击事件
+     * @return
+     */
+    public OnRegularClickListener getOnRegularClickListener() {
+        return onRegularClickListener;
+    }
+
+    public void setOnRegularClickListener(OnRegularClickListener onRegularClickListener) {
+        this.onRegularClickListener = onRegularClickListener;
+    }
+
+    /**
      * ViewHolder
      */
     public class NoteEditViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.ll_edit_container)
         public LinearLayout llEditContainer;    //edit文本区域
         @Bind(R.id.tv_item_recylcer)
-        public SelectionEditText etItem;                 //编辑文本框
+        public ClickableEditText etItem;                 //编辑文本框
         @Bind(R.id.iv_text_point)
         public ImageView ivTextPonit;           //编辑栏位列表图标
         @Bind(R.id.cb_text_check)
@@ -827,7 +848,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             mDataList.get(currentPos).setFormat_title(format_title);
             setFormat_align_center(format_title);
             etItem.setTextSize(format_title ? 25 : 18);
-            etItem.setTypeface(format_title ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            if (format_title) {
+                setFormat_blod(false);
+                setFormat_italic(false);
+                setFormat_underlined(false);
+                setFormat_strike_through(false);
+                etItem.setText(etItem.getText());
+//                etItem.setTypeface(format_title ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            }
         }
 
         /**
@@ -941,7 +969,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     public class MyItemTextChangeListener implements TextWatcher {
         private int position;
 
-        private EditText currentEdit;
+        private ClickableEditText currentEdit;
         private boolean flagIsAuto = false;           //设置一个flag用来避免重新设置EditText时候触发监听
         private boolean format_blod = false;          //加粗
         private boolean format_italic = false;        //斜体
@@ -977,6 +1005,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     for (int i = start; i < start + count; i++) {
                         ss.setSpan(new StyleSpan(Typeface.ITALIC), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
+                }else {
+                    StyleSpan[] spans = ss.getSpans(0, ss.length(), StyleSpan.class);
+                    if (spans.length != 0) {   //如果有ITALIC则设置为正常
+                        for (StyleSpan span : spans) {
+                            ss.removeSpan(span);
+                        }
+                    }
                 }
 
                 //设置下划线
@@ -984,13 +1019,27 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     for (int i = start; i < start + count; i++) {
                         ss.setSpan(new UnderlineSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
+                }else {
+                    UnderlineSpan[] spans = ss.getSpans(0, ss.length(), UnderlineSpan.class);
+                    if (spans.length != 0) {   //如果有ITALIC则设置为正常
+                        for (UnderlineSpan span : spans) {
+                            ss.removeSpan(span);
+                        }
+                    }
                 }
 
                 //设置删除线
-                if (format_strike_through) {
+                 if (format_strike_through) {
                     for (int i = start; i < start + count; i++) {
                         ss.setSpan(new StrikethroughSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
+                }else {
+                     StrikethroughSpan[] spans = ss.getSpans(0, ss.length(), StrikethroughSpan.class);
+                     if (spans.length != 0) {   //如果有ITALIC则设置为正常
+                         for (StrikethroughSpan span : spans) {
+                             ss.removeSpan(span);
+                         }
+                     }
                 }
 
                 currentEdit.setText(ss);
@@ -1007,8 +1056,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 flagIsAuto = false;
 //                currentEdit.setSelection(lastPos);
             }
-
-
 //            mDataList.set(position, model);
         }
 
@@ -1016,10 +1063,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public void afterTextChanged(Editable s) {
         }
 
-        public void setCurrentEdit(EditText currentEdit) {
+        public void setCurrentEdit(ClickableEditText currentEdit) {
             this.currentEdit = currentEdit;
         }
-
 
         public void setFormat_blod(boolean format_blod) {
             this.format_blod = format_blod;

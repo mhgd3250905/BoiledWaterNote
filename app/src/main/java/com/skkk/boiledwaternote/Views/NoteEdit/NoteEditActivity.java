@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Configs;
+import com.skkk.boiledwaternote.CostomViews.ClickableEdit.OnRegularClickListener;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
 import com.skkk.boiledwaternote.Modles.Note;
@@ -228,6 +229,38 @@ public class NoteEditActivity extends AppCompatActivity {
                 intent.putExtra(Configs.KEY_PREVIEW_IMAGE, new ImageModle(model, false));
                 intent.putExtra(Configs.KEY_NOTE_TYPE, noteType);
                 startActivityForResult(intent, Configs.REQUEST_DELETE_IMAGE);
+            }
+        });
+
+        /**
+         * 设置正则特殊文本点击
+         */
+        revEdit.setOnRegularClickListener(new OnRegularClickListener() {
+            @Override
+            public void onPhoneClickListener(View view, String regexMatcher) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                Uri data = Uri.parse("tel:" + regexMatcher);
+                intent.setData(data);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onUrlClickListener(View view, String regexMatcher) {
+                Uri uri = Uri.parse("http://" + regexMatcher);
+                Intent urlIntent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(urlIntent);
+
+            }
+
+            @Override
+            public void onEmailClickListener(View view, String regexMatcher) {
+                Intent email = new Intent(Intent.ACTION_SEND);
+                email.setType("message/rfc822");
+                email.putExtra(Intent.EXTRA_EMAIL, new String[] {regexMatcher});
+                email.putExtra(Intent.EXTRA_SUBJECT, "");
+                email.putExtra(Intent.EXTRA_TEXT   , "");
+                startActivity(Intent.createChooser(email, "请选择邮箱："));
+
             }
         });
 

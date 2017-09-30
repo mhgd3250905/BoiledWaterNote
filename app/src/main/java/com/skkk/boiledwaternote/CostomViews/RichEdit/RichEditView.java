@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.skkk.boiledwaternote.Configs;
+import com.skkk.boiledwaternote.CostomViews.ClickableEdit.OnRegularClickListener;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -61,6 +62,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     private MyItemTouchHelperCallback callback;
     private ItemTouchHelper itemTouchHelper;
+    private OnRegularClickListener onRegularClickListener;
 
     public RichEditView(Context context) {
         super(context);
@@ -173,7 +175,6 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                         ivFormatAlignCenter.setEnabled(true);
                         ivFormatAlignCenter.setImageResource(R.drawable.format_align_center);
                     }
-
                 }
             }
         });
@@ -223,7 +224,18 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             }
         });
 
-        adapter.setOnImageItemClickListener(onImageItemClickListener);
+        /**
+         * 设置图片点击事件
+         */
+        if (onImageItemClickListener!=null) {
+            adapter.setOnImageItemClickListener(onImageItemClickListener);
+        }
+        /**
+         * 设置正则特殊文本点击事件
+         */
+        if (onRegularClickListener!=null) {
+            adapter.setOnRegularClickListener(onRegularClickListener);
+        }
     }
 
     /**
@@ -632,10 +644,16 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         adapter.setOnImageItemClickListener(onImageItemClickListener);
     }
 
-//    /**
-//     * 设置光标变化监听
-//     */
-//    public void setOnSelectionChangeListener(SelectionEditText.OnSelectionChangeListener onSelectionChangeListener) {
-//        this.onSelectionChangeListener = onSelectionChangeListener;
-//    }
+    /**
+     * 设置正则表达式特殊文本部分事件
+     * @return
+     */
+    public OnRegularClickListener getOnRegularClickListener() {
+        return onRegularClickListener;
+    }
+
+    public void setOnRegularClickListener(OnRegularClickListener onRegularClickListener) {
+        this.onRegularClickListener= onRegularClickListener;
+        adapter.setOnRegularClickListener(onRegularClickListener);
+    }
 }
