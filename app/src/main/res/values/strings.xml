@@ -25,6 +25,13 @@
     <string name="note_list_note_item_delete_failed">删除便签失败！</string>
     <string name="note_list_save_privacy_failed">保存到私密仓库失败！</string>
 
+    <string name="note_edit_phone_text_title">你选择了电话：%s</string>
+    <string name="note_edit_phone_text_action">拨号</string>
+    <string name="note_edit_url_text_title">你选择了网页：%s？</string>
+    <string name="note_edit_url_text_action">跳转</string>
+    <string name="note_edit_email_text_title">你选择了邮箱：%s？</string>
+    <string name="note_edit_email_text_action">发送邮件</string>
+
     <string name="image_list_delete_failed">删除图片失败</string>
     <string name="image_list_change_edit_status">进入编辑模式</string>
 
