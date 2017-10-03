@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_privacy) {//隐私
             fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
         } else if (id == R.id.nav_recycle) {//回收站
-
+            fragment = NoteListFragment.getInstance(Note.NoteType.RECYCLE_NOTE.getValue());
         } else if (id == R.id.nav_about) {//关于
             navigationMenu.findItem(id).setChecked(false);
 

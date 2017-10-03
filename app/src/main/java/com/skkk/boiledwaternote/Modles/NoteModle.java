@@ -70,17 +70,23 @@ public class NoteModle implements NoteModleImpl<Note> {
     }
 
     /**
-     * 删除笔记
+     * 删除笔记: 删除笔记如果是回收站类型的时候就直接删除，否则设置类型为回收站类型
      * @param note
      * @return
      */
     @Override
     public boolean deleteOne(Note note) {
         session = DBUtils.getInstance(context).getSession();
+        NoteDao noteDao = session.getNoteDao();
         try {
-            NoteDao noteDao = session.getNoteDao();
-            noteDao.delete(note);
-            return true;
+            if (note.getNoteType()==Note.NoteType.RECYCLE_NOTE.getValue()){
+                noteDao.delete(note);
+                return true;
+            }else {
+                note.setNoteType(Note.NoteType.RECYCLE_NOTE.getValue());
+                noteDao.update(note);
+                return true;
+            }
         } catch (Exception e) {
             return false;
         }

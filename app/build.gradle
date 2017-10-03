@@ -27,14 +27,7 @@ android {
 
 //greenDao
 apply plugin: 'org.greenrobot.greendao'
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.0.0'
-    }
-}
+
 
 //greenDao
 greendao {
