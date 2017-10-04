@@ -34,12 +34,14 @@ public class NoteEditModel implements Serializable {
         this.content = content;
         this.itemFlag = itemFlag;
         this.imagePath = imagePath;
+
     }
 
     public enum Flag {
         TEXT,
         IMAGE,
-        SEPARATED
+        SEPARATED,
+        TIMERECORD
     }
 
 

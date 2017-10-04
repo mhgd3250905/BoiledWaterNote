@@ -54,7 +54,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     private Context context;
     private ImageView ivFormatAlignCenter, ivFormatBold, ivFormatItalic,
             ivFormatList, ivFormatHorSeperate, ivFormatQuote, ivFormatTitle,
-            ivFormatUnderLine, ivFormatStrikeThrough, ivFormatCheckBox;
+            ivFormatUnderLine, ivFormatStrikeThrough, ivFormatCheckBox,ivFormatTimeRecord;
     private ImageView ivEditFormatNotice;
 
     private NoteEditAdapter.OnImageItemClickListener onImageItemClickListener;//图片点击事件
@@ -101,6 +101,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatUnderLine = (ImageView) findViewById(R.id.iv_format_underlined);
         ivFormatStrikeThrough = (ImageView) findViewById(R.id.iv_format_strike_through);
         ivFormatCheckBox = (ImageView) findViewById(R.id.iv_format_checkbox);
+        ivFormatTimeRecord = (ImageView) findViewById(R.id.iv_format_time_record);
 
         ivFormatAlignCenter.setOnClickListener(this);
         ivFormatBold.setOnClickListener(this);
@@ -112,6 +113,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivFormatUnderLine.setOnClickListener(this);
         ivFormatStrikeThrough.setOnClickListener(this);
         ivFormatCheckBox.setOnClickListener(this);
+        ivFormatTimeRecord.setOnClickListener(this);
     }
 
     /**
@@ -379,6 +381,24 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 * */
                 currentHolder.setFormat_list(!currentHolder.isFormat_list());
 
+                break;
+
+            case R.id.iv_format_time_record:       //增加时间记录分隔线
+                List<NoteEditModel> timeRecordItems = new ArrayList<>();
+                timeRecordItems.add(new NoteEditModel(null, NoteEditModel.Flag.TIMERECORD, null));
+                timeRecordItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
+                insertItems(timeRecordItems, currentHolder.getCurrentPos() + 1);
+                adapter.setFocusItemPos(currentHolder.getCurrentPos() + 2);
+                adapter.notifyDataSetChanged();
+
+                /*
+                * 锁定光标
+                * */
+                if (currentHolder.getCurrentPos() < adapter.getItemCount() - 1) {
+                    rvRichEdit.smoothScrollToPosition(currentHolder.getCurrentPos());
+                } else {
+                    rvRichEdit.smoothScrollToPosition(adapter.getItemCount());
+                }
                 break;
 
             case R.id.iv_format_hor_seperate:       //增加分隔线

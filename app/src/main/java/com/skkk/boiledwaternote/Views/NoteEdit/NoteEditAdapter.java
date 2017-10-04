@@ -186,6 +186,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.llEditContainer.setVisibility(View.VISIBLE);          //文本显示 图片隐藏
             holder.rlItemImg.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
+            holder.tvItemTimeRecord.setVisibility(GONE);
 
             //设置引用格式
             holder.setFormat_quote(itemDate.isFormat_quote());
@@ -217,6 +218,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
             holder.ivNoteImageChecked.setVisibility(GONE);
+            holder.tvItemTimeRecord.setVisibility(GONE);
 
             if (itemDate.getImagePath() == null) {
                 return;
@@ -309,7 +311,19 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.llEditContainer.setVisibility(GONE);
             holder.ivTextQuote.setVisibility(GONE);
             holder.ivTextPonit.setVisibility(GONE);
+            holder.tvItemTimeRecord.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(View.VISIBLE);
+
+        }else if (itemDate.getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
+            /*
+            * 分隔线
+            * */
+            holder.rlItemImg.setVisibility(GONE);
+            holder.llEditContainer.setVisibility(GONE);
+            holder.ivTextQuote.setVisibility(GONE);
+            holder.ivTextPonit.setVisibility(GONE);
+            holder.rlItemSeparated.setVisibility(View.GONE);
+            holder.tvItemTimeRecord.setVisibility(View.VISIBLE);
 
         }
 
@@ -447,6 +461,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public View ivSwipeNotice;              //拖拽切换的时候的提示图标
         @Bind(R.id.rl_item_separated)
         public RelativeLayout rlItemSeparated;  //分割线容器
+        @Bind(R.id.tv_item_time_record)
+        public TextView tvItemTimeRecord;       //时间记录分割线
 
 
         private OnKeyDownFinishListener onKeyDownFinishListener;//按键按下事件监听
@@ -607,7 +623,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 /*
                                 * 如果已经删除的上衣个Item是分割线，那么也将其删除，然后焦点跳转到上一个Item
                                 * */
-                                if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED) {
+                                if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED
+                                        ||mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
                                     mDataList.remove(currentPos - 1);
                                     setFocusItemPos(currentPos - 2);
                                 } else {
