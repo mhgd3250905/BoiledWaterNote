@@ -29,6 +29,7 @@ import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.ClickableEdit.OnRegularClickListener;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
+import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditAdapter;
@@ -64,6 +65,9 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     private ItemTouchHelper itemTouchHelper;
     private OnRegularClickListener onRegularClickListener;
 
+    private static List<List<NoteEditModel>> historyNotes;     //用来记录笔记后退历史内容
+    private static List<List<NoteEditModel>> previewNotes;     //用来记录笔记前进历史内容
+
     public RichEditView(Context context) {
         super(context);
         initView(context);
@@ -85,6 +89,10 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         initRV();
         initBottomBar();
         ivEditFormatNotice = (ImageView) findViewById(R.id.iv_edit_format_notice);
+
+        //初始化历史笔记容器
+        historyNotes=new ArrayList<>();
+        previewNotes=new ArrayList<>();
     }
 
     /**
@@ -385,7 +393,9 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
             case R.id.iv_format_time_record:       //增加时间记录分隔线
                 List<NoteEditModel> timeRecordItems = new ArrayList<>();
-                timeRecordItems.add(new NoteEditModel(null, NoteEditModel.Flag.TIMERECORD, null));
+                NoteEditModel timeRecordItem = new NoteEditModel(null, NoteEditModel.Flag.TIMERECORD, null);
+                timeRecordItem.setFormat_time_record(System.currentTimeMillis());
+                timeRecordItems.add(timeRecordItem);
                 timeRecordItems.add(new NoteEditModel("", NoteEditModel.Flag.TEXT, null));
                 insertItems(timeRecordItems, currentHolder.getCurrentPos() + 1);
                 adapter.setFocusItemPos(currentHolder.getCurrentPos() + 2);
@@ -675,5 +685,78 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     public void setOnRegularClickListener(OnRegularClickListener onRegularClickListener) {
         this.onRegularClickListener= onRegularClickListener;
         adapter.setOnRegularClickListener(onRegularClickListener);
+    }
+
+    /**
+     * 加入笔记到后退历史记录中
+     * @param models
+     */
+    public void insertHistoryNote(List<NoteEditModel> models){
+        //插入历史笔记的时候，就需要清空前进笔记
+        previewNotes.clear();
+        if (historyNotes!=null){
+            if (historyNotes.size()<=5){
+                historyNotes.add(0,models);
+            }else {
+                historyNotes.remove(historyNotes.size());
+                historyNotes.add(0,models);
+            }
+        }
+    }
+
+    /**
+     * 加入笔记到前进历史记录中
+     * @param models
+     */
+    public void insertPreviewNote(List<NoteEditModel> models){
+        if (previewNotes!=null){
+            if (previewNotes.size()<=5){
+                previewNotes.add(0,models);
+            }else {
+                previewNotes.remove(previewNotes.size());
+                previewNotes.add(0,models);
+            }
+        }
+    }
+
+    /**
+     * 获取历史笔记：
+     * 从0开始为最近笔记
+     * 每获取一次历史笔记就将当前笔记设置为历史前进笔记中
+     * @return
+     */
+    public List<NoteEditModel> getHistoryNote(List<NoteEditModel> curModels){
+        if (historyNotes==null||previewNotes==null){
+            return null;
+        }
+        if (historyNotes.size()==0){
+            return null;
+        }
+        List<NoteEditModel> latestModles = historyNotes.get(historyNotes.size());
+        historyNotes.remove(historyNotes.size());
+        insertPreviewNote(curModels);
+
+        return latestModles;
+    }
+
+    /**
+     * 获取历史前进笔记
+     * 从0开始为最近笔记
+     * 每获取一次历史前进笔记就将当前的笔记设置到历史后退笔记
+     * @return
+     */
+    public List<NoteEditModel> getPreviewNote(List<NoteEditModel> curModels){
+        if (historyNotes==null||previewNotes==null){
+            return null;
+        }
+        if (previewNotes.size()==0){
+            return null;
+        }
+
+        List<NoteEditModel> latestModles = previewNotes.get(previewNotes.size());
+        previewNotes.remove(historyNotes.size());
+        insertHistoryNote(curModels);
+
+        return latestModles;
     }
 }

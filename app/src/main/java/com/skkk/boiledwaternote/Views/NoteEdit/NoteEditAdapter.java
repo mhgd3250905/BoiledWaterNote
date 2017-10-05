@@ -12,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
@@ -324,7 +325,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(View.GONE);
             holder.tvItemTimeRecord.setVisibility(View.VISIBLE);
-
+            holder.tvItemTimeRecord.setText(DateFormat.format("yyyy-MM-dd HH:mm:ss",itemDate.getFormat_time_record()));
         }
 
     }

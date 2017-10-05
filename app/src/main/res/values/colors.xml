@@ -15,6 +15,7 @@
     <color name="nightColorCardBackground">#454545</color>
 
     <color name="transparentColor">#55000000</color>
+    <color name="realTransparentColor">#00000000</color>
 
 
     <color name="colorLightBlue">#3ffffF</color>

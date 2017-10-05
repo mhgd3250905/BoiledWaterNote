@@ -26,6 +26,7 @@ public class NoteEditModel implements Serializable {
     public boolean format_strike_through = false;//删除线
     public boolean format_show_checkbox=false;  //勾选框
     public boolean foramt_checkBox_check=false; //勾选框是否勾选
+    public long format_time_record=0;           //时间间隔
 
     public NoteEditModel() {
     }
@@ -156,6 +157,14 @@ public class NoteEditModel implements Serializable {
 
     public void setForamt_checkBox_check(boolean foramt_checkBox_check) {
         this.foramt_checkBox_check = foramt_checkBox_check;
+    }
+
+    public long getFormat_time_record() {
+        return format_time_record;
+    }
+
+    public void setFormat_time_record(long format_time_record) {
+        this.format_time_record = format_time_record;
     }
 
     @Override
