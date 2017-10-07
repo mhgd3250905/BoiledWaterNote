@@ -197,6 +197,21 @@ public class NoteEditActivity extends AppCompatActivity {
                         });
                         popupWindow.showAtLocation(llEditContainer, Gravity.BOTTOM, 0, 300);
                         break;
+
+                    case R.id.menu_edit_perious:
+                        List<NoteEditModel> historyNote = revEdit.getHistoryNote(revEdit.getRichText());
+                        if (historyNote==null){
+                            return false;
+                        }
+                        revEdit.loadRichText(historyNote);
+                        break;
+                    case R.id.menu_edit_next:
+                        List<NoteEditModel> previewNote = revEdit.getPreviewNote(revEdit.getRichText());
+                        if (previewNote==null){
+                            return false;
+                        }
+                        revEdit.loadRichText(previewNote);
+                        break;
                 }
                 return false;
             }

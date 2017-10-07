@@ -74,6 +74,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private int moveToPos;
     private Configs.OnSelectionChangeListener onSelectionChangeListener;
     private OnRegularClickListener onRegularClickListener;
+    private OnEditTextChangeListener onEditTextChangeListener;
 
 
     public interface OnImageItemClickListener {
@@ -88,10 +89,12 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
-
         void onDelFinishListner(int pos);
     }
 
+    public interface OnEditTextChangeListener{
+        void onEditTextChangeListener(List<NoteEditModel> models);
+    }
 
     public NoteEditAdapter(Context context, List<NoteEditModel> mDataList) {
         this.context = context;
@@ -432,6 +435,18 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public void setOnRegularClickListener(OnRegularClickListener onRegularClickListener) {
         this.onRegularClickListener = onRegularClickListener;
+    }
+
+    /**
+     * 设置文本变化事件监听
+     * @return
+     */
+    public OnEditTextChangeListener getOnEditTextChangeListener() {
+        return onEditTextChangeListener;
+    }
+
+    public void setOnEditTextChangeListener(OnEditTextChangeListener onEditTextChangeListener) {
+        this.onEditTextChangeListener = onEditTextChangeListener;
     }
 
     /**
@@ -1060,6 +1075,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                      }
                 }
 
+                /**
+                 * 文本变化监听
+                 */
+                if (onEditTextChangeListener!=null) {
+                    onEditTextChangeListener.onEditTextChangeListener(mDataList);
+                }
+
                 currentEdit.setText(ss);
 
                 if (android.os.Build.VERSION.SDK_INT >= N) {
@@ -1069,6 +1091,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
                 }
                 currentEdit.setSelection((start + count) > 0 ? start + count : 0);
+
+
 
             } else {
                 flagIsAuto = false;

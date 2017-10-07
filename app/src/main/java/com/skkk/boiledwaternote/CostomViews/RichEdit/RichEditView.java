@@ -67,6 +67,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     private static List<List<NoteEditModel>> historyNotes;     //用来记录笔记后退历史内容
     private static List<List<NoteEditModel>> previewNotes;     //用来记录笔记前进历史内容
+    private boolean isEditChanged=true;                        //反应是否为正常文本变化，非前进后退
 
     public RichEditView(Context context) {
         super(context);
@@ -221,6 +222,22 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         });
 
 
+        /**
+         * 文本变化就设置历史笔记
+         */
+        adapter.setOnEditTextChangeListener(new NoteEditAdapter.OnEditTextChangeListener() {
+            @Override
+            public void onEditTextChangeListener(List<NoteEditModel> models) {
+                if (isEditChanged) {
+                    insertHistoryNote(models);
+                    isEditChanged=false;
+                }else {
+                    isEditChanged=true;
+                }
+            }
+        });
+
+
         rvRichEdit.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -233,6 +250,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 return false;
             }
         });
+
 
         /**
          * 设置图片点击事件
@@ -698,7 +716,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             if (historyNotes.size()<=5){
                 historyNotes.add(0,models);
             }else {
-                historyNotes.remove(historyNotes.size());
+                historyNotes.remove(historyNotes.size()-1);
                 historyNotes.add(0,models);
             }
         }
@@ -713,7 +731,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             if (previewNotes.size()<=5){
                 previewNotes.add(0,models);
             }else {
-                previewNotes.remove(previewNotes.size());
+                previewNotes.remove(previewNotes.size()-1);
                 previewNotes.add(0,models);
             }
         }
@@ -732,8 +750,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         if (historyNotes.size()==0){
             return null;
         }
-        List<NoteEditModel> latestModles = historyNotes.get(historyNotes.size());
-        historyNotes.remove(historyNotes.size());
+        List<NoteEditModel> latestModles = historyNotes.get(historyNotes.size()-1);
+        historyNotes.remove(historyNotes.size()-1);
         insertPreviewNote(curModels);
 
         return latestModles;
@@ -753,8 +771,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             return null;
         }
 
-        List<NoteEditModel> latestModles = previewNotes.get(previewNotes.size());
-        previewNotes.remove(historyNotes.size());
+        List<NoteEditModel> latestModles = previewNotes.get(previewNotes.size()-1 );
+        previewNotes.remove(historyNotes.size()-1);
         insertHistoryNote(curModels);
 
         return latestModles;
