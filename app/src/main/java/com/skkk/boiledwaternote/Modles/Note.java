@@ -78,7 +78,8 @@ public class Note implements Serializable {
         ALL_NOTE(0),
         ARTICLE_NOTE(1),
         NOTE_NOTE(2),
-        PRIVACY_NOTE(3);
+        PRIVACY_NOTE(3),
+        RECYCLE_NOTE(4);
         int typeCode;
 
         private NoteType(int typeCode) {

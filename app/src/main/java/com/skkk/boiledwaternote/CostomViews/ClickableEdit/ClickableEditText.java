@@ -78,7 +78,7 @@ public class ClickableEditText extends EditText {
                     public void onClick(View v) {
                         Log.i(TAG, "onClick: PHONE");
                         if (regularClickListener != null) {
-                            regularClickListener.onPhoneClickListener(v, result.getMatchContent());
+                            regularClickListener.onPhoneClickListener(v, result.getMatchContent(),result.getType());
                         }
                     }
                 });
@@ -88,7 +88,7 @@ public class ClickableEditText extends EditText {
                     public void onClick(View v) {
                         Log.i(TAG, "onClick: URL");
                         if (regularClickListener!=null){
-                            regularClickListener.onUrlClickListener(v,result.getMatchContent());
+                            regularClickListener.onUrlClickListener(v,result.getMatchContent(),result.getType());
                         }
                     }
                 });
@@ -99,7 +99,7 @@ public class ClickableEditText extends EditText {
                     public void onClick(View v) {
                         Log.i(TAG, "onClick: EMAIL");
                         if (regularClickListener!=null){
-                            regularClickListener.onEmailClickListener(v,result.getMatchContent());
+                            regularClickListener.onEmailClickListener(v,result.getMatchContent(),result.getType());
                         }
                     }
                 });

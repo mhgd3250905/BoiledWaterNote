@@ -8,7 +8,7 @@ import android.view.View;
  */
 
 public interface OnRegularClickListener {
-    void onPhoneClickListener(View view, String regexMatcher);
-    void onUrlClickListener(View view,String regexMatcher);
-    void onEmailClickListener(View view,String regexMatcher);
+    void onPhoneClickListener(View view, String regexMatcher,int type);
+    void onUrlClickListener(View view,String regexMatcher,int type);
+    void onEmailClickListener(View view,String regexMatcher,int type);
 }

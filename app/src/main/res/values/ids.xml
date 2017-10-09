@@ -90,4 +90,8 @@
     </item>
     <item name="iv_note_imaghe_checked" type="id">iv_note_imaghe_checked</item>
     <item name="iv_note_image_checked" type="id">iv_note_image_checked</item>
+    <item name="iv_format_time_record" type="id">iv_format_time_record</item>
+    <item name="tv_item_time_record" type="id">tv_item_time_record</item>
+    <item name="menu_edit_perious" type="id">menu_edit_perious</item>
+    <item name="menu_edit_next" type="id">menu_edit_next</item>
 </resources>

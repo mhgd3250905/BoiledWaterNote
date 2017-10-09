@@ -161,4 +161,15 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:paddingBottom="5dp"
+        android:id="@id/tv_item_time_record"
+        android:paddingStart="10dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2017-10-14 12:00:00"/>
+
+
 </RelativeLayout>

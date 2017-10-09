@@ -10,7 +10,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.ClickableEdit.OnRegularClickListener;
+import com.skkk.boiledwaternote.CostomViews.ClickableEdit.RegexParser;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
 import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
 import com.skkk.boiledwaternote.Modles.Note;
@@ -194,6 +197,21 @@ public class NoteEditActivity extends AppCompatActivity {
                         });
                         popupWindow.showAtLocation(llEditContainer, Gravity.BOTTOM, 0, 300);
                         break;
+
+                    case R.id.menu_edit_perious:
+                        List<NoteEditModel> historyNote = revEdit.getHistoryNote(revEdit.getRichText());
+                        if (historyNote==null){
+                            return false;
+                        }
+                        revEdit.loadRichText(historyNote);
+                        break;
+                    case R.id.menu_edit_next:
+                        List<NoteEditModel> previewNote = revEdit.getPreviewNote(revEdit.getRichText());
+                        if (previewNote==null){
+                            return false;
+                        }
+                        revEdit.loadRichText(previewNote);
+                        break;
                 }
                 return false;
             }
@@ -236,31 +254,20 @@ public class NoteEditActivity extends AppCompatActivity {
          * 设置正则特殊文本点击
          */
         revEdit.setOnRegularClickListener(new OnRegularClickListener() {
+
             @Override
-            public void onPhoneClickListener(View view, String regexMatcher) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                Uri data = Uri.parse("tel:" + regexMatcher);
-                intent.setData(data);
-                startActivity(intent);
+            public void onPhoneClickListener(View view, String regexMatcher, int type) {
+                showSnakeBarNotice(type,regexMatcher);
             }
 
             @Override
-            public void onUrlClickListener(View view, String regexMatcher) {
-                Uri uri = Uri.parse("http://" + regexMatcher);
-                Intent urlIntent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(urlIntent);
-
+            public void onUrlClickListener(View view, String regexMatcher, int type) {
+                showSnakeBarNotice(type,regexMatcher);
             }
 
             @Override
-            public void onEmailClickListener(View view, String regexMatcher) {
-                Intent email = new Intent(Intent.ACTION_SEND);
-                email.setType("message/rfc822");
-                email.putExtra(Intent.EXTRA_EMAIL, new String[] {regexMatcher});
-                email.putExtra(Intent.EXTRA_SUBJECT, "");
-                email.putExtra(Intent.EXTRA_TEXT   , "");
-                startActivity(Intent.createChooser(email, "请选择邮箱："));
-
+            public void onEmailClickListener(View view, String regexMatcher, int type) {
+                showSnakeBarNotice(type,regexMatcher);
             }
         });
 
@@ -278,6 +285,28 @@ public class NoteEditActivity extends AppCompatActivity {
 //                        revEdit.refreshRichText();
 //                    }
 //                });
+    }
+
+    private void sendEmail(String regexMatcher) {
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.setType("message/rfc822");
+        email.putExtra(Intent.EXTRA_EMAIL, new String[] {regexMatcher});
+        email.putExtra(Intent.EXTRA_SUBJECT, "");
+        email.putExtra(Intent.EXTRA_TEXT   , "");
+        startActivity(Intent.createChooser(email, "请选择邮箱："));
+    }
+
+    private void jump2Url(String regexMatcher) {
+        Uri uri = Uri.parse("http://" + regexMatcher);
+        Intent urlIntent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(urlIntent);
+    }
+
+    private void callPhone(String regexMatcher) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        Uri data = Uri.parse("tel:" + regexMatcher);
+        intent.setData(data);
+        startActivity(intent);
     }
 
 
@@ -425,6 +454,47 @@ public class NoteEditActivity extends AppCompatActivity {
                 getWindow().setAttributes(lp);
             }
         });
+    }
+
+    private void showSnakeBarNotice(int type, final String matcherResult){
+        String title="";
+        String actionStr="";
+        View.OnClickListener actionClick=null;
+        switch (type){
+            case RegexParser.phoneType:
+                title=String.format(getString(R.string.note_edit_phone_text_title),matcherResult);
+                actionStr=getString(R.string.note_edit_phone_text_action);
+                actionClick=new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callPhone(matcherResult);
+                    }
+                };
+                break;
+            case RegexParser.urlType:
+                title=String.format(getString(R.string.note_edit_url_text_title),matcherResult);
+                actionStr=getString(R.string.note_edit_url_text_action);
+                actionClick=new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        jump2Url(matcherResult);
+                    }
+                };
+                break;
+            case RegexParser.emailType:
+                title=String.format(getString(R.string.note_edit_email_text_title),matcherResult);
+                actionStr=getString(R.string.note_edit_email_text_action);
+                actionClick=new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendEmail(matcherResult);
+                    }
+                };
+                break;
+        }
+        Snackbar.make(activityEditContainer,title,Snackbar.LENGTH_LONG)
+        .setAction(actionStr,actionClick)
+        .show();
     }
 
 

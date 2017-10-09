@@ -12,6 +12,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
@@ -73,6 +74,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private int moveToPos;
     private Configs.OnSelectionChangeListener onSelectionChangeListener;
     private OnRegularClickListener onRegularClickListener;
+    private OnEditTextChangeListener onEditTextChangeListener;
 
 
     public interface OnImageItemClickListener {
@@ -87,10 +89,12 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
-
         void onDelFinishListner(int pos);
     }
 
+    public interface OnEditTextChangeListener{
+        void onEditTextChangeListener(List<NoteEditModel> models);
+    }
 
     public NoteEditAdapter(Context context, List<NoteEditModel> mDataList) {
         this.context = context;
@@ -186,6 +190,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.llEditContainer.setVisibility(View.VISIBLE);          //文本显示 图片隐藏
             holder.rlItemImg.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
+            holder.tvItemTimeRecord.setVisibility(GONE);
 
             //设置引用格式
             holder.setFormat_quote(itemDate.isFormat_quote());
@@ -217,6 +222,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(GONE);
             holder.ivNoteImageChecked.setVisibility(GONE);
+            holder.tvItemTimeRecord.setVisibility(GONE);
 
             if (itemDate.getImagePath() == null) {
                 return;
@@ -309,8 +315,20 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.llEditContainer.setVisibility(GONE);
             holder.ivTextQuote.setVisibility(GONE);
             holder.ivTextPonit.setVisibility(GONE);
+            holder.tvItemTimeRecord.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(View.VISIBLE);
 
+        }else if (itemDate.getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
+            /*
+            * 分隔线
+            * */
+            holder.rlItemImg.setVisibility(GONE);
+            holder.llEditContainer.setVisibility(GONE);
+            holder.ivTextQuote.setVisibility(GONE);
+            holder.ivTextPonit.setVisibility(GONE);
+            holder.rlItemSeparated.setVisibility(View.GONE);
+            holder.tvItemTimeRecord.setVisibility(View.VISIBLE);
+            holder.tvItemTimeRecord.setText(DateFormat.format("yyyy-MM-dd HH:mm:ss",itemDate.getFormat_time_record()));
         }
 
     }
@@ -420,6 +438,18 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     }
 
     /**
+     * 设置文本变化事件监听
+     * @return
+     */
+    public OnEditTextChangeListener getOnEditTextChangeListener() {
+        return onEditTextChangeListener;
+    }
+
+    public void setOnEditTextChangeListener(OnEditTextChangeListener onEditTextChangeListener) {
+        this.onEditTextChangeListener = onEditTextChangeListener;
+    }
+
+    /**
      * ViewHolder
      */
     public class NoteEditViewHolder extends RecyclerView.ViewHolder {
@@ -447,6 +477,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public View ivSwipeNotice;              //拖拽切换的时候的提示图标
         @Bind(R.id.rl_item_separated)
         public RelativeLayout rlItemSeparated;  //分割线容器
+        @Bind(R.id.tv_item_time_record)
+        public TextView tvItemTimeRecord;       //时间记录分割线
 
 
         private OnKeyDownFinishListener onKeyDownFinishListener;//按键按下事件监听
@@ -607,7 +639,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 /*
                                 * 如果已经删除的上衣个Item是分割线，那么也将其删除，然后焦点跳转到上一个Item
                                 * */
-                                if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED) {
+                                if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED
+                                        ||mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
                                     mDataList.remove(currentPos - 1);
                                     setFocusItemPos(currentPos - 2);
                                 } else {
@@ -1042,6 +1075,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                      }
                 }
 
+                /**
+                 * 文本变化监听
+                 */
+                if (onEditTextChangeListener!=null) {
+                    onEditTextChangeListener.onEditTextChangeListener(mDataList);
+                }
+
                 currentEdit.setText(ss);
 
                 if (android.os.Build.VERSION.SDK_INT >= N) {
@@ -1051,6 +1091,8 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
                 }
                 currentEdit.setSelection((start + count) > 0 ? start + count : 0);
+
+
 
             } else {
                 flagIsAuto = false;
