@@ -1075,13 +1075,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                      }
                 }
 
-                /**
-                 * 文本变化监听
-                 */
-                if (onEditTextChangeListener!=null) {
-                    onEditTextChangeListener.onEditTextChangeListener(mDataList);
-                }
-
                 currentEdit.setText(ss);
 
                 if (android.os.Build.VERSION.SDK_INT >= N) {
@@ -1092,8 +1085,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
                 currentEdit.setSelection((start + count) > 0 ? start + count : 0);
 
-
-
             } else {
                 flagIsAuto = false;
 //                currentEdit.setSelection(lastPos);
@@ -1103,6 +1094,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         @Override
         public void afterTextChanged(Editable s) {
+            /**
+             * 文本变化监听
+             */
+            if (!flagIsAuto) {
+                if (onEditTextChangeListener != null) {
+                    onEditTextChangeListener.onEditTextChangeListener(mDataList);
+                }
+            }
         }
 
         public void setCurrentEdit(ClickableEditText currentEdit) {
