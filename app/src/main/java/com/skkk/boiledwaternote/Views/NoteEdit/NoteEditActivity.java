@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
@@ -33,6 +32,7 @@ import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.ClickableEdit.OnRegularClickListener;
 import com.skkk.boiledwaternote.CostomViews.ClickableEdit.RegexParser;
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCallback;
+import com.skkk.boiledwaternote.CostomViews.RichEdit.NoteEditAdapter;
 import com.skkk.boiledwaternote.CostomViews.RichEdit.RichEditView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
@@ -203,14 +203,14 @@ public class NoteEditActivity extends AppCompatActivity {
                         if (historyNote==null){
                             return false;
                         }
-                        revEdit.loadRichText(historyNote);
+                        revEdit.loadRichText(historyNote,true);
                         break;
                     case R.id.menu_edit_next:
                         List<NoteEditModel> previewNote = revEdit.getPreviewNote(revEdit.getRichText());
                         if (previewNote==null){
                             return false;
                         }
-                        revEdit.loadRichText(previewNote);
+                        revEdit.loadRichText(previewNote,true);
                         break;
                 }
                 return false;

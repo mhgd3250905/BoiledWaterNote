@@ -1,21 +1,15 @@
-package com.skkk.boiledwaternote.Views.NoteEdit;
+package com.skkk.boiledwaternote.CostomViews.RichEdit;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.Html;
-import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.text.style.StrikethroughSpan;
-import android.text.style.StyleSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -38,7 +32,10 @@ import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
+import com.skkk.boiledwaternote.Utils.Utils.ListUtils;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,6 +72,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     private Configs.OnSelectionChangeListener onSelectionChangeListener;
     private OnRegularClickListener onRegularClickListener;
     private OnEditTextChangeListener onEditTextChangeListener;
+    private List<NoteEditModel> lastModles = new ArrayList<>();
+    private boolean isHistoryRefresh = false;
+
+    private List<NoteEditModel> lastModels;
 
 
     public interface OnImageItemClickListener {
@@ -89,10 +90,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
+
         void onDelFinishListner(int pos);
     }
 
-    public interface OnEditTextChangeListener{
+    public interface OnEditTextChangeListener {
         void onEditTextChangeListener(List<NoteEditModel> models);
     }
 
@@ -105,7 +107,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     public NoteEditViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.item_note_edit, parent, false);
         NoteEditViewHolder viewHolder
-                = new NoteEditViewHolder(v, new MyItemTextChangeListener());
+                = new NoteEditViewHolder(v, new FormatTextChangeWatcher());
         return viewHolder;
     }
 
@@ -121,7 +123,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
     public void onBindViewHolder(final NoteEditViewHolder holder, final int position) {
         final NoteEditViewHolder viewHolder = holder;
         holder.setCurrentPos(holder.getAdapterPosition());          //设置当前Item位置
-        holder.myItemTextChangeListener.updatePos(position);        //更新文本变化监听pos
         if (onKeyDownFinishListener != null) {                        //设置按键事件完成回调
             holder.setOnKeyDownFinishListener(onKeyDownFinishListener);
         }
@@ -179,7 +180,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             /**
              * 设置正则识别点击事件
              */
-            if (onRegularClickListener!=null) {
+            if (onRegularClickListener != null) {
                 holder.etItem.setRegularClickListener(onRegularClickListener);
             }
 
@@ -212,6 +213,15 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 holder.etItem.setSelection(holder.etItem.length());
             }
 
+            if (onSelectionChangeListener != null) {
+                holder.etItem.setOnSelectionChangeListener(new SelectionEditText.OnSelectionChangeListener() {
+                    @Override
+                    public void onSelectionChangeListener(int selStart, int selEnd) {
+                        onSelectionChangeListener.onSelectionChangeListener(holder.etItem.getText(), selStart, selEnd);
+                    }
+                });
+            }
+
         } else if (itemDate.getItemFlag() == NoteEditModel.Flag.IMAGE) {//如果是图片Item
             /*
             * 图片
@@ -234,7 +244,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             int imgWidth = ImageUtils.getBitmapWidth(itemDate.getImagePath(), true);
             int imgHeight = ImageUtils.getBitmapWidth(itemDate.getImagePath(), false);
 
-            Log.i(TAG, "图片宽: "+imgWidth+",图片高: "+imgHeight);
+            Log.i(TAG, "图片宽: " + imgWidth + ",图片高: " + imgHeight);
 
             int editWidth = MyApplication.getEditScopeWidth();
 
@@ -243,13 +253,13 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 //                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
                 layoutParams.width = editWidth;
                 layoutParams.height = layoutParams.width * imgHeight / imgWidth;
-                Log.i(TAG, "相框宽: "+layoutParams.width+",相框高: "+layoutParams.height );
+                Log.i(TAG, "相框宽: " + layoutParams.width + ",相框高: " + layoutParams.height);
 
             } else {
 //                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
                 layoutParams.width = editWidth;
                 layoutParams.height = layoutParams.width * imgHeight / imgWidth;
-                Log.i(TAG, "相框宽: "+imgWidth+",相框高: "+imgHeight);
+                Log.i(TAG, "相框宽: " + imgWidth + ",相框高: " + imgHeight);
 
             }
             holder.ivNoteImageChecked.setLayoutParams(layoutParams);
@@ -272,15 +282,15 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                     .into(holder.ivNoteImageChecked);
 
 
-                holder.ivItemImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (onImageItemClickListener != null) {
-                            onImageItemClickListener.onImageClickListener(holder.getAdapterPosition(), v, itemDate);
-                        }
-
+            holder.ivItemImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onImageItemClickListener != null) {
+                        onImageItemClickListener.onImageClickListener(holder.getAdapterPosition(), v, itemDate);
                     }
-                });
+
+                }
+            });
 
             /*
             * 设置图片点击事件
@@ -318,7 +328,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.tvItemTimeRecord.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(View.VISIBLE);
 
-        }else if (itemDate.getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
+        } else if (itemDate.getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
             /*
             * 分隔线
             * */
@@ -328,7 +338,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.ivTextPonit.setVisibility(GONE);
             holder.rlItemSeparated.setVisibility(View.GONE);
             holder.tvItemTimeRecord.setVisibility(View.VISIBLE);
-            holder.tvItemTimeRecord.setText(DateFormat.format("yyyy-MM-dd HH:mm:ss",itemDate.getFormat_time_record()));
+            holder.tvItemTimeRecord.setText(DateFormat.format("yyyy-MM-dd HH:mm:ss", itemDate.getFormat_time_record()));
         }
 
     }
@@ -427,6 +437,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     /**
      * 正则表达式特殊文本点击事件
+     *
      * @return
      */
     public OnRegularClickListener getOnRegularClickListener() {
@@ -439,6 +450,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     /**
      * 设置文本变化事件监听
+     *
      * @return
      */
     public OnEditTextChangeListener getOnEditTextChangeListener() {
@@ -447,6 +459,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public void setOnEditTextChangeListener(OnEditTextChangeListener onEditTextChangeListener) {
         this.onEditTextChangeListener = onEditTextChangeListener;
+    }
+
+    public boolean isHistoryRefresh() {
+        return isHistoryRefresh;
+    }
+
+    public void setHistoryRefresh(boolean historyRefresh) {
+        isHistoryRefresh = historyRefresh;
     }
 
     /**
@@ -515,9 +535,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         /*
         * 文本变化监听
         * */
-        public MyItemTextChangeListener myItemTextChangeListener;
+        public FormatTextChangeWatcher formatTextChangeWatcher;
 
-        public NoteEditViewHolder(View itemView, MyItemTextChangeListener myItemTextChangeListener) {
+        public NoteEditViewHolder(View itemView, FormatTextChangeWatcher formatTextChangeWatcher) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             //初始化获取焦点
@@ -535,11 +555,43 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 }
             });
 
-
             //设置文本变化监听
-            this.myItemTextChangeListener = myItemTextChangeListener;
-            myItemTextChangeListener.setCurrentEdit(etItem);
-            etItem.addTextChangedListener(myItemTextChangeListener);        //当文本发生变化的时候就保存对应的内容到dataList
+            this.formatTextChangeWatcher = formatTextChangeWatcher;
+            formatTextChangeWatcher.initWatcher(etItem, new FormatTextChangeWatcher.FormatTextChangeToDoListener() {
+                @Override
+                public void formatTextChangeToDoListener(CharSequence s, int selectionIndex) {
+                    if (android.os.Build.VERSION.SDK_INT >= N) {
+                        Log.i(TAG, "onTextChanged: --->" + Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                        mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
+                    } else {
+                        mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText()));
+                    }
+                    etItem.setSelection(selectionIndex);
+
+                    /**
+                     * 文本变化监听
+                     */
+                    if (!isHistoryRefresh) {//如果是历史数据刷新的刷就不需要更新到历史数据中
+                        if (onEditTextChangeListener != null) {
+                            try {
+                                List<NoteEditModel> models = ListUtils.deepCopy(mDataList);
+                                //每次都记录上一次的文本内容
+                                if (lastModels!=null) {
+                                    onEditTextChangeListener.onEditTextChangeListener(lastModels);
+                                }
+                                lastModels = models;
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        isHistoryRefresh = false;
+                    }
+                }
+            });
+            etItem.addTextChangedListener(formatTextChangeWatcher);        //当文本发生变化的时候就保存对应的内容到dataList
 
             /**
              * 设置Edit按键监听：判断按键行为作出不同的处理方式
@@ -640,7 +692,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 * 如果已经删除的上衣个Item是分割线，那么也将其删除，然后焦点跳转到上一个Item
                                 * */
                                 if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED
-                                        ||mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
+                                        || mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
                                     mDataList.remove(currentPos - 1);
                                     setFocusItemPos(currentPos - 2);
                                 } else {
@@ -778,7 +830,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
          */
         public void setFormat_blod(boolean format_bold) {
             this.format_bold = format_bold;
-            myItemTextChangeListener.setFormat_blod(format_bold);
+            formatTextChangeWatcher.setFormat_blod(format_bold);
         }
 
 
@@ -798,7 +850,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
          */
         public void setFormat_italic(boolean format_italic) {
             this.format_italic = format_italic;
-            myItemTextChangeListener.setFormat_italic(format_italic);
+            formatTextChangeWatcher.setFormat_italic(format_italic);
         }
 
         /**
@@ -817,7 +869,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
          */
         public void setFormat_underlined(boolean format_underlined) {
             this.format_underlined = format_underlined;
-            myItemTextChangeListener.setFormat_underlined(format_underlined);
+            formatTextChangeWatcher.setFormat_underlined(format_underlined);
         }
 
         /**
@@ -836,7 +888,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
          */
         public void setFormat_strike_through(boolean format_strike_through) {
             this.format_strike_through = format_strike_through;
-            myItemTextChangeListener.setFormat_strike_through(format_strike_through);
+            formatTextChangeWatcher.setFormat_strike_through(format_strike_through);
         }
 
         /**
@@ -995,158 +1047,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
          */
         public boolean isFormat_quote() {
             return format_quote;
-        }
-    }
-
-
-    public class MyItemTextChangeListener implements TextWatcher {
-        private int position;
-
-        private ClickableEditText currentEdit;
-        private boolean flagIsAuto = false;           //设置一个flag用来避免重新设置EditText时候触发监听
-        private boolean format_blod = false;          //加粗
-        private boolean format_italic = false;        //斜体
-        private int format_size = 0;                  //字体大小：0-p 1-h1 2-h2 3-h3
-        private boolean format_underlined = false;    //下划线
-        private boolean format_strike_through = false;//删除线
-        private int lastPos;
-
-        public void updatePos(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (!flagIsAuto) {
-                SpannableString ss = new SpannableString(s);
-                flagIsAuto = true;
-                //设置斜体和粗体
-                if (format_blod && format_italic) {
-                    for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new StyleSpan(Typeface.BOLD), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        ss.setSpan(new StyleSpan(Typeface.ITALIC), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
-                } else if (format_blod) {
-                    for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new StyleSpan(Typeface.BOLD), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
-                } else if (format_italic) {
-                    for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new StyleSpan(Typeface.ITALIC), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
-                }else {
-                    StyleSpan[] spans = ss.getSpans(0, ss.length(), StyleSpan.class);
-                    if (spans.length != 0) {   //如果有ITALIC则设置为正常
-                        for (StyleSpan span : spans) {
-                            ss.removeSpan(span);
-                        }
-                    }
-                }
-
-                //设置下划线
-                if (format_underlined) {
-                    for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new UnderlineSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
-                }else {
-                    UnderlineSpan[] spans = ss.getSpans(0, ss.length(), UnderlineSpan.class);
-                    if (spans.length != 0) {   //如果有ITALIC则设置为正常
-                        for (UnderlineSpan span : spans) {
-                            ss.removeSpan(span);
-                        }
-                    }
-                }
-
-                //设置删除线
-                 if (format_strike_through) {
-                    for (int i = start; i < start + count; i++) {
-                        ss.setSpan(new StrikethroughSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
-                }else {
-                     StrikethroughSpan[] spans = ss.getSpans(0, ss.length(), StrikethroughSpan.class);
-                     if (spans.length != 0) {   //如果有ITALIC则设置为正常
-                         for (StrikethroughSpan span : spans) {
-                             ss.removeSpan(span);
-                         }
-                     }
-                }
-
-                currentEdit.setText(ss);
-
-                if (android.os.Build.VERSION.SDK_INT >= N) {
-                    Log.i(TAG, "onTextChanged: --->" + Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
-                    mDataList.get(position).setContent(Html.toHtml(currentEdit.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
-                } else {
-                    mDataList.get(position).setContent(Html.toHtml(currentEdit.getText()));
-                }
-                currentEdit.setSelection((start + count) > 0 ? start + count : 0);
-
-            } else {
-                flagIsAuto = false;
-//                currentEdit.setSelection(lastPos);
-            }
-//            mDataList.set(position, model);
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            /**
-             * 文本变化监听
-             */
-            if (!flagIsAuto) {
-                if (onEditTextChangeListener != null) {
-                    onEditTextChangeListener.onEditTextChangeListener(mDataList);
-                }
-            }
-        }
-
-        public void setCurrentEdit(ClickableEditText currentEdit) {
-            this.currentEdit = currentEdit;
-        }
-
-        public void setFormat_blod(boolean format_blod) {
-            this.format_blod = format_blod;
-        }
-
-        public void setFormat_italic(boolean format_italic) {
-            this.format_italic = format_italic;
-        }
-
-        public void setFormat_size(int format_size) {
-            this.format_size = format_size;
-        }
-
-        public void setFormat_underlined(boolean format_underlined) {
-            this.format_underlined = format_underlined;
-        }
-
-        public void setFormat_strike_through(boolean format_strike_through) {
-            this.format_strike_through = format_strike_through;
-        }
-
-        public boolean isFormat_blod() {
-            return format_blod;
-        }
-
-        public boolean isFormat_italic() {
-            return format_italic;
-        }
-
-
-        public int getFormat_size() {
-            return format_size;
-        }
-
-        public boolean isFormat_strike_through() {
-            return format_strike_through;
-        }
-
-        public boolean isFormat_underlined() {
-            return format_underlined;
         }
     }
 

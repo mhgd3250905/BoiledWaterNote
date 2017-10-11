@@ -12,7 +12,8 @@ import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
+
+import com.skkk.boiledwaternote.CostomViews.RichEdit.SelectionEditText;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ import static android.content.ContentValues.TAG;
 * 作    者：ksheng
 * 时    间：2017/9/30$ 19:50$.
 */
-public class ClickableEditText extends EditText {
+public class ClickableEditText extends SelectionEditText {
     private RegularUtils regularUtils;
     private OnRegularClickListener regularClickListener;
 
@@ -134,7 +135,7 @@ public class ClickableEditText extends EditText {
                 .addNewRule(RegexParser.URL_PATTERN, RegexParser.urlType)
                 .addNewRule(RegexParser.EMAIL_PATTERN, RegexParser.emailType);
         regularUtils.setRegularRule(rule);
-        addTextChangedListener(watcher);
+//        addTextChangedListener(watcher);
     }
 
     public OnRegularClickListener getRegularClickListener() {

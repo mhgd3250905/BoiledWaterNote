@@ -209,4 +209,5 @@ public class NoteEditModel implements Serializable {
         result = 31 * result + (foramt_checkBox_check ? 1 : 0);
         return result;
     }
+
 }

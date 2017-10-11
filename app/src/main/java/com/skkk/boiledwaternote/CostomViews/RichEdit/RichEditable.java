@@ -15,7 +15,7 @@ public interface RichEditable {
     //刷新编辑文本
     void refreshRichText();
     //加载传入的富文本
-    void loadRichText(List<NoteEditModel> richTexts);
+    void loadRichText(List<NoteEditModel> richTexts,boolean isHistory);
     //获取数据
     List<NoteEditModel> getRichText();
     //是否获取焦点

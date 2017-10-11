@@ -31,7 +31,6 @@ import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCa
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
-import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +53,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     private Context context;
     private ImageView ivFormatAlignCenter, ivFormatBold, ivFormatItalic,
             ivFormatList, ivFormatHorSeperate, ivFormatQuote, ivFormatTitle,
-            ivFormatUnderLine, ivFormatStrikeThrough, ivFormatCheckBox,ivFormatTimeRecord;
+            ivFormatUnderLine, ivFormatStrikeThrough, ivFormatCheckBox, ivFormatTimeRecord;
     private ImageView ivEditFormatNotice;
 
     private NoteEditAdapter.OnImageItemClickListener onImageItemClickListener;//图片点击事件
@@ -66,7 +65,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     private static List<List<NoteEditModel>> historyNotes;     //用来记录笔记后退历史内容
     private static List<List<NoteEditModel>> previewNotes;     //用来记录笔记前进历史内容
-    private boolean isEditChanged=true;                        //反应是否为正常文本变化，非前进后退
+    private boolean isEditChanged = true;                        //反应是否为正常文本变化，非前进后退
 
     public RichEditView(Context context) {
         super(context);
@@ -91,8 +90,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         ivEditFormatNotice = (ImageView) findViewById(R.id.iv_edit_format_notice);
 
         //初始化历史笔记容器
-        historyNotes=new ArrayList<>();
-        previewNotes=new ArrayList<>();
+        historyNotes = new ArrayList<>();
+        previewNotes = new ArrayList<>();
     }
 
     /**
@@ -203,19 +202,19 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                     StyleSpan[] styleSpen = s.getSpans(selStart - 1, selStart, StyleSpan.class);
                     for (int i = 0; i < styleSpen.length; i++) {
                         if (styleSpen[i].getStyle() == Typeface.BOLD) {
-                            isBold=true;
+                            isBold = true;
                         } else if (styleSpen[i].getStyle() == Typeface.ITALIC) {
-                            isItalic=true;
+                            isItalic = true;
                         }
                     }
                     UnderlineSpan[] underlineSpen = s.getSpans(selStart - 1, selStart, UnderlineSpan.class);
                     isUnderLined = underlineSpen.length > 0;
                     StrikethroughSpan[] strikethroughSpen = s.getSpans(selStart - 1, selStart, StrikethroughSpan.class);
                     isStrikeThrough = strikethroughSpen.length > 0;
-                    ivFormatBold.setBackgroundColor(isBold?Color.LTGRAY:Color.TRANSPARENT);
-                    ivFormatItalic.setBackgroundColor(isItalic?Color.LTGRAY:Color.TRANSPARENT);
-                    ivFormatUnderLine.setBackgroundColor(isUnderLined?Color.LTGRAY:Color.TRANSPARENT);
-                    ivFormatStrikeThrough.setBackgroundColor(isStrikeThrough?Color.LTGRAY:Color.TRANSPARENT);
+                    ivFormatBold.setBackgroundColor(isBold ? Color.LTGRAY : Color.TRANSPARENT);
+                    ivFormatItalic.setBackgroundColor(isItalic ? Color.LTGRAY : Color.TRANSPARENT);
+                    ivFormatUnderLine.setBackgroundColor(isUnderLined ? Color.LTGRAY : Color.TRANSPARENT);
+                    ivFormatStrikeThrough.setBackgroundColor(isStrikeThrough ? Color.LTGRAY : Color.TRANSPARENT);
                 }
             }
         });
@@ -227,12 +226,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         adapter.setOnEditTextChangeListener(new NoteEditAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChangeListener(List<NoteEditModel> models) {
-                if (isEditChanged) {
-                    insertHistoryNote(models);
-                    isEditChanged=false;
-                }else {
-                    isEditChanged=true;
-                }
+                insertHistoryNote(models,false);
             }
         });
 
@@ -254,13 +248,13 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         /**
          * 设置图片点击事件
          */
-        if (onImageItemClickListener!=null) {
+        if (onImageItemClickListener != null) {
             adapter.setOnImageItemClickListener(onImageItemClickListener);
         }
         /**
          * 设置正则特殊文本点击事件
          */
-        if (onRegularClickListener!=null) {
+        if (onRegularClickListener != null) {
             adapter.setOnRegularClickListener(onRegularClickListener);
         }
     }
@@ -305,7 +299,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         if (isNew && datas == null) {       //新笔记
             resetRichText();
         } else {                            //加载旧笔记
-            loadRichText(datas);
+            loadRichText(datas, false);
         }
     }
 
@@ -447,6 +441,9 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 break;
 
             case R.id.iv_format_title:
+                /*
+                * 设置标题
+                * */
                 currentHolder.setFormat_title(!currentHolder.isFormat_title());
                 break;
 
@@ -460,7 +457,6 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 /*
                 * 点击列表项目之后在下方添加一行
                 * */
-
                 currentHolder.setForamtCheckBox(!currentHolder.isForamt_show_checkBox(), false);
                 break;
 
@@ -619,8 +615,8 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
      * @param richTexts
      */
     @Override
-    public void loadRichText(List<NoteEditModel> richTexts) {
-        adapter.getmDataList().addAll(richTexts);        //同步数据
+    public void loadRichText(List<NoteEditModel> richTexts, boolean isHistory) {
+        adapter.setHistoryRefresh(isHistory);
         adapter.setmDataList(richTexts);
         adapter.notifyDataSetChanged();
     }
@@ -693,6 +689,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 设置正则表达式特殊文本部分事件
+     *
      * @return
      */
     public OnRegularClickListener getOnRegularClickListener() {
@@ -700,38 +697,42 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
     }
 
     public void setOnRegularClickListener(OnRegularClickListener onRegularClickListener) {
-        this.onRegularClickListener= onRegularClickListener;
+        this.onRegularClickListener = onRegularClickListener;
         adapter.setOnRegularClickListener(onRegularClickListener);
     }
 
     /**
      * 加入笔记到后退历史记录中
+     *
      * @param models
      */
-    public void insertHistoryNote(List<NoteEditModel> models){
+    public void insertHistoryNote(List<NoteEditModel> models,boolean fromPre) {
         //插入历史笔记的时候，就需要清空前进笔记
-        previewNotes.clear();
-        if (historyNotes!=null){
-            if (historyNotes.size()<=5){
-                historyNotes.add(0,models);
-            }else {
-                historyNotes.remove(historyNotes.size()-1);
-                historyNotes.add(0,models);
+        if (!fromPre) {
+            previewNotes.clear();
+        }
+        if (historyNotes != null) {
+            if (historyNotes.size() <= 5) {
+                historyNotes.add(0, models);
+            } else {
+                historyNotes.remove(historyNotes.size() - 1);
+                historyNotes.add(0, models);
             }
         }
     }
 
     /**
      * 加入笔记到前进历史记录中
+     *
      * @param models
      */
-    public void insertPreviewNote(List<NoteEditModel> models){
-        if (previewNotes!=null){
-            if (previewNotes.size()<=5){
-                previewNotes.add(0,models);
-            }else {
-                previewNotes.remove(previewNotes.size()-1);
-                previewNotes.add(0,models);
+    public void insertPreviewNote(List<NoteEditModel> models) {
+        if (previewNotes != null) {
+            if (previewNotes.size() <= 5) {
+                previewNotes.add(0, models);
+            } else {
+                previewNotes.remove(previewNotes.size() - 1);
+                previewNotes.add(0, models);
             }
         }
     }
@@ -740,17 +741,18 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
      * 获取历史笔记：
      * 从0开始为最近笔记
      * 每获取一次历史笔记就将当前笔记设置为历史前进笔记中
+     *
      * @return
      */
-    public List<NoteEditModel> getHistoryNote(List<NoteEditModel> curModels){
-        if (historyNotes==null||previewNotes==null){
+    public List<NoteEditModel> getHistoryNote(List<NoteEditModel> curModels) {
+        if (historyNotes == null || previewNotes == null) {
             return null;
         }
-        if (historyNotes.size()==0){
+        if (historyNotes.size() == 0) {
             return null;
         }
-        List<NoteEditModel> latestModles = historyNotes.get(historyNotes.size()-1);
-        historyNotes.remove(historyNotes.size()-1);
+        List<NoteEditModel> latestModles = historyNotes.get(0);
+        historyNotes.remove(0);
         insertPreviewNote(curModels);
 
         return latestModles;
@@ -760,20 +762,22 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
      * 获取历史前进笔记
      * 从0开始为最近笔记
      * 每获取一次历史前进笔记就将当前的笔记设置到历史后退笔记
+     *
      * @return
      */
-    public List<NoteEditModel> getPreviewNote(List<NoteEditModel> curModels){
-        if (historyNotes==null||previewNotes==null){
+    public List<NoteEditModel> getPreviewNote(List<NoteEditModel> curModels) {
+        if (historyNotes == null || previewNotes == null) {
             return null;
         }
-        if (previewNotes.size()==0){
+        if (previewNotes.size() == 0) {
             return null;
         }
 
-        List<NoteEditModel> latestModles = previewNotes.get(previewNotes.size()-1 );
-        previewNotes.remove(historyNotes.size()-1);
-        insertHistoryNote(curModels);
+        List<NoteEditModel> latestModles = previewNotes.get(0);
+        previewNotes.remove(0);
+        insertHistoryNote(curModels,true);
 
         return latestModles;
     }
+
 }
