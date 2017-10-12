@@ -528,38 +528,11 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             return currentPos;
         }
 
-        public void setCurrentPos(int currentPos) {
+        public void setCurrentPos(final int currentPos) {
             this.currentPos = currentPos;
-        }
-
-        /*
-        * 文本变化监听
-        * */
-        public FormatTextChangeWatcher formatTextChangeWatcher;
-
-        public NoteEditViewHolder(View itemView, FormatTextChangeWatcher formatTextChangeWatcher) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            //初始化获取焦点
-            llEditContainer.setFocusable(true);
-            llEditContainer.setFocusableInTouchMode(true);
-            //如果item获取到了焦点，那么默认的编辑框也就获取到了焦点
-            itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            formatTextChangeWatcher.initWatcher(etItem,currentPos, new FormatTextChangeWatcher.FormatTextChangeToDoListener() {
                 @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (etItem.getVisibility() == View.VISIBLE) {
-                        if (hasFocus) {
-                            etItem.setSelection(etItem.length());
-                        }
-                    }
-                }
-            });
-
-            //设置文本变化监听
-            this.formatTextChangeWatcher = formatTextChangeWatcher;
-            formatTextChangeWatcher.initWatcher(etItem, new FormatTextChangeWatcher.FormatTextChangeToDoListener() {
-                @Override
-                public void formatTextChangeToDoListener(CharSequence s, int selectionIndex) {
+                public void formatTextChangeToDoListener(CharSequence s,int position, int selectionIndex) {
                     if (android.os.Build.VERSION.SDK_INT >= N) {
                         Log.i(TAG, "onTextChanged: --->" + Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                         mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
@@ -587,10 +560,40 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                             }
                         }
                     } else {
-                        isHistoryRefresh = false;
+                        if (position==(0)) {
+                            isHistoryRefresh = false;
+                        }
                     }
                 }
             });
+        }
+
+        /*
+        * 文本变化监听
+        * */
+        public FormatTextChangeWatcher formatTextChangeWatcher;
+
+        public NoteEditViewHolder(View itemView, FormatTextChangeWatcher formatTextChangeWatcher) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            //初始化获取焦点
+            llEditContainer.setFocusable(true);
+            llEditContainer.setFocusableInTouchMode(true);
+            //如果item获取到了焦点，那么默认的编辑框也就获取到了焦点
+            itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (etItem.getVisibility() == View.VISIBLE) {
+                        if (hasFocus) {
+                            etItem.setSelection(etItem.length());
+                        }
+                    }
+                }
+            });
+
+            //设置文本变化监听
+            this.formatTextChangeWatcher = formatTextChangeWatcher;
+
             etItem.addTextChangedListener(formatTextChangeWatcher);        //当文本发生变化的时候就保存对应的内容到dataList
 
             /**

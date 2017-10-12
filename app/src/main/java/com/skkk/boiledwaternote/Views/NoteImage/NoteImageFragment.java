@@ -243,6 +243,11 @@ public class NoteImageFragment extends Fragment implements NoteImageImpl {
         holder.setNeedDelete(needDelete);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        noteImagePresent.showImages(noteType);//显示指定类型的图片
+    }
 
     @Override
     public void onDestroyView() {

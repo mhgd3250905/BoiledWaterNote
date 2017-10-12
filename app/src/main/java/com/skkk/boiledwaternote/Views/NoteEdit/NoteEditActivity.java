@@ -174,6 +174,9 @@ public class NoteEditActivity extends AppCompatActivity {
             }
         });
 
+        tbNoteEdit.getMenu().findItem(R.id.menu_edit_perious).setVisible(false);
+        tbNoteEdit.getMenu().findItem(R.id.menu_edit_next).setVisible(false);
+
         tbNoteEdit.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

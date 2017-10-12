@@ -109,7 +109,6 @@ public class ImagePreviewActivity extends AppCompatActivity {
                                     setResult(RESULT_OK,intent);
                                     onBackPressed();
 
-
                                 }
                             }, "算了", null).show();
                     return true;

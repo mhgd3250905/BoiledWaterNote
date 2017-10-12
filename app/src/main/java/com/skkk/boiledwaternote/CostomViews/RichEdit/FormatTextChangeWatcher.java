@@ -27,13 +27,13 @@ public class FormatTextChangeWatcher implements TextWatcher {
     private int format_size = 0;                  //字体大小：0-p 1-h1 2-h2 3-h3
     private boolean format_underlined = false;    //下划线
     private boolean format_strike_through = false;//删除线
-    private int lastPos;
+    private int position;
 
     private ClickableEditText editText;
     private FormatTextChangeToDoListener formatTextChangeToDoListener;
 
     public interface FormatTextChangeToDoListener {
-        void formatTextChangeToDoListener(CharSequence s,int selectionIndex);
+        void formatTextChangeToDoListener(CharSequence s,int itemIndex,int selectionIndex);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class FormatTextChangeWatcher implements TextWatcher {
         editText.setText(ss);
 
         if (formatTextChangeToDoListener!=null){
-            formatTextChangeToDoListener.formatTextChangeToDoListener(ss,(start + count) > 0 ? start + count : 0);
+            formatTextChangeToDoListener.formatTextChangeToDoListener(ss,position,(start + count) > 0 ? start + count : 0);
         }
 
         editText.addTextChangedListener(this);
@@ -153,9 +153,17 @@ public class FormatTextChangeWatcher implements TextWatcher {
         return format_underlined;
     }
 
-    public void initWatcher(ClickableEditText editText,FormatTextChangeToDoListener formatTextChangeToDoListener) {
+    public void initWatcher(ClickableEditText editText,int position,FormatTextChangeToDoListener formatTextChangeToDoListener) {
         this.editText = editText;
         this.formatTextChangeToDoListener=formatTextChangeToDoListener;
+        this.position=position;
     }
 
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 }
