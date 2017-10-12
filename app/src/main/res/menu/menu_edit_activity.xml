@@ -27,6 +27,7 @@
     </item>
 
     <item
+        android:id="@id/menu_edit_theme"
         android:icon="@drawable/ic_color_lens"
         android:orderInCategory="80"
         android:title="主菜单"
