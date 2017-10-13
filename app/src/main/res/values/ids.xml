@@ -99,4 +99,8 @@
     <item name="tb_touch_id" type="id">tb_touch_id</item>
     <item name="activity_touch_id_container" type="id">activity_touch_id_container</item>
     <item name="menu_edit_theme" type="id">menu_edit_theme</item>
+    <item name="tdv_graphy_unlock" type="id">tdv_graphy_unlock</item>
+    <item name="tb_graphy_unlock" type="id">tb_graphy_unlock</item>
+    <item name="ll_graphy_unlock" type="id">ll_graphy_unlock</item>
+    <item name="activity_graphy_unlock_container" type="id">activity_graphy_unlock_container</item>
 </resources>

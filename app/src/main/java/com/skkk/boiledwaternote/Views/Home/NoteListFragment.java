@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,18 +21,16 @@ import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.MyApplication;
-import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
+import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 
 public class NoteListFragment extends Fragment implements NoteListImpl {
@@ -63,10 +60,10 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     private volatile static NoteListFragment instance;
 
     public static NoteListFragment getInstance(int noteType) {
-        if (instance==null){
-            synchronized (NoteListFragment.class){
-                if (instance==null){
-                    instance=newInstance(noteType);
+        if (instance == null) {
+            synchronized (NoteListFragment.class) {
+                if (instance == null) {
+                    instance = newInstance(noteType);
                 }
             }
         }
@@ -117,7 +114,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         linearLayoutManager = new MyLinearLayoutManager(getContext());
         rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
-        adapter = new NoteListAdapter(getContext(), new ArrayList<Note>(),noteType);
+        adapter = new NoteListAdapter(getContext(), new ArrayList<Note>(), noteType);
         rvNoteList.setAdapter(adapter);
 
         rvNoteList.post(new Runnable() {
@@ -125,7 +122,6 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             public void run() {
                 int editScopeWidth = rvNoteList.getMeasuredWidth() - rvNoteList.getPaddingLeft() - rvNoteList.getPaddingRight();
                 MyApplication.setEditScopeWidth(editScopeWidth);
-                Log.i(TAG, "编辑框宽： "+editScopeWidth);
             }
         });
     }
@@ -160,26 +156,39 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             public void onItemLockClickListener(View view, int pos) {
                 final int notePos = pos;
                 DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
-                        "提醒", "是否将该笔记加入隐私仓库？",
-                        "好的", new DialogInterface.OnClickListener() {
+                        getString(R.string.note_list_notice_title), getString(R.string.note_list_notice_move_to_privacy),
+                        getString(R.string.note_list_ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 noteListPresenter.updateNoteToPrivacy(notePos);
                             }
-                        }, "算了", null).show();
+                        }, getString(R.string.note_list_cancel), null).show();
             }
 
             @Override
             public void onItemUnlockClickListener(View view, int pos) {
                 final int notePos = pos;
                 DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
-                        "提醒", "是否将该笔记从隐私仓库移除？",
-                        "好的", new DialogInterface.OnClickListener() {
+                        getString(R.string.note_list_notice_title), getString(R.string.note_list_notice_out_from_privacy),
+                        getString(R.string.note_list_ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 noteListPresenter.updateNoteFromPrivacy(notePos);
                             }
-                        }, "算了", null).show();
+                        }, getString(R.string.note_list_cancel), null).show();
+            }
+
+            @Override
+            public void onItemRecycleClickListener(View view, int pos) {
+                final int notePos = pos;
+                DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
+                        getString(R.string.note_list_notice_title), getString(R.string.note_list_notice_recycle),
+                        getString(R.string.note_list_ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                noteListPresenter.updateNoteFromPrivacy(notePos);
+                            }
+                        }, getString(R.string.note_list_cancel), null).show();
             }
 
             //便签类型长按点击事件
@@ -187,13 +196,13 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             public void onNoteItemLongClickListener(View view, int pos) {
                 final int notePos = pos;
                 DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
-                        "提醒", "是否删除快捷便签？",
-                        "好的", new DialogInterface.OnClickListener() {
+                        getString(R.string.note_list_notice_title), getString(R.string.note_list_notice_delete),
+                        getString(R.string.note_list_ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 noteListPresenter.deleteNote(notePos);
                             }
-                        }, "算了", null).show();
+                        }, getString(R.string.note_list_cancel), null).show();
 
 
             }
@@ -208,7 +217,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                 if (etNoteEdit.length() != 0) {
                     noteListPresenter.saveNote(etNoteEdit.getText().toString());
                 } else {
-                    Toast.makeText(getContext(), "内容为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.note_list_notice_empty, Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }
@@ -237,6 +246,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     /**
      * 展示所有的笔记
+     *
      * @param noteList
      */
     @Override
@@ -247,6 +257,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     /**
      * 删除指定的Note
+     *
      * @param pos
      */
     @Override
@@ -256,6 +267,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     /**
      * 删除批量Notes
+     *
      * @param noteList
      */
     @Override
@@ -265,6 +277,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     /**
      * 插入指定位置的Note
+     *
      * @param pos
      */
     @Override
@@ -284,17 +297,19 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     /**
      * 重置适配器中的内容
+     *
      * @param dataList
      */
     @Override
     public void resetAdapterData(List<Note> dataList) {
-        if (adapter!=null){
+        if (adapter != null) {
             adapter.setDataList(dataList);
         }
     }
 
     /**
      * 显示提示内容
+     *
      * @param strId
      */
     @Override
@@ -304,6 +319,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     /**
      * 跳转到编辑笔记内容界面
+     *
      * @param note
      */
     @Override
@@ -330,13 +346,13 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
 
     public void setNoteType(int noteType) {
         this.noteType = noteType;
-        if (noteListPresenter!=null){
+        if (noteListPresenter != null) {
             noteListPresenter.showNotes(noteType);
         }
     }
 
-    public void attachPresenter(){
-        if (noteListPresenter!=null){
+    public void attachPresenter() {
+        if (noteListPresenter != null) {
             noteListPresenter.attachView(this);
         }
     }

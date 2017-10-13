@@ -2,15 +2,15 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@id/activity_touch_id_container"
+    android:id="@id/activity_graphy_unlock_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/mainBackground"
     android:fitsSystemWindows="true"
-    tools:context=".Views.PrivacyProtect.TouchIdActivity">
+    tools:context=".Views.PrivacyProtect.GraphyUnlockActivity">
 
     <LinearLayout
-        android:id="@id/ll_touch_id"
+        android:id="@id/ll_graphy_unlock"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -21,25 +21,17 @@
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <android.support.v7.widget.Toolbar
-                android:id="@id/tb_touch_id"
+                android:id="@id/tb_graphy_unlock"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
         </android.support.design.widget.AppBarLayout>
 
-        <RelativeLayout
+        <com.skkk.boiledwaternote.CostomViews.TouchDeblockView.TouchDeblockingView
+            android:id="@id/tdv_graphy_unlock"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@id/iv_finger_print"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_fingerprint_black" />
-
-        </RelativeLayout>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

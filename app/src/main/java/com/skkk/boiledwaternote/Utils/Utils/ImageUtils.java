@@ -5,7 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 
 import java.io.File;
@@ -24,6 +27,27 @@ import java.io.IOException;
 * 时    间：2017/6/25$ 22:04$.
 */
 public class ImageUtils {
+
+    /**
+     * 通过vector资源来获取bitmap
+     * @param context
+     * @param vectorDrawableId
+     * @return
+     */
+    public static Bitmap getBitmap(Context context,int vectorDrawableId) {
+        Bitmap bitmap=null;
+        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP){
+            Drawable vectorDrawable = context.getDrawable(vectorDrawableId);
+            bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                    vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            vectorDrawable.draw(canvas);
+        }else {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), vectorDrawableId);
+        }
+        return bitmap;
+    }
 
     /* @描述 保存图片然后返回路径 */
     public static String saveBitmapAndReturnPath(Context context, Bitmap bitmap) {

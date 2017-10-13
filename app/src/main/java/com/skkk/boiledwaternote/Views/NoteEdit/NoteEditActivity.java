@@ -41,7 +41,7 @@ import com.skkk.boiledwaternote.Utils.Utils.AnimatorUtils;
 import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
 import com.skkk.boiledwaternote.Views.NoteImage.ImageModle;
 import com.skkk.boiledwaternote.Views.NoteImage.ImagePreviewActivity;
-import com.skkk.boiledwaternote.Views.TouchId.TouchIdActivity;
+import com.skkk.boiledwaternote.Views.PrivacyProtect.GraphyUnlockActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -218,7 +218,7 @@ public class NoteEditActivity extends AppCompatActivity {
                         break;
 
                     case R.id.menu_edit_theme:
-                        startActivity(new Intent(NoteEditActivity.this, TouchIdActivity.class));
+                        startActivity(new Intent(NoteEditActivity.this, GraphyUnlockActivity.class));
                         break;
                 }
                 return false;

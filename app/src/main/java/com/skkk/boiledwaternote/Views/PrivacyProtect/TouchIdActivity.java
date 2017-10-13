@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.Views.TouchId;
+package com.skkk.boiledwaternote.Views.PrivacyProtect;
 
 import android.Manifest;
 import android.content.Intent;
@@ -61,6 +61,7 @@ public class TouchIdActivity extends AppCompatActivity {
      * 初始化事件
      */
     private void initEvent() {
+        tbTouchId.setNavigationIcon(R.drawable.back_arrow);
         //设置返回按钮点击事件
         tbTouchId.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -2,7 +2,6 @@ package com.skkk.boiledwaternote.CostomViews.TouchDeblockView;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -10,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.skkk.boiledwaternote.R;
+import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +31,8 @@ public class TouchDeblockingView extends View {
     private boolean isDraw = false;
 
 
-    private ArrayList<Point> pointList=new ArrayList<Point>();
-    private ArrayList<Integer> passList=new ArrayList<Integer>();
+    private ArrayList<Point> pointList = new ArrayList<Point>();
+    private ArrayList<Integer> passList = new ArrayList<Integer>();
 
 
     private Bitmap bitmapPointNormal;
@@ -40,17 +40,18 @@ public class TouchDeblockingView extends View {
     private Bitmap bitmapPointError;
 
     private float bitmapR;
+    private float touchR;
 
     private float mouseX, mouseY;
 
     Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    Paint normalPaint=new Paint();
-    Paint pressPaint=new Paint();
-    Paint errorPaint=new Paint();
+    Paint normalPaint = new Paint();
+    Paint pressPaint = new Paint();
+    Paint errorPaint = new Paint();
 
     private OnDrawFinishListener mOnDrawFinishListener;
 
-    public interface OnDrawFinishListener{
+    public interface OnDrawFinishListener {
         boolean OnDrawFinished(List<Integer> passList);
     }
 
@@ -84,11 +85,12 @@ public class TouchDeblockingView extends View {
         errorPaint.setDither(true);
 
 
-        bitmapPointNormal = BitmapFactory.decodeResource(getResources(), R.drawable.touch_normal);
-        bitmapPointPress = BitmapFactory.decodeResource(getResources(), R.drawable.touch_press);
-        bitmapPointError = BitmapFactory.decodeResource(getResources(), R.drawable.touch_error);
+        bitmapPointNormal = ImageUtils.getBitmap(getContext(), R.drawable.ic_touch_normal);
+        bitmapPointPress = ImageUtils.getBitmap(getContext(), R.drawable.ic_touch_correct);
+        bitmapPointError = ImageUtils.getBitmap(getContext(), R.drawable.ic_touch_error);
 
         bitmapR = bitmapPointNormal.getHeight() / 2;
+
 
         int width = getWidth();
         int height = getHeight();
@@ -104,6 +106,9 @@ public class TouchDeblockingView extends View {
             offsetX = 0;
             offsetY = offset;
         }
+
+        touchR = space / 2;
+
 
         points[0][0] = new Point(offsetX + space, offsetY + space);
         points[0][1] = new Point(offsetX + space * 2, offsetY + space);
@@ -128,20 +133,20 @@ public class TouchDeblockingView extends View {
         }
         drawPoints(canvas);
 
-        if (pointList.size()>0){
+        if (pointList.size() > 0) {
 
-            Point a=pointList.get(0);
+            Point a = pointList.get(0);
 
             for (int i = 1; i < pointList.size(); i++) {
-                Point b=pointList.get(i);
+                Point b = pointList.get(i);
 
-                drawLine(canvas,a,b);
+                drawLine(canvas, a, b);
 
-                a=b;
+                a = b;
             }
 
-            if (isDraw){
-                drawLine(canvas,a,new Point(mouseX,mouseY));
+            if (isDraw) {
+                drawLine(canvas, a, new Point(mouseX, mouseY));
             }
         }
     }
@@ -152,6 +157,8 @@ public class TouchDeblockingView extends View {
                 if (points[i][j].state == Point.STATE_NORMAL) {
                     //Normal
                     canvas.drawBitmap(bitmapPointNormal, points[i][j].x - bitmapR, points[i][j].y - bitmapR, paint);
+//                    paint.setColor(Color.LTGRAY);
+//                    canvas.drawCircle(points[i][j].x - bitmapR, points[i][j].y - bitmapR, touchR, paint);
                 } else if (points[i][j].state == Point.STATE_PRESS) {
                     //Press
                     canvas.drawBitmap(bitmapPointPress, points[i][j].x - bitmapR, points[i][j].y - bitmapR, paint);
@@ -164,13 +171,13 @@ public class TouchDeblockingView extends View {
     }
 
 
-    private void drawLine(Canvas canvas, Point a, Point b){
-        if (a.state==Point.STATE_NORMAL){
-            canvas.drawLine(a.x,a.y,b.x,b.y,normalPaint);
-        } else if (a.state==Point.STATE_PRESS){
-            canvas.drawLine(a.x,a.y,b.x,b.y,pressPaint);
-        }else if (a.state==Point.STATE_ERROR){
-            canvas.drawLine(a.x,a.y,b.x,b.y,errorPaint);
+    private void drawLine(Canvas canvas, Point a, Point b) {
+        if (a.state == Point.STATE_NORMAL) {
+            canvas.drawLine(a.x, a.y, b.x, b.y, normalPaint);
+        } else if (a.state == Point.STATE_PRESS) {
+            canvas.drawLine(a.x, a.y, b.x, b.y, pressPaint);
+        } else if (a.state == Point.STATE_ERROR) {
+            canvas.drawLine(a.x, a.y, b.x, b.y, errorPaint);
         }
     }
 
@@ -181,7 +188,7 @@ public class TouchDeblockingView extends View {
         //LogUtils.Log("X: "+mouseX+" Y: "+mouseY);
 
         int[] ij;
-        int i,j;
+        int i, j;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //重置状态
@@ -192,38 +199,38 @@ public class TouchDeblockingView extends View {
                     isDraw = true;
                     i = ij[0];
                     j = ij[1];
-                    points[i][j].state=Point.STATE_PRESS;
+                    points[i][j].state = Point.STATE_PRESS;
                     pointList.add(points[i][j]);
-                    passList.add(i*3+j);
+                    passList.add(i * 3 + j);
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (isDraw){
-                    ij=getSelectedPoint();
-                    if (ij!=null){
+                if (isDraw) {
+                    ij = getSelectedPoint();
+                    if (ij != null) {
                         i = ij[0];
                         j = ij[1];
-                        if (!pointList.contains(points[i][j])){
-                            points[i][j].state=Point.STATE_PRESS;
+                        if (!pointList.contains(points[i][j])) {
+                            points[i][j].state = Point.STATE_PRESS;
                             pointList.add(points[i][j]);
-                            passList.add(i*3+j);
+                            passList.add(i * 3 + j);
                         }
                     }
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                boolean valid=false;
-                if (mOnDrawFinishListener!=null && isDraw){
-                    valid=mOnDrawFinishListener.OnDrawFinished(passList);
+                boolean valid = false;
+                if (mOnDrawFinishListener != null && isDraw) {
+                    valid = mOnDrawFinishListener.OnDrawFinished(passList);
                 }
 
-                if (!valid){
-                    for(Point p:pointList){
-                        p.state=Point.STATE_ERROR;
+                if (!valid) {
+                    for (Point p : pointList) {
+                        p.state = Point.STATE_ERROR;
                     }
                 }
 
-                isDraw=false;
+                isDraw = false;
 
                 break;
         }
@@ -236,7 +243,7 @@ public class TouchDeblockingView extends View {
         Point pMouse = new Point(mouseX, mouseY);
         for (int i = 0; i < points.length; i++) {
             for (int j = 0; j < points[i].length; j++) {
-                if (points[i][j].distance(pMouse) < bitmapR) {
+                if (points[i][j].distance(pMouse) < touchR) {
                     int[] result = new int[2];
                     result[0] = i;
                     result[1] = j;
@@ -248,19 +255,19 @@ public class TouchDeblockingView extends View {
     }
 
     /* @描述 恢复point状态 */
-    public void resetPoints(){
+    public void resetPoints() {
         pointList.clear();
         passList.clear();
         for (int i = 0; i < points.length; i++) {
-            for (int j=0;j<points[i].length;j++){
-                points[i][j].state=Point.STATE_NORMAL;
+            for (int j = 0; j < points[i].length; j++) {
+                points[i][j].state = Point.STATE_NORMAL;
             }
         }
         this.postInvalidate();
     }
 
-    public void setOnDrawFinishedListener(OnDrawFinishListener listener){
-        mOnDrawFinishListener=listener;
+    public void setOnDrawFinishedListener(OnDrawFinishListener listener) {
+        mOnDrawFinishListener = listener;
     }
 
 }

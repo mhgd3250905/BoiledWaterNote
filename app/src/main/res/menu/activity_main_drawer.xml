@@ -26,7 +26,7 @@
             android:title="@string/slide_menu_privacy" />
         <item
             android:id="@+id/nav_recycle"
-            android:icon="@drawable/vector_drawable_recycle"
+            android:icon="@drawable/vector_drawable_discard"
             android:title="@string/slide_menu_recycle" />
     </group>
 

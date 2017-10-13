@@ -39,5 +39,13 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="note_save_failed">保存失败！</string>
     <string name="title_activity_image_preview">ImagePreviewActivity</string>
+    <string name="note_list_notice_title">提醒</string>
+    <string name="note_list_ok">好的</string>
+    <string name="note_list_cancel">算了</string>
+    <string name="note_list_notice_move_to_privacy">是否将该笔记加入隐私仓库？</string>
+    <string name="note_list_notice_out_from_privacy">是否将该笔记从隐私仓库移除？</string>
+    <string name="note_list_notice_recycle">是否将该笔记从回收站移除？</string>
+    <string name="note_list_notice_delete">是否删除快捷便签？</string>
+    <string name="note_list_notice_empty">内容为空</string>
 
 </resources>

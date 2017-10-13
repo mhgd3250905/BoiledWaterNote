@@ -68,6 +68,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
         void onItemUnlockClickListener(View view, int pos);
 
+        void onItemRecycleClickListener(View view, int pos);
+
         void onNoteItemLongClickListener(View view, int pos);
     }
 
@@ -224,9 +226,10 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             * */
             if (dataList.get(position).getNoteType() == Note.NoteType.PRIVACY_NOTE.getValue()) {
                 holder.ivLock.setImageResource(R.drawable.vector_drawable_unlock);
+            } else if (dataList.get(position).getNoteType() == Note.NoteType.RECYCLE_NOTE.getValue()) {
+                holder.ivLock.setImageResource(R.drawable.vector_drawable_recycle);
             } else {
                 holder.ivLock.setImageResource(R.drawable.vector_drawable_lock);
-
             }
 
             if (onItemClickListener != null) {
@@ -249,10 +252,11 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 holder.ivLock.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (dataList.get(position).getNoteType()== Note.NoteType.PRIVACY_NOTE.getValue()){
+                        if (dataList.get(position).getNoteType() == Note.NoteType.PRIVACY_NOTE.getValue()) {
                             onItemClickListener.onItemUnlockClickListener(v, holder.getAdapterPosition());
-
-                        }else {
+                        } else if (dataList.get(position).getNoteType() == Note.NoteType.RECYCLE_NOTE.getValue()) {
+                            onItemClickListener.onItemRecycleClickListener(v, holder.getAdapterPosition());
+                        } else {
                             onItemClickListener.onItemLockClickListener(v, holder.getAdapterPosition());
 
                         }
@@ -377,7 +381,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         public ImageView ivDelete;
         @Bind(R.id.iv_lock)
         public ImageView ivLock;
-//        @Bind(R.id.iv_unlock)
+        //        @Bind(R.id.iv_unlock)
 //        public ImageView ivUnlock;
         @Bind(R.id.div_item)
         public MyDragItemView divItem;
