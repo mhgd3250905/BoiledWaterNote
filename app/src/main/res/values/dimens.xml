@@ -23,4 +23,9 @@
     <dimen name="item_edit_image_height_hor">810px</dimen>
     <dimen name="list_item_title_text_size">20sp</dimen>
     <dimen name="note_list_item_height">120dp</dimen>
+    <dimen name="note_list_content_margin_vertical">10dp</dimen>
+    <dimen name="note_list_content_margin_vertical_mini">5dp</dimen>
+    <dimen name="note_list_item_margin_start">20dp</dimen>
+    <dimen name="note_list_item_margin_end">5dp</dimen>
+    <dimen name="note_list_item_menu_icon">40dp</dimen>
 </resources>

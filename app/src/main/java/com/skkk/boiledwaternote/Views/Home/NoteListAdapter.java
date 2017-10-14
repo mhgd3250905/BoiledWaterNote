@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyDragItemView;
 import com.skkk.boiledwaternote.Modles.Note;
@@ -51,6 +52,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private boolean isItemResetAnim = false;
     private boolean itemClickable = true;
     private int noteType = Note.NoteType.ALL_NOTE.getValue();
+    private int layoutStyle = 0;
 
     interface OnDragItemStatusChange {
         void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
@@ -77,15 +79,22 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         this.onItemClickListener = onItemClickListener;
     }
 
-    public NoteListAdapter(Context context, List<Note> dataList, int noteType) {
+    public NoteListAdapter(Context context, List<Note> dataList, int noteType, int layoutStyle) {
         this.context = context;
         this.dataList = dataList;
         this.noteType = noteType;
+        this.layoutStyle = layoutStyle;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        MyViewHolder viewHolder = new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.item_note_list, parent, false));
+        int layoutResId = 0;
+        if (layoutStyle == Configs.NOTE_LIST_LAYOUT_STYLE_LINEAR) {
+            layoutResId = R.layout.item_note_list_linear;
+        } else if (layoutStyle == Configs.NOTE_LIST_LAYOUT_STYLE_STAGGER) {
+            layoutResId = R.layout.item_note_list_linear;
+        }
+        MyViewHolder viewHolder = new MyViewHolder(LayoutInflater.from(context).inflate(layoutResId, parent, false));
         return viewHolder;
     }
 
@@ -363,10 +372,14 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
         this.noteType = noteType;
     }
 
-
-//    public void setHaveItemOpen(boolean haveItemOpen) {
-//        this.haveItemOpen = haveItemOpen;
-//    }
+    /**
+     * 设置布局样式
+     *
+     * @param layoutStyle
+     */
+    public void setLayoutStyle(int layoutStyle) {
+        this.layoutStyle = layoutStyle;
+    }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tv_article_list_title)

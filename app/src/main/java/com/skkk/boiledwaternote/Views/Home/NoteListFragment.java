@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,14 +19,15 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Configs;
-import com.skkk.boiledwaternote.CostomViews.DragItemView.MyLinearLayoutManager;
+import com.skkk.boiledwaternote.CostomViews.DragItemView.MLinearLayoutManager;
+import com.skkk.boiledwaternote.CostomViews.DragItemView.MStaggeredGridLayoutManager;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
+import com.skkk.boiledwaternote.Utils.Utils.SpUtils;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
-import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,18 +49,17 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     RelativeLayout rlNoteEdit;
 
     private NoteListPresenter noteListPresenter;
-    private NoteEditPresenter noteEditPresenter;
 
     private int noteType;//传入的笔记类型
 
     //    private RefreshLayout refreshLayout;
-    private MyLinearLayoutManager linearLayoutManager;
     private NoteListAdapter adapter;
 
     /*
     * 设置单例模式
     * */
     private volatile static NoteListFragment instance;
+    private RecyclerView.LayoutManager layoutManager;
 
     public static NoteListFragment getInstance(int noteType) {
         if (instance == null) {
@@ -101,22 +103,14 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         super.onViewCreated(view, savedInstanceState);
         noteListPresenter = new NoteListPresenter();
         noteListPresenter.attachView(this);
-        noteEditPresenter = new NoteEditPresenter(getContext());
         initUI();           //初始化UI
-        initEvent();        //设置各种事件
-        noteListPresenter.showNotes(noteType);
     }
 
     /**
      * 初始化UI
      */
     private void initUI() {
-        linearLayoutManager = new MyLinearLayoutManager(getContext());
-        rvNoteList.setLayoutManager(linearLayoutManager);
         rvNoteList.setItemAnimator(new DefaultItemAnimator());
-        adapter = new NoteListAdapter(getContext(), new ArrayList<Note>(), noteType);
-        rvNoteList.setAdapter(adapter);
-
         rvNoteList.post(new Runnable() {
             @Override
             public void run() {
@@ -131,7 +125,6 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
      * 初始化事件
      */
     private void initEvent() {
-
         //设置Item点击事件以及拖拽事件
         adapter.setOnItemClickListener(new NoteListAdapter.OnItemClickListener() {
             //Item点击事件
@@ -240,7 +233,32 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     @Override
     public void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
+        initLayoutManager();
+        initEvent();
+        noteListPresenter.showNotes(noteType);
+    }
+
+
+    /**
+     * 初始化布局管理器
+     */
+    private void initLayoutManager() {
+        int layoutStyle = SpUtils.getInt(getContext(), Configs.SP_KEY_NOTE_LIST_LAYOUT_STYLE);
+        if (layoutStyle == -1) {
+            layoutStyle = 0;//默认为线性列表
+        }
+        layoutManager = null;
+        switch (layoutStyle) {
+            case Configs.NOTE_LIST_LAYOUT_STYLE_LINEAR:
+                layoutManager =new MLinearLayoutManager(getContext());
+                break;
+            case Configs.NOTE_LIST_LAYOUT_STYLE_STAGGER:
+                layoutManager =new MStaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+                break;
+        }
+        adapter = new NoteListAdapter(getContext(), new ArrayList<Note>(), noteType,layoutStyle);
+        rvNoteList.setAdapter(adapter);
+        rvNoteList.setLayoutManager(layoutManager);
     }
 
 
@@ -283,7 +301,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     @Override
     public void insertNote(int pos) {
         adapter.notifyItemInserted(0);
-        linearLayoutManager.scrollToPosition(0);
+        layoutManager.scrollToPosition(0);
     }
 
 

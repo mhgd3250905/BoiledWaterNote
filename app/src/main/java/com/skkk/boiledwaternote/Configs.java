@@ -21,6 +21,11 @@ public class Configs {
     public static final String KEY_UPDATE_NOTE="key_update_note";           //更新笔记
     public static final String KEY_PREVIEW_IMAGE="key_preview_image";       //预览的图片
     public static final String KEY_NOTE_TYPE="key_note_type";  //预览的图片类型
+    //笔记列表布局样式
+    public static final String SP_KEY_NOTE_LIST_LAYOUT_STYLE="sp_key_note_list_layout_style";
+    public static final int NOTE_LIST_LAYOUT_STYLE_LINEAR=0;
+    public static final int NOTE_LIST_LAYOUT_STYLE_STAGGER=1;
+
 
     public interface OnSelectionChangeListener {
         void onSelectionChangeListener(Editable s, int selStart, int selEnd);

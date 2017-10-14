@@ -15,6 +15,6 @@ public interface NoteListable {
     Note getNote(int pos);
     void saveNote(String noteContent);
     void startEditActivity(int pos);
-    void showSpecialTypeNotes(int noteType);
+    void showSpecialTypeNotes(int nteType);
     void showAllImages();
 }

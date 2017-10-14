@@ -174,6 +174,4 @@ public class NoteListPresenter extends BasePersenter<NoteListImpl> implements No
     public void showAllImages() {
 
     }
-
-
 }
