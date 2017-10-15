@@ -11,7 +11,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v4.os.CancellationSignal;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.R;
 
 import butterknife.Bind;
@@ -34,7 +34,7 @@ import butterknife.ButterKnife;
 * 作    者：ksheng
 * 时    间：2017/10/12$ 23:17$.
 */
-public class TouchIdActivity extends AppCompatActivity {
+public class TouchIdActivity extends BasePrivacyActivity {
     private static final String TAG = "TouchIdActivity";
     protected FingerprintManagerCompat fingerprintManagerCompat;
     protected StringBuilder stringBuilder = new StringBuilder("");  // 显示指纹传感器回调信息
@@ -52,8 +52,8 @@ public class TouchIdActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_touch_id);
         ButterKnife.bind(this);
-        fingerprintManagerCompat = FingerprintManagerCompat.from(getApplication());
 
+        fingerprintManagerCompat = FingerprintManagerCompat.from(getApplication());
         initEvent();
     }
 
@@ -129,7 +129,6 @@ public class TouchIdActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if (requestCode == 100 && grantResults.length > 0 && grantResults[0] == 0) {
             startActivity(new Intent(this, TouchIdActivity.class));
             finish();
@@ -163,7 +162,6 @@ public class TouchIdActivity extends AppCompatActivity {
         @Override
         public void onAuthenticationHelp(int helpMsgId, CharSequence helpString) {
             Log.e(TAG, "验证回调 二 onAuthenticationHelp " + helpMsgId + "\t" + helpString.toString());
-
             stringBuilder.append("\nonAuthenticationHelp\t").append(helpMsgId).append("\t").append(helpString);
         }
 
@@ -175,7 +173,10 @@ public class TouchIdActivity extends AppCompatActivity {
         public void onAuthenticationSucceeded(FingerprintManagerCompat.AuthenticationResult result) {
             Log.e(TAG, "验证回调 三 onAuthenticationSucceeded " + result.toString());
             ivFingerPrint.setImageResource(R.drawable.ic_fingerprint_green);
+            Toast.makeText(TouchIdActivity.this, "验证成功，进入笔记详情页面。", Toast.LENGTH_SHORT).show();
             stringBuilder.append("\nonAuthenticationSucceeded 验证成功 系统停止验证指纹 \t").append(result.toString());
+            setResult(Configs.RESULT_PRIVACY_CHECK_OK);
+            finish();
         }
 
         /**
@@ -207,6 +208,7 @@ public class TouchIdActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         closeCheckFingerPrint();
+        setResult(Configs.RESULT_PRIVACY_CHECK_FAILED);
         super.onBackPressed();
     }
 }

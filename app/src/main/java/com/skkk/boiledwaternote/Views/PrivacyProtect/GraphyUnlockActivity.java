@@ -2,7 +2,6 @@ package com.skkk.boiledwaternote.Views.PrivacyProtect;
 
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.LinearLayout;
 
@@ -12,7 +11,7 @@ import com.skkk.boiledwaternote.R;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class GraphyUnlockActivity extends AppCompatActivity {
+public class GraphyUnlockActivity extends BasePrivacyActivity {
 
     @Bind(R.id.tb_graphy_unlock)
     Toolbar tbGraphyUnlock;
@@ -29,4 +28,6 @@ public class GraphyUnlockActivity extends AppCompatActivity {
         setContentView(R.layout.activity_graphy_unlock);
         ButterKnife.bind(this);
     }
+
+
 }

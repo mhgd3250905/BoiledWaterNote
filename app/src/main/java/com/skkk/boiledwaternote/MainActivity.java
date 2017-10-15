@@ -34,6 +34,7 @@ import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Views.NoteImage.NoteImageFragment;
+import com.skkk.boiledwaternote.Views.PrivacyProtect.TouchIdActivity;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -233,6 +234,31 @@ public class MainActivity extends AppCompatActivity
         //抛转到NoteList界面
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fl_container);
         currentFragment.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case Configs.REQUEST_PRIVACY_CHECK:
+                if (resultCode==Configs.RESULT_PRIVACY_CHECK_OK){
+                    fragment=NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fl_container, fragment)
+                                .commit();
+
+                        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                        drawer.closeDrawer(GravityCompat.START);
+                }else if (resultCode==Configs.RESULT_PRIVACY_CHECK_FAILED){
+                   if (fragment!=null){
+                       getSupportFragmentManager()
+                               .beginTransaction()
+                               .replace(R.id.fl_container, fragment)
+                               .commit();
+
+                       DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                       drawer.closeDrawer(GravityCompat.START);
+                   }
+                }
+                break;
+        }
     }
 
     /**
@@ -350,7 +376,14 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_image) {//图片
             fragment = NoteImageFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         } else if (id == R.id.nav_privacy) {//隐私
-            fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
+            /*
+            * 跳转到验证界面
+            * */
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, TouchIdActivity.class);
+            startActivityForResult(intent,Configs.REQUEST_PRIVACY_CHECK);
+            return true;
+//            fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
         } else if (id == R.id.nav_recycle) {//回收站
             fragment = NoteListFragment.getInstance(Note.NoteType.RECYCLE_NOTE.getValue());
         } else if (id == R.id.nav_about) {//关于

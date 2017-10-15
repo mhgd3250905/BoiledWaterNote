@@ -262,6 +262,10 @@ public class NoteImageFragment extends Fragment implements NoteImageImpl {
         }
     }
 
+    public int getNoteType() {
+        return noteType;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

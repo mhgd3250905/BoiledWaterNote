@@ -131,12 +131,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //Item点击事件
             @Override
             public void onItemClickListener(View view, int pos) {
-//                boolean haveItemOpen = adapter.isHaveItemMenuOpen();
-//                if (haveItemOpen) {
-//                    return;
-//                }
                 noteListPresenter.startEditActivity(pos);
-//                adapter.changeMenuStatus();
             }
 
             //隐藏菜单删除按钮点击事件
@@ -358,13 +353,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         getActivity().startActivityForResult(intent, Configs.REQUEST_UPDATE_NOTE);
     }
 
-    /**
-     * 切换笔记类型
-     */
-    @Override
-    public void changNoteType() {
-        noteListPresenter.showSpecialTypeNotes(noteType);
-    }
+
 
 
     public int getNoteType() {
