@@ -1,4 +1,4 @@
-package com.skkk.boiledwaternote.CostomViews.DragItemView;
+package com.skkk.boiledwaternote.CostomViews.MLayoutManager;
 
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
@@ -11,7 +11,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 * 作    者：ksheng
 * 时    间：2017/6/5$ 22:19$.
 */
-public class MStaggeredGridLayoutManager extends StaggeredGridLayoutManager {
+public class MStaggeredGridLayoutManager extends StaggeredGridLayoutManager implements LayoutManagerScrollImpl {
     private boolean isScroll = true;
 
     public MStaggeredGridLayoutManager(int spanCount, int orientation) {

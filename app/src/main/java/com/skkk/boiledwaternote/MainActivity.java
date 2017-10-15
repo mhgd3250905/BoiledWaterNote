@@ -322,7 +322,6 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(new Intent(MainActivity.this, NoteEditActivity.class), Configs.REQUEST_START_NEW_NOTE);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

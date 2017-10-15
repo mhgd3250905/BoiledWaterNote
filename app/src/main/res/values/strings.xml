@@ -45,7 +45,8 @@
     <string name="note_list_notice_move_to_privacy">是否将该笔记加入隐私仓库？</string>
     <string name="note_list_notice_out_from_privacy">是否将该笔记从隐私仓库移除？</string>
     <string name="note_list_notice_recycle">是否将该笔记从回收站移除？</string>
-    <string name="note_list_notice_delete">是否删除快捷便签？</string>
+    <string name="note_list_notice_note_delete">是否删除快捷便签？</string>
+    <string name="note_list_notice_article_delete">是否删除此条笔记？</string>
     <string name="note_list_notice_empty">内容为空</string>
 
 </resources>

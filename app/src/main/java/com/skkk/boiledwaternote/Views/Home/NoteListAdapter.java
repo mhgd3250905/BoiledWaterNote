@@ -16,7 +16,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,7 @@ import com.google.gson.Gson;
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.DragItemCircleView;
 import com.skkk.boiledwaternote.CostomViews.DragItemView.MyDragItemView;
+import com.skkk.boiledwaternote.CostomViews.MLayoutManager.LayoutManagerScrollImpl;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
@@ -38,7 +38,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static android.content.ContentValues.TAG;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -53,13 +52,13 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private boolean itemClickable = true;
     private int noteType = Note.NoteType.ALL_NOTE.getValue();
     private int layoutStyle = 0;
+    private LayoutManagerScrollImpl layoutManager;
+    private boolean isMenuOpen=true;
 
     interface OnDragItemStatusChange {
         void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
-
         void onDragClose(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
     }
-
 
     public interface OnItemClickListener {
         void onItemClickListener(View view, int pos);
@@ -159,6 +158,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             * */
             holder.divItem.setVisibility(VISIBLE);
             holder.rlListNoteContainer.setVisibility(GONE);
+
+            holder.divItem.setPosition(holder.getAdapterPosition());
 
             //显示距离此刻模式的时间显示方式
             CharSequence relativeDateTimeString = DateUtils
@@ -278,45 +279,47 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             /**
              * 设置Item菜单
              */
-
-            Log.i(TAG, "onBindViewHolder: 处理第" + position + "个Item的菜单状态");
-            if (dataList.get(position).isMenuOpen()) {
-                Log.i(TAG, "onBindViewHolder: 正在关闭第" + position + "个Item");
-                holder.divItem.closeItem();
-            } else {
-                holder.divItem.resetItem();
-            }
-
-            /**
-             * 设置拖拽状态监听事件
-             */
-            holder.divItem.setOnItemDragStatusChange(new MyDragItemView.OnItemDragStatusChange() {
-                @Override
-                public void onItemDragStatusOpen() {
-                    itemClickable = false;
-                }
-
-                @Override
-                public void onItemDragStatusClose() {
-                    itemClickable = true;
-                }
-
-                @Override
-                public void onItemMenuStatusOpen() {
-                    Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽开启" + position);
-                    dataList.get(holder.getAdapterPosition()).setMenuOpen(true);
-                }
-
-                @Override
-                public void onItemMenuStatusClose() {
-                    Log.i(TAG, "onItemDragStatusOpen: 响应Item拖拽guanb" + position);
-                    dataList.get(holder.getAdapterPosition()).setMenuOpen(false);
-                    for (int i = 0; i < dataList.size(); i++) {
-                        Log.i(TAG, position + "->" + dataList.get(i).isMenuOpen());
-                    }
-
-                }
-            });
+//            if (isMenuOpen){
+//                holder.divItem.closeItem();
+//            } else {
+//                holder.divItem.openItem();
+//            }
+//            /**
+//             * 设置拖拽状态监听事件
+//             */
+//            holder.divItem.setOnItemDragStatusChange(new MyDragItemView.OnItemDragStatusChange() {
+//                @Override
+//                public void onItemDragStatusOpen(int pos) {
+//                    Log.i(TAG, "打开方向拖拽"+pos);
+//                    itemClickable = false;
+//                }
+//
+//                @Override
+//                public void onItemDragStatusClose(int pos) {
+//                    Log.i(TAG, "打开方向拖拽"+pos);
+//                    itemClickable = false;
+//
+//                }
+//
+//                @Override
+//                public void onItemMenuStatusOpen(int pos) {
+//                    Log.i(TAG, "菜单打开了" + pos);
+//                    itemClickable = true;
+//                    dataList.get(pos).setMenuOpen(true);
+//                    layoutManager.setScroll(false);
+//                }
+//
+//                @Override
+//                public void onItemMenuStatusClose(int pos) {
+//                    itemClickable = true;
+//                    Log.i(TAG, "菜单关闭了" + pos);
+//                    dataList.get(pos).setMenuOpen(false);
+//                    for (int i = 0; i < dataList.size(); i++) {
+//                        Log.i(TAG, position + "->" + dataList.get(i).isMenuOpen());
+//                    }
+//                    layoutManager.setScroll(true);
+//                }
+//            });
         }
     }
 
@@ -352,12 +355,16 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     }
 
     public boolean isHaveItemMenuOpen() {
-        for (Note note : dataList) {
+        Note note;
+        boolean menuOpen=false;
+        for (int i = 0; i < dataList.size(); i++) {
+            note=dataList.get(i);
             if (note.isMenuOpen()) {
-                return true;
+                notifyItemChanged(i);
+                menuOpen= true;
             }
         }
-        return false;
+        return menuOpen;
     }
 
     public void resetMenuStatus() {
@@ -378,7 +385,35 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
      * @param layoutStyle
      */
     public void setLayoutStyle(int layoutStyle) {
-        this.layoutStyle = layoutStyle;
+        this.layoutStyle = layoutStyle;    }
+
+
+    /**
+     * 获取布局管理器
+     * @return
+     */
+    public LayoutManagerScrollImpl getLayoutManager() {
+        // TODO: 2017/10/15 必须要完成的事情
+        //请尽快把王越蓉接走，我不想伤害她，她继续摧毁我的生活，我不确定会做出什么事情
+        //请不要跟王越蓉说是我说的，我实在没办法才请求您帮忙，否则她又会无休止的地侮辱我
+        //感谢您，请您尽快
+        return layoutManager;
+    }
+
+    /**
+     * 设置布局管理器
+     * @param layoutManager
+     */
+    public void setLayoutManager(LayoutManagerScrollImpl layoutManager) {
+        this.layoutManager = layoutManager;
+    }
+
+    /**
+     * 切换菜单状态
+     */
+    public void changeMenuStatus(){
+        isMenuOpen=!isMenuOpen;
+        notifyDataSetChanged();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

@@ -5,10 +5,13 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by admin on 2017/4/11.
@@ -34,6 +37,7 @@ public class MyDragItemView extends ViewGroup {
     private OnDragItemClickListener onDragItemClickListener;//拖拽Item点击事件
     private int l,t,r,b;
     private boolean isMenuOpen;
+    private int position;
 
 
     public interface OnDragItemClickListener{
@@ -42,10 +46,10 @@ public class MyDragItemView extends ViewGroup {
     }
 
     public interface OnItemDragStatusChange{
-        void onItemDragStatusOpen();
-        void onItemDragStatusClose();
-        void onItemMenuStatusOpen();
-        void onItemMenuStatusClose();
+        void onItemDragStatusOpen(int pos);
+        void onItemDragStatusClose(int pos);
+        void onItemMenuStatusOpen(int pos);
+        void onItemMenuStatusClose(int pos);
     }
 
     public void setOnItemDragStatusChange(OnItemDragStatusChange onItemDragStatusChange) {
@@ -217,13 +221,12 @@ public class MyDragItemView extends ViewGroup {
         @Override
         public void onViewCaptured(View capturedChild, int activePointerId) {
             super.onViewCaptured(capturedChild, activePointerId);
+            Log.i(TAG, "onViewCaptured: ");
             //设置滑动状态状态为True
             isDraging = true;
             //设置开启拖拽监听
-            onItemDragStatusChange.onItemDragStatusOpen();
-            if (capturedChild.getLeft()<=leftBorder){
-                setMenuOpen(true);
-                onItemDragStatusChange.onItemMenuStatusOpen();
+            if (onItemDragStatusChange!=null) {
+                onItemDragStatusChange.onItemDragStatusOpen(getPosition());
             }
         }
 
@@ -241,10 +244,8 @@ public class MyDragItemView extends ViewGroup {
                 }
             }
             ViewCompat.postInvalidateOnAnimation(MyDragItemView.this);
-
-            onItemDragStatusChange.onItemDragStatusClose();
+//            onItemDragStatusChange.onItemDragStatusClose();
             isDraging = false;
-
         }
 
         @Override
@@ -252,22 +253,30 @@ public class MyDragItemView extends ViewGroup {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
             if (dx > 0) {
                 dragToRight = true;
+                if (onItemDragStatusChange!=null) {
+                    onItemDragStatusChange.onItemDragStatusOpen(getPosition());
+                }
             } else if (dx < 0) {
                 dragToRight = false;
+                if (onItemDragStatusChange!=null) {
+                    onItemDragStatusChange.onItemDragStatusClose(getPosition());
+                }
             }
             /**
              * 判断并设置Item的拖拽状态
              */
             if (left<=leftBorder){
-                onItemDragStatusChange.onItemMenuStatusClose();
+                if (onItemDragStatusChange!=null) {
+                    onItemDragStatusChange.onItemMenuStatusClose(getPosition());
+                }
                 setMenuOpen(false);
             }
-
-//            if (mIsMoving && rv != null) {
-//                rv.setLayoutFrozen(true);
-//            } else if(!mIsMoving && rv != null){
-//                rv.setLayoutFrozen(false);
-//            }
+            if (left>=leftBorder+maxWidth){
+                setMenuOpen(true);
+                if (onItemDragStatusChange!=null) {
+                    onItemDragStatusChange.onItemMenuStatusOpen(getPosition());
+                }
+            }
         }
 
         @Override
@@ -278,10 +287,23 @@ public class MyDragItemView extends ViewGroup {
     };
 
     /**
+     * 打开Item
+     */
+    public void openItem(){
+        if (llShow.getLeft()<=leftBorder) {
+            dragHelper.smoothSlideViewTo(llShow, leftBorder + maxWidth, 0);
+            ViewCompat.postInvalidateOnAnimation(MyDragItemView.this);
+        }
+    }
+
+    /**
      * 关闭Item
      */
     public void closeItem() {
-        dragHelper.smoothSlideViewTo(llShow, leftBorder, 0);
+        if (llShow.getLeft()>leftBorder){
+            dragHelper.smoothSlideViewTo(llShow, leftBorder, 0);
+            ViewCompat.postInvalidateOnAnimation(MyDragItemView.this);
+        }
     }
 
     public void resetItem(){
@@ -315,5 +337,13 @@ public class MyDragItemView extends ViewGroup {
 
     public void setMenuOpen(boolean menuOpen) {
         isMenuOpen = menuOpen;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

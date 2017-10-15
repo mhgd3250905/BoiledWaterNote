@@ -19,8 +19,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Configs;
-import com.skkk.boiledwaternote.CostomViews.DragItemView.MLinearLayoutManager;
-import com.skkk.boiledwaternote.CostomViews.DragItemView.MStaggeredGridLayoutManager;
+import com.skkk.boiledwaternote.CostomViews.MLayoutManager.LayoutManagerScrollImpl;
+import com.skkk.boiledwaternote.CostomViews.MLayoutManager.MLinearLayoutManager;
+import com.skkk.boiledwaternote.CostomViews.MLayoutManager.MStaggeredGridLayoutManager;
 import com.skkk.boiledwaternote.CostomViews.VerticalRecyclerView;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.MyApplication;
@@ -130,18 +131,26 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             //Item点击事件
             @Override
             public void onItemClickListener(View view, int pos) {
-                boolean haveItemOpen = adapter.isHaveItemMenuOpen();
-                if (haveItemOpen) {
-                    adapter.resetMenuStatus();
-                    return;
-                }
+//                boolean haveItemOpen = adapter.isHaveItemMenuOpen();
+//                if (haveItemOpen) {
+//                    return;
+//                }
                 noteListPresenter.startEditActivity(pos);
+//                adapter.changeMenuStatus();
             }
 
             //隐藏菜单删除按钮点击事件
             @Override
             public void onItemDeleteClickListener(View view, int pos) {
-                noteListPresenter.deleteNote(pos);
+                final int notePos = pos;
+                DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
+                        getString(R.string.note_list_notice_title), getString(R.string.note_list_notice_article_delete),
+                        getString(R.string.note_list_ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                noteListPresenter.deleteNote(notePos);
+                            }
+                        }, getString(R.string.note_list_cancel), null).show();
             }
 
             //隐藏菜单上锁点击事件
@@ -189,15 +198,13 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
             public void onNoteItemLongClickListener(View view, int pos) {
                 final int notePos = pos;
                 DialogUtils.showDialog(getContext(), R.drawable.vector_drawable_notice,
-                        getString(R.string.note_list_notice_title), getString(R.string.note_list_notice_delete),
+                        getString(R.string.note_list_notice_title), getString(R.string.note_list_notice_note_delete),
                         getString(R.string.note_list_ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 noteListPresenter.deleteNote(notePos);
                             }
                         }, getString(R.string.note_list_cancel), null).show();
-
-
             }
         });
 
@@ -257,6 +264,8 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
                 break;
         }
         adapter = new NoteListAdapter(getContext(), new ArrayList<Note>(), noteType,layoutStyle);
+
+        adapter.setLayoutManager((LayoutManagerScrollImpl) layoutManager);
         rvNoteList.setAdapter(adapter);
         rvNoteList.setLayoutManager(layoutManager);
     }
