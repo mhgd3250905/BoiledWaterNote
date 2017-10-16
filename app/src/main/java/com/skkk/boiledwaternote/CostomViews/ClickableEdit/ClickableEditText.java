@@ -135,7 +135,7 @@ public class ClickableEditText extends SelectionEditText {
                 .addNewRule(RegexParser.URL_PATTERN, RegexParser.urlType)
                 .addNewRule(RegexParser.EMAIL_PATTERN, RegexParser.emailType);
         regularUtils.setRegularRule(rule);
-        addTextChangedListener(watcher);
+//        addTextChangedListener(watcher);
     }
 
     public OnRegularClickListener getRegularClickListener() {

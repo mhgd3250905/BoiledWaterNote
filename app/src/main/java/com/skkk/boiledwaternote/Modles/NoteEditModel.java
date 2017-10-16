@@ -174,6 +174,10 @@ public class NoteEditModel implements Serializable {
 
         NoteEditModel model = (NoteEditModel) o;
 
+        if (content==null){
+            return false;
+        }
+
         if (format_align_center != model.format_align_center) return false;
         if (format_bold != model.format_bold) return false;
         if (format_italic != model.format_italic) return false;

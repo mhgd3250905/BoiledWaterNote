@@ -60,10 +60,11 @@ public class FormatTextChangeWatcher implements TextWatcher {
                 ss.setSpan(new StyleSpan(Typeface.ITALIC), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         } else {
-            StyleSpan[] spans = ss.getSpans(0, ss.length(), StyleSpan.class);
-            if (spans.length != 0) {   //如果有ITALIC则设置为正常
-                for (StyleSpan span : spans) {
-                    ss.removeSpan(span);
+            //如果有ITALIC则设置为正常
+            for (int i = start; i < start + count; i++) {
+                StyleSpan[] styleSpans = ss.getSpans(i, i + 1, StyleSpan.class);
+                for (StyleSpan styleSpan : styleSpans) {
+                    ss.removeSpan(styleSpan);
                 }
             }
         }
@@ -74,10 +75,10 @@ public class FormatTextChangeWatcher implements TextWatcher {
                 ss.setSpan(new UnderlineSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         } else {
-            UnderlineSpan[] spans = ss.getSpans(0, ss.length(), UnderlineSpan.class);
-            if (spans.length != 0) {   //如果有ITALIC则设置为正常
-                for (UnderlineSpan span : spans) {
-                    ss.removeSpan(span);
+            for (int i = start; i < start + count; i++) {
+                UnderlineSpan[] underlineSpans = ss.getSpans(i, i + 1, UnderlineSpan.class);
+                for (UnderlineSpan underlineSpan : underlineSpans) {
+                    ss.removeSpan(underlineSpan);
                 }
             }
         }
@@ -88,10 +89,10 @@ public class FormatTextChangeWatcher implements TextWatcher {
                 ss.setSpan(new StrikethroughSpan(), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         } else {
-            StrikethroughSpan[] spans = ss.getSpans(0, ss.length(), StrikethroughSpan.class);
-            if (spans.length != 0) {   //如果有ITALIC则设置为正常
-                for (StrikethroughSpan span : spans) {
-                    ss.removeSpan(span);
+            for (int i = start; i < start + count; i++) {
+                StrikethroughSpan[] strikethroughSpans = ss.getSpans(i, i + 1, StrikethroughSpan.class);
+                for (StrikethroughSpan strikethroughSpan : strikethroughSpans) {
+                    ss.removeSpan(strikethroughSpan);
                 }
             }
         }
