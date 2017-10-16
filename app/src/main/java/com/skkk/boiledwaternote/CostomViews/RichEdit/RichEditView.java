@@ -336,7 +336,11 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             * 设置文字居中
             * */
             case R.id.iv_format_align_center:
-                currentHolder.setFormat_align_center(!currentHolder.isFormat_align_center());
+                if (currentHolder.isFormat_align_center()) {
+                    currentHolder.setFormat_align_center(false);
+                }else {
+                    currentHolder.setFormat_align_center(true);
+                }
                 adapter.notifyItemChanged(currentHolder.getCurrentPos());
                 break;
             case R.id.iv_format_blod:                //设置文字Blod

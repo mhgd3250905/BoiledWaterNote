@@ -530,9 +530,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         public void setCurrentPos(final int currentPos) {
             this.currentPos = currentPos;
-            formatTextChangeWatcher.initWatcher(etItem,currentPos, new FormatTextChangeWatcher.FormatTextChangeToDoListener() {
+            formatTextChangeWatcher.initWatcher(etItem, currentPos, new FormatTextChangeWatcher.FormatTextChangeToDoListener() {
                 @Override
-                public void formatTextChangeToDoListener(CharSequence s,int position, int selectionIndex) {
+                public void formatTextChangeToDoListener(CharSequence s, int position, int selectionIndex) {
                     if (android.os.Build.VERSION.SDK_INT >= N) {
                         Log.i(TAG, "onTextChanged: --->" + Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
                         mDataList.get(currentPos).setContent(Html.toHtml(etItem.getText(), Html.TO_HTML_PARAGRAPH_LINES_INDIVIDUAL));
@@ -549,7 +549,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                             try {
                                 List<NoteEditModel> models = ListUtils.deepCopy(mDataList);
                                 //每次都记录上一次的文本内容
-                                if (lastModels!=null) {
+                                if (lastModels != null) {
                                     onEditTextChangeListener.onEditTextChangeListener(lastModels);
                                 }
                                 lastModels = models;
@@ -560,7 +560,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                             }
                         }
                     } else {
-                        if (position==(0)) {
+                        if (position == (0)) {
                             isHistoryRefresh = false;
                         }
                     }
@@ -683,34 +683,39 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 return false;
                             }
                         }
-                        /*
-                        * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
-                        * */
-                        if (TextUtils.isEmpty(etItem.getText())) {
-                            if (currentPos != 0) {
-                                // TODO: 2017/8/1 如果长按删除键会出现重复删除的bug
-                                //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
+
+                        if (currentPos != 0) {
+                            // TODO: 2017/8/1 如果长按删除键会出现重复删除的bug
+                            //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
+                            /*
+                            * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
+                            * */
+                            if (TextUtils.isEmpty(etItem.getText())) {
                                 mDataList.remove(currentPos);
+                            }
                                 /*
                                 * 如果已经删除的上衣个Item是分割线，那么也将其删除，然后焦点跳转到上一个Item
                                 * */
-                                if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED
-                                        || mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
+                            if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.SEPARATED
+                                    || mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
+                                mDataList.remove(currentPos - 1);
+                                setFocusItemPos(currentPos - 2);
+                            } else {
+                                if (TextUtils.isEmpty(mDataList.get(currentPos-1).getContent())) {
                                     mDataList.remove(currentPos - 1);
-                                    setFocusItemPos(currentPos - 2);
-                                } else {
-                                    setFocusItemPos(currentPos - 1);
                                 }
-                                notifyDataSetChanged();
+                                setFocusItemPos(currentPos - 1);
+                            }
+                            notifyDataSetChanged();
 
                                 /*
                                 * 触发按键监听
                                 * */
-                                if (onKeyDownFinishListener != null) {
-                                    onKeyDownFinishListener.onDelFinishListner(currentPos - 1);
-                                }
+                            if (onKeyDownFinishListener != null) {
+                                onKeyDownFinishListener.onDelFinishListner(currentPos - 1);
                             }
                         }
+
                     }
                     return false;
                 }
@@ -929,12 +934,12 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (format_title) {
                 setFormat_list(!format_title);
             }
-//            if (format_title) {
-//                etItem.getText().clearSpans();
-//            }
+            if (format_title){
+                setFormat_align_center(format_title);
+            }
+
             //同步到数据列表
             mDataList.get(currentPos).setFormat_title(format_title);
-            setFormat_align_center(format_title);
             etItem.setTextSize(format_title ? 25 : 18);
             if (format_title) {
                 setFormat_blod(false);
