@@ -364,9 +364,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         //设置菜单点击事件
         navigationMenu.findItem(id).setChecked(true);
-
-        fragment = null;
-
         if (id == R.id.nav_all) {
             fragment = NoteListFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         } else if (id == R.id.nav_article) {//文章
@@ -379,11 +376,17 @@ public class MainActivity extends AppCompatActivity
             /*
             * 跳转到验证界面
             * */
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, TouchIdActivity.class);
-            startActivityForResult(intent,Configs.REQUEST_PRIVACY_CHECK);
-            return true;
-//            fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
+            if (fragment instanceof NoteListFragment){
+                NoteListFragment noteListFragment= (NoteListFragment) fragment;
+                if (noteListFragment.getNoteType()!= Note.NoteType.PRIVACY_NOTE.getValue()){
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, TouchIdActivity.class);
+                    startActivityForResult(intent,Configs.REQUEST_PRIVACY_CHECK);
+                    return true;
+                }else {
+                    fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
+                }
+            }
         } else if (id == R.id.nav_recycle) {//回收站
             fragment = NoteListFragment.getInstance(Note.NoteType.RECYCLE_NOTE.getValue());
         } else if (id == R.id.nav_about) {//关于

@@ -216,6 +216,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                     ivFormatUnderLine.setBackgroundColor(isUnderLined ? Color.LTGRAY : Color.TRANSPARENT);
                     ivFormatStrikeThrough.setBackgroundColor(isStrikeThrough ? Color.LTGRAY : Color.TRANSPARENT);
                 }
+
             }
         });
 

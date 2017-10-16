@@ -701,7 +701,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 mDataList.remove(currentPos - 1);
                                 setFocusItemPos(currentPos - 2);
                             } else {
-                                if (TextUtils.isEmpty(mDataList.get(currentPos-1).getContent())) {
+                                if (TextUtils.isEmpty(mDataList.get(currentPos - 1).getContent())) {
                                     mDataList.remove(currentPos - 1);
                                 }
                                 setFocusItemPos(currentPos - 1);
@@ -934,7 +934,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             if (format_title) {
                 setFormat_list(!format_title);
             }
-            if (format_title){
+            if (format_title) {
                 setFormat_align_center(format_title);
             }
 
