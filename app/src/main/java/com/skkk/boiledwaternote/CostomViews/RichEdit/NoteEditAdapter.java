@@ -143,11 +143,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
             contentHtml = contentHtml.replace("\n", "").replace("/p><p", "/span><br><span").replace("<p", "<span").replace("/p>", "/span>");
 
+            holder.removeTextWatcher();
             if (Build.VERSION.SDK_INT >= N) {
                 holder.etItem.setText(Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_LEGACY));
             } else {
                 holder.etItem.setText(Html.fromHtml(contentHtml));
             }
+            holder.addTextWatcher();
+
 
             //设置光标在最后一个字符后面，默认会多出一个空格
             if (!TextUtils.isEmpty(mDataList.get(position).getContent())) {
@@ -199,10 +202,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             holder.setFormat_list(itemDate.isFormat_list());
             //设置勾选框样式
             holder.setForamtCheckBox(itemDate.isFormat_show_checkbox(), itemDate.isForamt_checkBox_check());
-            //设置对齐方式
-            holder.setFormat_align_center(itemDate.isFormat_align_center());
             //设置标题文字
             holder.setFormat_title(itemDate.isFormat_title());
+            //设置对齐方式
+            holder.setFormat_align_center(itemDate.isFormat_align_center());
 
 
             //设置指定的Item获取焦点
@@ -684,15 +687,10 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                             }
                         }
 
-                        if (currentPos != 0) {
+                        if (currentPos != 0&&etItem.getSelectionStart()==0&&etItem.getSelectionEnd()==0) {
                             // TODO: 2017/8/1 如果长按删除键会出现重复删除的bug
                             //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
-                            /*
-                            * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
-                            * */
-                            if (TextUtils.isEmpty(etItem.getText())) {
-                                mDataList.remove(currentPos);
-                            }
+
                                 /*
                                 * 如果已经删除的上衣个Item是分割线，那么也将其删除，然后焦点跳转到上一个Item
                                 * */
@@ -700,12 +698,30 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                     || mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.TIMERECORD) {
                                 mDataList.remove(currentPos - 1);
                                 setFocusItemPos(currentPos - 2);
-                            } else {
+
+                                /*
+                            * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
+                            * */
+                                if (TextUtils.isEmpty(etItem.getText())) {
+                                    mDataList.remove(currentPos);
+                                }
+                            } else if (mDataList.get(currentPos - 1).getItemFlag()==NoteEditModel.Flag.TEXT){
                                 if (TextUtils.isEmpty(mDataList.get(currentPos - 1).getContent())) {
                                     mDataList.remove(currentPos - 1);
                                 }
                                 setFocusItemPos(currentPos - 1);
+
+                                /*
+                            * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
+                            * */
+                                if (TextUtils.isEmpty(etItem.getText())) {
+                                    mDataList.remove(currentPos);
+                                }
+                            } else if (mDataList.get(currentPos - 1).getItemFlag()==NoteEditModel.Flag.IMAGE){
+                                
                             }
+
+
                             notifyDataSetChanged();
 
                                 /*
@@ -814,12 +830,16 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
         public void setFormat_align_center(boolean isTextCenter) {
             format_align_center = isTextCenter;
-            if (format_align_center) {
+            if (isTextCenter) {
                 etItem.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             } else {
                 etItem.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             }
             mDataList.get(currentPos).setFormat_align_center(format_align_center);
+            removeTextWatcher();
+            etItem.setText(etItem.getText());
+            etItem.setSelection(etItem.length());
+            addTextWatcher();
         }
 
         /**
@@ -935,7 +955,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 setFormat_list(!format_title);
             }
             if (format_title) {
-                setFormat_align_center(format_title);
+                etItem.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            }else {
+                etItem.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             }
 
             //同步到数据列表
@@ -1055,6 +1077,20 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
          */
         public boolean isFormat_quote() {
             return format_quote;
+        }
+
+        /**
+         * 移除文本变化监听
+         */
+        public void removeTextWatcher(){
+            etItem.removeTextChangedListener(formatTextChangeWatcher);
+        }
+
+        /**
+         * 新增文本变化监听
+         */
+        public void addTextWatcher(){
+            etItem.addTextChangedListener(formatTextChangeWatcher);
         }
     }
 
