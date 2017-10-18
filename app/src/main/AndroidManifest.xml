@@ -51,7 +51,8 @@
         <activity
             android:name=".Views.PrivacyProtect.TouchIdActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".Views.PrivacyProtect.GraphyUnlockActivity"></activity>
+        <activity android:name=".Views.PrivacyProtect.GraphyUnlockActivity" />
+        <activity android:name=".Views.Settings.SettingsActivity"></activity>
     </application>
 
 </manifest>

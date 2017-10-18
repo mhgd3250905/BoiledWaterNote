@@ -35,6 +35,7 @@ import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Views.NoteImage.NoteImageFragment;
 import com.skkk.boiledwaternote.Views.PrivacyProtect.TouchIdActivity;
+import com.skkk.boiledwaternote.Views.Settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -392,8 +393,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_about) {//关于
             navigationMenu.findItem(id).setChecked(false);
 
-        } else if (id == R.id.nav_setting) {//设置
+        } else if (id == R.id.nav_setting) {//设置:跳转到设置界面
             navigationMenu.findItem(id).setChecked(false);
+            startActivity(new Intent(this, SettingsActivity.class));
         }
 
         if (fragment == null) {

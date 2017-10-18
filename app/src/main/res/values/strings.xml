@@ -48,5 +48,6 @@
     <string name="note_list_notice_note_delete">是否删除快捷便签？</string>
     <string name="note_list_notice_article_delete">是否删除此条笔记？</string>
     <string name="note_list_notice_empty">内容为空</string>
+    <string name="settings_item_title">笔记样式</string>
 
 </resources>

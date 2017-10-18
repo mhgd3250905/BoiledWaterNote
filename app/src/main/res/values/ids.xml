@@ -104,4 +104,10 @@
     <item name="ll_graphy_unlock" type="id">ll_graphy_unlock</item>
     <item name="activity_graphy_unlock_container" type="id">activity_graphy_unlock_container</item>
     <item name="iv_article_list_recycle_flag" type="id">iv_article_list_recycle_flag</item>
+    <item name="activity_settings_container" type="id">activity_settings_container</item>
+    <item name="ll_settings" type="id">ll_settings</item>
+    <item name="tb_settings" type="id">tb_settings</item>
+    <item name="tv_settings_title" type="id">tv_settings_title</item>
+    <item name="tv_settings_value" type="id">tv_settings_value</item>
+    <item name="container_settings" type="id">container_settings</item>
 </resources>

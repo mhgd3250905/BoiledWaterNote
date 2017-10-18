@@ -203,7 +203,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             //设置标题文字
             holder.setFormat_title(itemDate.isFormat_title());
             //设置对齐方式
-            holder.setFormat_align_center(itemDate.isFormat_align_center());
+            if (!itemDate.isFormat_title()) {
+                holder.setFormat_align_center(itemDate.isFormat_align_center());
+            }
 
 
             //设置指定的Item获取焦点
