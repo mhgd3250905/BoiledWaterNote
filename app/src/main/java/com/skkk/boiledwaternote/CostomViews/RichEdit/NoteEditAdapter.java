@@ -90,7 +90,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
-
         void onDelFinishListner(int pos);
     }
 
@@ -687,7 +686,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                             }
                         }
 
-                        if (currentPos != 0&&etItem.getSelectionStart()==0&&etItem.getSelectionEnd()==0) {
+                        if (currentPos != 0 && etItem.getSelectionStart() == 0 && etItem.getSelectionEnd() == 0) {
                             // TODO: 2017/8/1 如果长按删除键会出现重复删除的bug
                             //如果是Eidt已经空了，那么继续按下DEL按钮就删除当前Item，焦点跳转到上一个Item
 
@@ -705,28 +704,28 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                                 if (TextUtils.isEmpty(etItem.getText())) {
                                     mDataList.remove(currentPos);
                                 }
-                            } else if (mDataList.get(currentPos - 1).getItemFlag()==NoteEditModel.Flag.TEXT){
+                            } else if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.TEXT) {
                                 if (TextUtils.isEmpty(mDataList.get(currentPos - 1).getContent())) {
                                     mDataList.remove(currentPos - 1);
                                 }
                                 setFocusItemPos(currentPos - 1);
 
                                 /*
-                            * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
-                            * */
+                                * 首先判断是否为空，也只有在内容为空的时候才需要进行特殊的处理
+                                * */
                                 if (TextUtils.isEmpty(etItem.getText())) {
                                     mDataList.remove(currentPos);
                                 }
-                            } else if (mDataList.get(currentPos - 1).getItemFlag()==NoteEditModel.Flag.IMAGE){
-                                
+                            } else if (mDataList.get(currentPos - 1).getItemFlag() == NoteEditModel.Flag.IMAGE) {
+
                             }
 
 
                             notifyDataSetChanged();
 
-                                /*
-                                * 触发按键监听
-                                * */
+                            /*
+                            * 触发按键监听
+                            * */
                             if (onKeyDownFinishListener != null) {
                                 onKeyDownFinishListener.onDelFinishListner(currentPos - 1);
                             }
@@ -956,7 +955,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             }
             if (format_title) {
                 etItem.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            }else {
+            } else {
                 etItem.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             }
 
@@ -1067,7 +1066,9 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
             mDataList.get(currentPos).setFormat_show_checkbox(foramt_show_checkBox, foramt_checkBox_checked);
             cbTextCheck.setVisibility(foramt_show_checkBox ? View.VISIBLE : GONE);
             cbTextCheck.setChecked(foramt_checkBox_checked);
-            setWholeEditStrikethroughSpan(foramt_checkBox_checked);
+            if (foramt_show_checkBox) {
+                setWholeEditStrikethroughSpan(foramt_checkBox_checked);
+            }
         }
 
         /**
@@ -1082,14 +1083,14 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         /**
          * 移除文本变化监听
          */
-        public void removeTextWatcher(){
+        public void removeTextWatcher() {
             etItem.removeTextChangedListener(formatTextChangeWatcher);
         }
 
         /**
          * 新增文本变化监听
          */
-        public void addTextWatcher(){
+        public void addTextWatcher() {
             etItem.addTextChangedListener(formatTextChangeWatcher);
         }
     }
