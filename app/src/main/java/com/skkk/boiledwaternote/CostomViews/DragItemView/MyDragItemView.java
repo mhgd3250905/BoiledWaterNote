@@ -38,6 +38,7 @@ public class MyDragItemView extends ViewGroup {
     private int l,t,r,b;
     private boolean isMenuOpen;
     private int position;
+    private float sensitivity=2f;//拖拽灵敏度
 
 
     public interface OnDragItemClickListener{
@@ -86,7 +87,7 @@ public class MyDragItemView extends ViewGroup {
     }
 
     private void mInit() {
-        dragHelper = ViewDragHelper.create(this, callback);
+        dragHelper = ViewDragHelper.create(this,sensitivity, callback);
     }
 
     /**

@@ -11,6 +11,7 @@ package com.skkk.boiledwaternote.Views.Home;
 */
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -53,10 +54,11 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     private int noteType = Note.NoteType.ALL_NOTE.getValue();
     private int layoutStyle = 0;
     private LayoutManagerScrollImpl layoutManager;
-    private boolean isMenuOpen=true;
+    private boolean isMenuOpen = true;
 
     interface OnDragItemStatusChange {
         void onDragingListener(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
+
         void onDragClose(int pos, DragItemCircleView item, View changedView, int left, int top, int dx, int dy);
     }
 
@@ -159,6 +161,13 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             holder.divItem.setVisibility(VISIBLE);
             holder.rlListNoteContainer.setVisibility(GONE);
 
+            //如果是删除类型
+            if (dataList.get(position).getNoteType() == Note.NoteType.RECYCLE_NOTE.getValue()) {
+                holder.llShow.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorGray));
+            }else {
+                holder.llShow.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite));
+            }
+
             holder.divItem.setPosition(holder.getAdapterPosition());
 
             //显示距离此刻模式的时间显示方式
@@ -243,15 +252,24 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
             }
 
             if (onItemClickListener != null) {
+                //设置笔记点击事件
                 holder.llShow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (itemClickable) {
-                            onItemClickListener.onItemClickListener(v, holder.getAdapterPosition());
+                            if (dataList.get(position).getNoteType() == Note.NoteType.RECYCLE_NOTE.getValue()) {
+                                //如果是回收站类型的笔记点击事件修改为恢复
+                                onItemClickListener.onItemRecycleClickListener(v, holder.getAdapterPosition());
+                            } else {
+                                //不是回收站类型则为正常点击事件
+                                onItemClickListener.onItemClickListener(v, holder.getAdapterPosition());
+                            }
                         }
                     }
                 });
 
+
+                //设置删除按钮点击事件
                 holder.ivDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -259,6 +277,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                     }
                 });
 
+                //设置上锁按钮点击事件
                 holder.ivLock.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -273,53 +292,15 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                     }
                 });
 
+                //设置菜单栏位点击事件：收起菜单
+                holder.llHide.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        holder.divItem.closeItem();
+                    }
+                });
+
             }
-
-
-            /**
-             * 设置Item菜单
-             */
-//            if (isMenuOpen){
-//                holder.divItem.closeItem();
-//            } else {
-//                holder.divItem.openItem();
-//            }
-//            /**
-//             * 设置拖拽状态监听事件
-//             */
-//            holder.divItem.setOnItemDragStatusChange(new MyDragItemView.OnItemDragStatusChange() {
-//                @Override
-//                public void onItemDragStatusOpen(int pos) {
-//                    Log.i(TAG, "打开方向拖拽"+pos);
-//                    itemClickable = false;
-//                }
-//
-//                @Override
-//                public void onItemDragStatusClose(int pos) {
-//                    Log.i(TAG, "打开方向拖拽"+pos);
-//                    itemClickable = false;
-//
-//                }
-//
-//                @Override
-//                public void onItemMenuStatusOpen(int pos) {
-//                    Log.i(TAG, "菜单打开了" + pos);
-//                    itemClickable = true;
-//                    dataList.get(pos).setMenuOpen(true);
-//                    layoutManager.setScroll(false);
-//                }
-//
-//                @Override
-//                public void onItemMenuStatusClose(int pos) {
-//                    itemClickable = true;
-//                    Log.i(TAG, "菜单关闭了" + pos);
-//                    dataList.get(pos).setMenuOpen(false);
-//                    for (int i = 0; i < dataList.size(); i++) {
-//                        Log.i(TAG, position + "->" + dataList.get(i).isMenuOpen());
-//                    }
-//                    layoutManager.setScroll(true);
-//                }
-//            });
         }
     }
 
@@ -356,12 +337,12 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     public boolean isHaveItemMenuOpen() {
         Note note;
-        boolean menuOpen=false;
+        boolean menuOpen = false;
         for (int i = 0; i < dataList.size(); i++) {
-            note=dataList.get(i);
+            note = dataList.get(i);
             if (note.isMenuOpen()) {
                 notifyItemChanged(i);
-                menuOpen= true;
+                menuOpen = true;
             }
         }
         return menuOpen;
@@ -385,11 +366,13 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
      * @param layoutStyle
      */
     public void setLayoutStyle(int layoutStyle) {
-        this.layoutStyle = layoutStyle;    }
+        this.layoutStyle = layoutStyle;
+    }
 
 
     /**
      * 获取布局管理器
+     *
      * @return
      */
     public LayoutManagerScrollImpl getLayoutManager() {
@@ -402,6 +385,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     /**
      * 设置布局管理器
+     *
      * @param layoutManager
      */
     public void setLayoutManager(LayoutManagerScrollImpl layoutManager) {
@@ -411,8 +395,8 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     /**
      * 切换菜单状态
      */
-    public void changeMenuStatus(){
-        isMenuOpen=!isMenuOpen;
+    public void changeMenuStatus() {
+        isMenuOpen = !isMenuOpen;
         notifyDataSetChanged();
     }
 

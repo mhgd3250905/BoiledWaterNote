@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.skkk.boiledwaternote.CostomViews.DragItemView.MyDragItemView
@@ -44,7 +44,6 @@
             android:id="@id/ll_show"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorWhite"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
             app:cardUseCompatPadding="true">
@@ -78,20 +77,22 @@
                             tools:text="here is time show" />
 
                         <ImageView
+                            android:layout_marginEnd="10dp"
                             android:id="@id/iv_article_list_image_flag"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center"
-                            android:layout_marginEnd="20dp"
                             android:src="@drawable/vector_drawable_image_gary" />
+
+
                     </LinearLayout>
 
                     <View
                         android:layout_marginTop="@dimen/note_list_content_margin_vertical_mini"
                         android:layout_width="match_parent"
                         android:layout_height="0.1dp"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
                         android:background="@color/colorGray" />
 
                     <TextView

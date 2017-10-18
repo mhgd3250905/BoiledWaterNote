@@ -247,7 +247,7 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
     private void initLayoutManager() {
         int layoutStyle = SpUtils.getInt(getContext(), Configs.SP_KEY_NOTE_LIST_LAYOUT_STYLE);
         if (layoutStyle == -1) {
-            layoutStyle = 0;//默认为线性列表
+            layoutStyle = 1;//默认为线性列表
         }
         layoutManager = null;
         switch (layoutStyle) {

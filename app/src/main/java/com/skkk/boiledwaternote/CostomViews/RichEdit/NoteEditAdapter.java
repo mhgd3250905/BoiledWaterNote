@@ -87,7 +87,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         void onItemEditHasFocusListener(View view, int pos);
     }
 
-
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
         void onDelFinishListner(int pos);
