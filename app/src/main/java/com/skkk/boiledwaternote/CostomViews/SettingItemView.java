@@ -61,7 +61,7 @@ public class SettingItemView extends LinearLayout {
      * 设置条目点击事件
      * @param onClickListener
      */
-    private void setSettingItemClickListener(final OnClickListener onClickListener){
+    public void setSettingItemClickListener(final OnClickListener onClickListener){
         if (container!=null){
             container.setOnClickListener(new OnClickListener() {
                 @Override
@@ -76,7 +76,7 @@ public class SettingItemView extends LinearLayout {
      * 设置标题
      * @param title
      */
-    private void setTitle(String title){
+    public void setTitle(String title){
         if (tvTitle!=null){
             tvTitle.setText(title);
         }
@@ -86,9 +86,17 @@ public class SettingItemView extends LinearLayout {
      * 设置内容
      * @param value
      */
-    private void setTvValue(String value){
+    public void setValue(String value){
         if (tvValue!=null){
-            tvTitle.setText(value);
+            tvValue.setText(value);
         }
+    }
+
+    /**
+     * 设置Item是否可用
+     * @param enable
+     */
+    public void setItemEnable(boolean enable){
+        container.setEnabled(enable);
     }
 }

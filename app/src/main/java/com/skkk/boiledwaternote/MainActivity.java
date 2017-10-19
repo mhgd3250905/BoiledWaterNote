@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
 import com.skkk.boiledwaternote.Utils.Utils.PermissionsUtils;
+import com.skkk.boiledwaternote.Utils.Utils.Toasts;
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
@@ -392,6 +394,7 @@ public class MainActivity extends AppCompatActivity
             fragment = NoteListFragment.getInstance(Note.NoteType.RECYCLE_NOTE.getValue());
         } else if (id == R.id.nav_about) {//关于
             navigationMenu.findItem(id).setChecked(false);
+            Toasts.costom(this,"您点击了关于按钮！",R.drawable.vector_drawable_pen_blue, Color.WHITE,10f,Toast.LENGTH_LONG).show();
 
         } else if (id == R.id.nav_setting) {//设置:跳转到设置界面
             navigationMenu.findItem(id).setChecked(false);

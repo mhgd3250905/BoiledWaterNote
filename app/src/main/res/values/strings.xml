@@ -49,5 +49,14 @@
     <string name="note_list_notice_article_delete">是否删除此条笔记？</string>
     <string name="note_list_notice_empty">内容为空</string>
     <string name="settings_item_title">笔记样式</string>
+    <string name="settings_style_title">界面</string>
+    <string name="settings_function_title">功能</string>
+    <string name="note_list_style_stagger">瀑布流布局</string>
+    <string name="note_list_style_linear">垂直布局</string>
+    <string name="switch_open">已开启</string>
+    <string name="switch_close">已关闭</string>
+    <string name="blank" />
+    <string name="privacy_type_touch_id">指纹识别</string>
+    <string name="privacy_type_graphy">图形解锁</string>
 
 </resources>

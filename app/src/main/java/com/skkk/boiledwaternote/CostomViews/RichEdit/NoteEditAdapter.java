@@ -89,6 +89,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
     public interface OnKeyDownFinishListener {
         void onEnterFinishListner(int pos);
+
         void onDelFinishListner(int pos);
     }
 
@@ -721,7 +722,6 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
 
                             }
 
-
                             notifyDataSetChanged();
 
                             /*
@@ -1094,6 +1094,7 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
         public void addTextWatcher() {
             etItem.addTextChangedListener(formatTextChangeWatcher);
         }
+
     }
 
     /**

@@ -107,7 +107,6 @@ public class NoteEditActivity extends AppCompatActivity {
 //        DisplayMetrics outMetrics = new DisplayMetrics();
 //        manager.getDefaultDisplay().getMetrics(outMetrics);
 //        int width2 = outMetrics.widthPixels;
-//
 
         initData();      //获取传入数据
         initUI();           //初始化UI

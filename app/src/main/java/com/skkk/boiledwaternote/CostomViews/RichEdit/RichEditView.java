@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.ClickableEdit.OnRegularClickListener;
@@ -31,6 +33,7 @@ import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.MyItemTouchHelperCa
 import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener;
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.R;
+import com.skkk.boiledwaternote.Utils.Utils.Toasts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,27 +171,6 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         });
 
         /*
-        * Item中EidtText获取到焦点的时候的监听事件
-        * */
-        adapter.setOnItemEditSelectedLintener(new NoteEditAdapter.OnItemEditHasFocusListener() {
-            @Override
-            public void onItemEditHasFocusListener(View view, int pos) {
-                //在接收到焦点的时候重置底部富文本状态
-                resetBottomBarStatus();
-                NoteEditModel model = adapter.getmDataList().get(pos);
-                if (model.getItemFlag() == NoteEditModel.Flag.TEXT) {
-                    if (model.isFormat_quote() || model.isFormat_list()) {
-                        ivFormatAlignCenter.setEnabled(false);
-                        ivFormatAlignCenter.setImageResource(R.drawable.format_align_center_unenable);
-                    } else {
-                        ivFormatAlignCenter.setEnabled(true);
-                        ivFormatAlignCenter.setImageResource(R.drawable.format_align_center);
-                    }
-                }
-            }
-        });
-
-        /*
         * 根据此时的文字状态显示富文本提示
         * */
         adapter.setOnSelectionChangeListener(new Configs.OnSelectionChangeListener() {
@@ -227,7 +209,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         adapter.setOnEditTextChangeListener(new NoteEditAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChangeListener(List<NoteEditModel> models) {
-                insertHistoryNote(models,false);
+                insertHistoryNote(models, false);
             }
         });
 
@@ -330,6 +312,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
         int start = currentHolder.etItem.getSelectionStart();
         int end = currentHolder.etItem.getSelectionEnd();
 
+        final Context mContext = context;
         startBottomViewAnim(v);
 
         switch (v.getId()) {
@@ -337,14 +320,27 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             * 设置文字居中
             * */
             case R.id.iv_format_align_center:
+                if (currentHolder.isFormat_list() ||
+                        currentHolder.isFormat_quote() ||
+                        currentHolder.isForamt_show_checkBox() ||
+                        currentHolder.isFormat_title()) {
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (currentHolder.isFormat_align_center()) {
                     currentHolder.setFormat_align_center(false);
-                }else {
+                } else {
                     currentHolder.setFormat_align_center(true);
                 }
 //                adapter.notifyItemChanged(currentHolder.getCurrentPos());
                 break;
             case R.id.iv_format_blod:                //设置文字Blod
+                if (currentHolder.isForamt_show_checkBox() ||
+                        currentHolder.isFormat_title()) {
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 if (!isSelected) {                   //如果没有选择
                     if (currentHolder.isFormat_bold()) {
                         currentHolder.setFormat_blod(false);
@@ -372,6 +368,11 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 }
                 break;
             case R.id.iv_format_italic:             //设置文字斜体
+                if (currentHolder.isForamt_show_checkBox() ||
+                        currentHolder.isFormat_title()) {
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (!isSelected) {
                     if (currentHolder.isFormat_italic()) {
                         currentHolder.setFormat_italic(false);
@@ -466,6 +467,11 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 break;
 
             case R.id.iv_format_underlined:         //设置文字下划线
+                if (currentHolder.isForamt_show_checkBox() ||
+                        currentHolder.isFormat_title()) {
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (!isSelected) {
                     if (currentHolder.isFormat_underlined()) {
                         currentHolder.setFormat_underlined(false);
@@ -495,6 +501,11 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                 break;
 
             case R.id.iv_format_strike_through:     //设置文字删除线
+                if (currentHolder.isForamt_show_checkBox() ||
+                        currentHolder.isFormat_title()) {
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (!isSelected) {
                     if (currentHolder.isFormat_strike_through()) {
                         currentHolder.setFormat_strike_through(false);
@@ -711,7 +722,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
      *
      * @param models
      */
-    public void insertHistoryNote(List<NoteEditModel> models,boolean fromPre) {
+    public void insertHistoryNote(List<NoteEditModel> models, boolean fromPre) {
         //插入历史笔记的时候，就需要清空前进笔记
         if (!fromPre) {
             previewNotes.clear();
@@ -780,7 +791,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
 
         List<NoteEditModel> latestModles = previewNotes.get(0);
         previewNotes.remove(0);
-        insertHistoryNote(curModels,true);
+        insertHistoryNote(curModels, true);
 
         return latestModles;
     }

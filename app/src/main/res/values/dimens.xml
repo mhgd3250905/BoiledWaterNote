@@ -30,5 +30,7 @@
     <dimen name="note_list_item_menu_icon">40dp</dimen>
     <dimen name="settings_item_title">20sp</dimen>
     <dimen name="settings_item_value">15sp</dimen>
+    <dimen name="settings_item_content_margin_vertical">10dp</dimen>
+    <dimen name="settings_item_content_margin_horizontal">15dp</dimen>
 
 </resources>

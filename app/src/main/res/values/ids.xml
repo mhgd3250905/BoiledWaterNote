@@ -110,4 +110,9 @@
     <item name="tv_settings_title" type="id">tv_settings_title</item>
     <item name="tv_settings_value" type="id">tv_settings_value</item>
     <item name="container_settings" type="id">container_settings</item>
+    <item name="settings_item_style" type="id">settings_item_style</item>
+    <item name="settings_item_theme" type="id">settings_item_theme</item>
+    <item name="settings_item_quick_entrance" type="id">settings_item_quick_entrance</item>
+    <item name="settings_item_privacy_switch" type="id">settings_item_privacy_switch</item>
+    <item name="settings_item_privacy_type" type="id">settings_item_privacy_type</item>
 </resources>
