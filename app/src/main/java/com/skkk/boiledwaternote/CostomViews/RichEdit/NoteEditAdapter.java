@@ -31,6 +31,7 @@ import com.skkk.boiledwaternote.CostomViews.RecyclerEditView.OnStartDragListener
 import com.skkk.boiledwaternote.Modles.NoteEditModel;
 import com.skkk.boiledwaternote.MyApplication;
 import com.skkk.boiledwaternote.R;
+import com.skkk.boiledwaternote.Utils.Utils.FileUtils;
 import com.skkk.boiledwaternote.Utils.Utils.ImageUtils;
 import com.skkk.boiledwaternote.Utils.Utils.ListUtils;
 
@@ -242,49 +243,53 @@ public class NoteEditAdapter extends RecyclerView.Adapter<NoteEditAdapter.NoteEd
                 return;
             }
 
+            if (FileUtils.fileIsExists(itemDate.getImagePath())) {
             /*
             * 根据图片的宽高来设置相框的大小
             * */
-            int imgWidth = ImageUtils.getBitmapWidth(itemDate.getImagePath(), true);
-            int imgHeight = ImageUtils.getBitmapWidth(itemDate.getImagePath(), false);
+                int imgWidth = ImageUtils.getBitmapWidth(itemDate.getImagePath(), true);
+                int imgHeight = ImageUtils.getBitmapWidth(itemDate.getImagePath(), false);
 
-            Log.i(TAG, "图片宽: " + imgWidth + ",图片高: " + imgHeight);
+                Log.i(TAG, "图片宽: " + imgWidth + ",图片高: " + imgHeight);
 
-            int editWidth = MyApplication.getEditScopeWidth();
+                int editWidth = MyApplication.getEditScopeWidth();
 
-            ViewGroup.LayoutParams layoutParams = holder.ivItemImage.getLayoutParams();
-            if (imgHeight > imgWidth) {
+                ViewGroup.LayoutParams layoutParams = holder.ivItemImage.getLayoutParams();
+                if (imgHeight > imgWidth) {
 //                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_ver);
-                layoutParams.width = editWidth;
-                layoutParams.height = layoutParams.width * imgHeight / imgWidth;
-                Log.i(TAG, "相框宽: " + layoutParams.width + ",相框高: " + layoutParams.height);
+                    layoutParams.width = editWidth;
+                    layoutParams.height = layoutParams.width * imgHeight / imgWidth;
+                    Log.i(TAG, "相框宽: " + layoutParams.width + ",相框高: " + layoutParams.height);
 
-            } else {
+                } else {
 //                layoutParams.width = (int) context.getResources().getDimension(R.dimen.item_edit_image_width_hor);
-                layoutParams.width = editWidth;
-                layoutParams.height = layoutParams.width * imgHeight / imgWidth;
-                Log.i(TAG, "相框宽: " + imgWidth + ",相框高: " + imgHeight);
+                    layoutParams.width = editWidth;
+                    layoutParams.height = layoutParams.width * imgHeight / imgWidth;
+                    Log.i(TAG, "相框宽: " + imgWidth + ",相框高: " + imgHeight);
 
-            }
-            holder.ivNoteImageChecked.setLayoutParams(layoutParams);
-            holder.ivItemImage.setLayoutParams(layoutParams);
-            holder.ivItemImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                }
+                holder.ivNoteImageChecked.setLayoutParams(layoutParams);
+                holder.ivItemImage.setLayoutParams(layoutParams);
+                holder.ivItemImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             /*
             * 设置图片
             * */
-            Glide.with(context)
-                    .load(itemDate.getImagePath())
-                    .into(holder.ivItemImage);
+                Glide.with(context)
+                        .load(itemDate.getImagePath())
+                        .into(holder.ivItemImage);
             /*
             * 设置高斯模糊背景图
             * */
-            Glide.with(context)
-                    .load(itemDate.getImagePath())
-                    .crossFade(1000)
-                    .bitmapTransform(new BlurTransformation(context, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
-                    .into(holder.ivNoteImageChecked);
+                Glide.with(context)
+                        .load(itemDate.getImagePath())
+                        .crossFade(1000)
+                        .bitmapTransform(new BlurTransformation(context, 23, 4))  // “23”：设置模糊度(在0.0到25.0之间)，默认”25";"4":图片缩放比例,默认“1”。
+                        .into(holder.ivNoteImageChecked);
 
+            } else {
+                holder.ivItemImage.setImageResource(R.mipmap.ic_launcher);
+            }
 
             holder.ivItemImage.setOnClickListener(new View.OnClickListener() {
                 @Override

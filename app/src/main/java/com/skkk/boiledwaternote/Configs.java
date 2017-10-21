@@ -38,6 +38,13 @@ public class Configs {
     public static final int PRIVACY_TYPE_TOUCH_ID = 0;
     public static final int PRIVACY_TYPE_GRAPHY = 1;
 
+    //图形解锁
+    public static final String KEY_GRAPHY_PURPOSE="key_graphy_purpose";             //进入图形解锁模式的目的
+    public static final int GRAPHY_UNLOCK=0;                                        //目的 解锁
+    public static final int GRAPHY_RESET_PASSWORD=1;                                //目的 重置密码
+    public static final int GRAPHY_SET_PASSWORD=1;                                  //目的 设置新密码
+    public static final String GRAPHY_UNLOCK_PASSWORD="graphy_unlock_password";     //图形解锁密码
+
 
     public interface OnSelectionChangeListener {
         void onSelectionChangeListener(Editable s, int selStart, int selEnd);

@@ -58,5 +58,8 @@
     <string name="blank" />
     <string name="privacy_type_touch_id">指纹识别</string>
     <string name="privacy_type_graphy">图形解锁</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_next">继续</string>
+    <string name="graphy_unlock_password_key">-</string>
 
 </resources>

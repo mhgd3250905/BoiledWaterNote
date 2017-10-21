@@ -115,4 +115,6 @@
     <item name="settings_item_quick_entrance" type="id">settings_item_quick_entrance</item>
     <item name="settings_item_privacy_switch" type="id">settings_item_privacy_switch</item>
     <item name="settings_item_privacy_type" type="id">settings_item_privacy_type</item>
+    <item name="tv_graphy_unlock_left" type="id">tv_graphy_unlock_left</item>
+    <item name="tv_graphy_unlock_right" type="id">tv_graphy_unlock_right</item>
 </resources>

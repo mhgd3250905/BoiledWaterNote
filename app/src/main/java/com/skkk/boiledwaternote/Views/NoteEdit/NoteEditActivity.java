@@ -217,7 +217,9 @@ public class NoteEditActivity extends AppCompatActivity {
                         break;
 
                     case R.id.menu_edit_theme:
-                        startActivity(new Intent(NoteEditActivity.this, GraphyUnlockActivity.class));
+                        Intent intent=new Intent(NoteEditActivity.this, GraphyUnlockActivity.class);
+                        intent.putExtra(Configs.KEY_GRAPHY_PURPOSE,Configs.GRAPHY_SET_PASSWORD);
+                        startActivity(intent);
                         break;
                 }
                 return false;

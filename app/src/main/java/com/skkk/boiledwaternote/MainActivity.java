@@ -137,14 +137,6 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if (requestCode == PERMISSION_REQUEST_CODE) {
-//            Map<String, Integer> perms = new HashMap<>();
-//            for (int i = 0; i < permissions.length; i++) {
-//                if (grantResults[i]==PERMISSIONS_DENIED) {
-//                    needRequestPermissions.add(permissions[i]);
-//                }
-//            }
-//        }
 
         if (requestCode == PERMISSION_REQUEST_CODE && hasAllPermissionsGranted(grantResults)) {
 
