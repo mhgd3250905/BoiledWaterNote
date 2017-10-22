@@ -21,4 +21,5 @@ interface NoteModleImpl<T> {
     List<NoteEditModel> queryAllImages(int type);
     boolean deleteImage(ImageModle model,int type);
     boolean deleteAllImages(List<ImageModle> modelList,int type);
+    boolean deleteAll(List<Note> notes);
 }

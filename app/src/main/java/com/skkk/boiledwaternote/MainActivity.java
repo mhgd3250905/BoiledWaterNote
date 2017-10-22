@@ -29,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.skkk.boiledwaternote.Modles.Note;
+import com.skkk.boiledwaternote.Modles.NoteModle;
 import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
 import com.skkk.boiledwaternote.Utils.Utils.PermissionsUtils;
 import com.skkk.boiledwaternote.Utils.Utils.Toasts;
@@ -40,6 +41,7 @@ import com.skkk.boiledwaternote.Views.PrivacyProtect.TouchIdActivity;
 import com.skkk.boiledwaternote.Views.Settings.SettingsActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -348,6 +350,19 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.action_delete) {
             //删除回收站全部笔记
+            if (fragment!=null){
+                if (fragment instanceof NoteListFragment){
+                    NoteListFragment noteListFragment= (NoteListFragment) fragment;
+                    List<Note> allNote = noteListFragment.getAllNote();
+                    NoteModle noteModle=new NoteModle(getApplicationContext());
+                    if (noteModle.deleteAll(allNote)){
+                        Toasts.costom(MainActivity.this, "清空回收站所有笔记！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    }else {
+                        Toasts.costom(MainActivity.this, "清空不彻底！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    }
+                    noteListFragment.onResume();
+                }
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -408,11 +423,6 @@ public class MainActivity extends AppCompatActivity
         if (fragment == null) {
             return true;
         }
-
-
-
-        //切换笔记类型
-//        fragment.changNoteType();
 
         getSupportFragmentManager()
                 .beginTransaction()

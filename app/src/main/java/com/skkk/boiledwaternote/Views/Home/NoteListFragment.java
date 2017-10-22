@@ -353,6 +353,13 @@ public class NoteListFragment extends Fragment implements NoteListImpl {
         getActivity().startActivityForResult(intent, Configs.REQUEST_UPDATE_NOTE);
     }
 
+    /**
+     *取显示的所有的笔记
+     */
+    public List<Note> getAllNote(){
+        return noteListPresenter.getmDataList();
+    }
+
 
 
 

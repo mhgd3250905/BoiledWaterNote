@@ -36,6 +36,7 @@ public class NoteModle implements NoteModleImpl<Note> {
 
     /**
      * 保存一个指定类型的笔记
+     *
      * @param noteType
      * @param note
      * @return
@@ -54,6 +55,7 @@ public class NoteModle implements NoteModleImpl<Note> {
 
     /**
      * 更新笔记
+     *
      * @param note
      * @return
      */
@@ -71,6 +73,7 @@ public class NoteModle implements NoteModleImpl<Note> {
 
     /**
      * 删除笔记: 删除笔记如果是回收站类型的时候就直接删除，否则设置类型为回收站类型
+     *
      * @param note
      * @return
      */
@@ -79,10 +82,10 @@ public class NoteModle implements NoteModleImpl<Note> {
         session = DBUtils.getInstance(context).getSession();
         NoteDao noteDao = session.getNoteDao();
         try {
-            if (note.getNoteType()==Note.NoteType.RECYCLE_NOTE.getValue()){
+            if (note.getNoteType() == Note.NoteType.RECYCLE_NOTE.getValue()) {
                 noteDao.delete(note);
                 return true;
-            }else {
+            } else {
                 note.setNoteType(Note.NoteType.RECYCLE_NOTE.getValue());
                 noteDao.update(note);
                 return true;
@@ -93,7 +96,35 @@ public class NoteModle implements NoteModleImpl<Note> {
     }
 
     /**
+     * 批量删除笔记: 删除笔记如果是回收站类型的时候就直接删除，否则设置类型为回收站类型
+     *
+     * @param notes
+     * @return
+     */
+    @Override
+    public boolean deleteAll(List<Note> notes) {
+        session = DBUtils.getInstance(context).getSession();
+        NoteDao noteDao = session.getNoteDao();
+        boolean done=true;
+        try {
+            for (Note note : notes) {
+                if (note.getNoteType() == Note.NoteType.RECYCLE_NOTE.getValue()) {
+                    noteDao.delete(note);
+                } else {
+                    note.setNoteType(Note.NoteType.RECYCLE_NOTE.getValue());
+                    noteDao.update(note);
+                }
+            }
+
+        } catch (Exception e) {
+            done=false;
+        }
+        return done;
+    }
+
+    /**
      * 查找指定类型的笔记
+     *
      * @param noteType
      * @return
      */
@@ -104,7 +135,7 @@ public class NoteModle implements NoteModleImpl<Note> {
 
         if (noteType == Note.NoteType.ALL_NOTE.getValue()) {
             noteQueryBuilder.where(noteQueryBuilder.or(NoteType.eq(Note.NoteType.ARTICLE_NOTE.getValue()),
-                                    NoteType.eq(Note.NoteType.NOTE_NOTE.getValue())));
+                    NoteType.eq(Note.NoteType.NOTE_NOTE.getValue())));
         } else {
             noteQueryBuilder.where(NoteType.eq(noteType));
         }
@@ -115,19 +146,20 @@ public class NoteModle implements NoteModleImpl<Note> {
 
     /**
      * 查找所有的图片
+     *
      * @return
      */
     @Override
     public List<NoteEditModel> queryAllImages(int type) {
-        List<NoteEditModel> modelList=new ArrayList<>();
+        List<NoteEditModel> modelList = new ArrayList<>();
         List<Note> allNotes = query(type);
         String content;
         for (Note note : allNotes) {
-            content="";
+            content = "";
             content = note.getContent();
             NoteEditModel[] models = new Gson().fromJson(content, NoteEditModel[].class);
             for (NoteEditModel model : models) {
-                if (model.getItemFlag()== NoteEditModel.Flag.IMAGE){
+                if (model.getItemFlag() == NoteEditModel.Flag.IMAGE) {
                     modelList.add(model);
                 }
             }
@@ -137,27 +169,28 @@ public class NoteModle implements NoteModleImpl<Note> {
 
     /**
      * 删除一个图片
+     *
      * @return
      */
     @Override
-    public boolean deleteImage(ImageModle imageModle,int type) {
-        boolean done=false;
+    public boolean deleteImage(ImageModle imageModle, int type) {
+        boolean done = false;
         List<Note> allNotes = query(type);
         String content;//笔记内容
         for (Note note : allNotes) {
-            content="";
+            content = "";
             content = note.getContent();
             NoteEditModel[] models = new Gson().fromJson(content, NoteEditModel[].class);
             List<NoteEditModel> modelList = Arrays.asList(models);
             /*
             * 如果条目中有这个图片条目就直接删除掉
             * */
-            List<NoteEditModel> newModleList=new ArrayList<>();
+            List<NoteEditModel> newModleList = new ArrayList<>();
             newModleList.addAll(modelList);
             for (int i = 0; i < modelList.size(); i++) {
                 NoteEditModel model = modelList.get(i);
                 NoteEditModel model1 = imageModle.getnoteEditModel();
-                if (modelList.get(i).equals(imageModle.getnoteEditModel())){
+                if (modelList.get(i).equals(imageModle.getnoteEditModel())) {
                     newModleList.remove(i);
                     note.setContent(new Gson().toJson(newModleList));
                     done = updateOne(note);
@@ -170,14 +203,15 @@ public class NoteModle implements NoteModleImpl<Note> {
 
     /**
      * 删除批量图片
+     *
      * @return
      */
     @Override
-    public boolean deleteAllImages(List<ImageModle> modelList,int type) {
-        boolean done=true;
+    public boolean deleteAllImages(List<ImageModle> modelList, int type) {
+        boolean done = true;
         for (int i = 0; i < modelList.size(); i++) {
-            if (!deleteImage(modelList.get(i),type)){
-                done=false;
+            if (!deleteImage(modelList.get(i), type)) {
+                done = false;
             }
         }
         return done;
@@ -185,6 +219,7 @@ public class NoteModle implements NoteModleImpl<Note> {
 
     /**
      * 保存一个笔记
+     *
      * @param noteType
      * @param isNote
      * @param noteEditModels
