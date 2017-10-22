@@ -207,6 +207,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationMenu = navigationView.getMenu();
         navigationMenu.findItem(R.id.nav_all).setChecked(true);
+
+
     }
 
     /**
@@ -230,10 +232,19 @@ public class MainActivity extends AppCompatActivity
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fl_container);
         currentFragment.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (requestCode) {
             case Configs.REQUEST_PRIVACY_CHECK:
-                if (resultCode==Configs.RESULT_PRIVACY_CHECK_OK){
-                    fragment=NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
+                if (resultCode == Configs.RESULT_PRIVACY_CHECK_OK) {
+                    fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fl_container, fragment)
+                            .commit();
+
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else if (resultCode == Configs.RESULT_PRIVACY_CHECK_FAILED) {
+                    if (fragment != null) {
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.fl_container, fragment)
@@ -241,16 +252,7 @@ public class MainActivity extends AppCompatActivity
 
                         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                         drawer.closeDrawer(GravityCompat.START);
-                }else if (resultCode==Configs.RESULT_PRIVACY_CHECK_FAILED){
-                   if (fragment!=null){
-                       getSupportFragmentManager()
-                               .beginTransaction()
-                               .replace(R.id.fl_container, fragment)
-                               .commit();
-
-                       DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                       drawer.closeDrawer(GravityCompat.START);
-                   }
+                    }
                 }
                 break;
         }
@@ -322,6 +324,8 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         this.menu = menu;
+        menu.findItem(R.id.action_add).setVisible(true);
+        menu.findItem(R.id.action_delete).setVisible(false);
         return true;
     }
 
@@ -342,6 +346,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_add) {
             startActivityForResult(new Intent(MainActivity.this, NoteEditActivity.class), Configs.REQUEST_START_NEW_NOTE);
             return true;
+        } else if (id == R.id.action_delete) {
+            //删除回收站全部笔记
         }
         return super.onOptionsItemSelected(item);
     }
@@ -359,6 +365,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         //设置菜单点击事件
         navigationMenu.findItem(id).setChecked(true);
+        //显示添加按钮
+        menu.findItem(R.id.action_add).setVisible(true);
+        menu.findItem(R.id.action_delete).setVisible(false);
+
         if (id == R.id.nav_all) {
             fragment = NoteListFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         } else if (id == R.id.nav_article) {//文章
@@ -371,22 +381,24 @@ public class MainActivity extends AppCompatActivity
             /*
             * 跳转到验证界面
             * */
-            if (fragment instanceof NoteListFragment){
-                NoteListFragment noteListFragment= (NoteListFragment) fragment;
-                if (noteListFragment.getNoteType()!= Note.NoteType.PRIVACY_NOTE.getValue()){
+            if (fragment instanceof NoteListFragment) {
+                NoteListFragment noteListFragment = (NoteListFragment) fragment;
+                if (noteListFragment.getNoteType() != Note.NoteType.PRIVACY_NOTE.getValue()) {
                     Intent intent = new Intent();
                     intent.setClass(MainActivity.this, TouchIdActivity.class);
-                    startActivityForResult(intent,Configs.REQUEST_PRIVACY_CHECK);
+                    startActivityForResult(intent, Configs.REQUEST_PRIVACY_CHECK);
                     return true;
-                }else {
+                } else {
                     fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
                 }
             }
         } else if (id == R.id.nav_recycle) {//回收站
+            menu.findItem(R.id.action_add).setVisible(false);
+            menu.findItem(R.id.action_delete).setVisible(true);
             fragment = NoteListFragment.getInstance(Note.NoteType.RECYCLE_NOTE.getValue());
         } else if (id == R.id.nav_about) {//关于
             navigationMenu.findItem(id).setChecked(false);
-            Toasts.costom(this,"您点击了关于按钮！",R.drawable.vector_drawable_pen_blue, Color.WHITE,10f,Toast.LENGTH_LONG).show();
+            Toasts.costom(this, "您点击了关于按钮！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
 
         } else if (id == R.id.nav_setting) {//设置:跳转到设置界面
             navigationMenu.findItem(id).setChecked(false);
@@ -397,8 +409,6 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        MenuItem addItem = menu.findItem(R.id.action_add);
-        addItem.setVisible(fragment instanceof NoteListFragment);
 
 
         //切换笔记类型

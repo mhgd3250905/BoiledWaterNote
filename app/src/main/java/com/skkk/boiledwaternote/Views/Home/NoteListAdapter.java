@@ -163,7 +163,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
             //如果是删除类型
             if (dataList.get(position).getNoteType() == Note.NoteType.RECYCLE_NOTE.getValue()) {
-                holder.llShow.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorGray));
+                holder.llShow.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorGrayLight));
             }else {
                 holder.llShow.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite));
             }

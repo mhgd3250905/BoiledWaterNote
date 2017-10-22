@@ -61,5 +61,11 @@
     <string name="btn_cancel">取消</string>
     <string name="btn_next">继续</string>
     <string name="graphy_unlock_password_key">-</string>
+    <string name="settings_graphy_unlock_title">点击设置图形解锁</string>
+    <string name="settings_graphy_unlock_new_password">设置新密码</string>
+    <string name="settings_graphy_unlock_reset_password">重置密码</string>
+    <string name="settings_priovacy_type_title">隐私笔记加密方式</string>
+    <string name="settings_priovacy_type_graphy">图形识别</string>
+    <string name="settings_privacy_switch">隐私笔记加密</string>
 
 </resources>

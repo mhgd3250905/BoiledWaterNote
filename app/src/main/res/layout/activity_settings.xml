@@ -153,8 +153,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/settings_item_content_margin_vertical"
                             android:layout_marginStart="@dimen/settings_item_content_margin_horizontal"
-                            app:title="隐私笔记加密"
-                            app:value="已开启">
+                            app:title="@string/settings_privacy_switch"
+                            app:value="@string/switch_open">
                         </com.skkk.boiledwaternote.CostomViews.SettingItemView>
 
                         <com.skkk.boiledwaternote.CostomViews.SettingItemView
@@ -163,8 +163,18 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/settings_item_content_margin_vertical"
                             android:layout_marginStart="@dimen/settings_item_content_margin_horizontal"
-                            app:title="隐私笔记加密方式"
-                            app:value="图形识别">
+                            app:title="@string/settings_priovacy_type_title"
+                            app:value="@string/privacy_type_touch_id">
+                        </com.skkk.boiledwaternote.CostomViews.SettingItemView>
+
+                        <com.skkk.boiledwaternote.CostomViews.SettingItemView
+                            android:id="@id/settings_graphy_unlock_set"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/settings_item_content_margin_vertical"
+                            android:layout_marginStart="@dimen/settings_item_content_margin_horizontal"
+                            app:title="@string/settings_graphy_unlock_title"
+                            app:value="@string/settings_graphy_unlock_new_password">
                         </com.skkk.boiledwaternote.CostomViews.SettingItemView>
 
                     </LinearLayout>

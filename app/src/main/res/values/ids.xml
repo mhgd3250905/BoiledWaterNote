@@ -117,4 +117,5 @@
     <item name="settings_item_privacy_type" type="id">settings_item_privacy_type</item>
     <item name="tv_graphy_unlock_left" type="id">tv_graphy_unlock_left</item>
     <item name="tv_graphy_unlock_right" type="id">tv_graphy_unlock_right</item>
+    <item name="settings_graphy_unlock_set" type="id">settings_graphy_unlock_set</item>
 </resources>

@@ -1,5 +1,6 @@
 package com.skkk.boiledwaternote.Views.Settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -11,10 +12,13 @@ import com.skkk.boiledwaternote.Configs;
 import com.skkk.boiledwaternote.CostomViews.SettingItemView;
 import com.skkk.boiledwaternote.R;
 import com.skkk.boiledwaternote.Utils.Utils.SpUtils;
+import com.skkk.boiledwaternote.Views.PrivacyProtect.GraphyUnlockActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.view.View.GONE;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
@@ -35,13 +39,20 @@ public class SettingsActivity extends AppCompatActivity {
     SettingItemView settingsItemPrivacySwitch;
     @Bind(R.id.settings_item_privacy_type)
     SettingItemView settingsItemPrivacyType;
+    @Bind(R.id.settings_graphy_unlock_set)
+    SettingItemView settingsGraphyUnlockSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-        //初始化UI
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         initUI();
     }
 
@@ -67,21 +78,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         //设置隐私是否开启
         boolean isPrivacyEnable = SpUtils.getBoolean(getApplicationContext(), Configs.SP_KEY_PRIVACY_ENABLE);
-        settingsItemPrivacySwitch.setValue(isPrivacyEnable?getString(R.string.switch_open):getString(R.string.switch_close));
+        settingsItemPrivacySwitch.setValue(isPrivacyEnable ? getString(R.string.switch_open) : getString(R.string.switch_close));
         settingsItemPrivacyType.setItemEnable(isPrivacyEnable);
-
-        int privacyType=SpUtils.getInt(getApplicationContext(),Configs.SP_KEY_PRIVACY_TYPE);
-        if (privacyType==Configs.PRIVACY_TYPE_TOUCH_ID){//指纹识别
-            settingsItemPrivacyType.setValue(getString(R.string.privacy_type_touch_id));
-        }else if (privacyType==Configs.PRIVACY_TYPE_GRAPHY){//图形解锁
-            settingsItemPrivacyType.setValue(getString(R.string.privacy_type_graphy));
-        }else {//没有设置
-            settingsItemPrivacyType.setValue(getString(R.string.blank));
-        }
-
+        //设置解锁类型的详细信息
+        setPrivacyItemDetail();
     }
 
-    @OnClick({R.id.settings_item_style, R.id.settings_item_theme, R.id.settings_item_quick_entrance, R.id.settings_item_privacy_switch, R.id.settings_item_privacy_type})
+    @OnClick({R.id.settings_item_style, R.id.settings_item_theme, R.id.settings_item_quick_entrance, R.id.settings_item_privacy_switch, R.id.settings_item_privacy_type ,R.id.settings_graphy_unlock_set})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.settings_item_style:      //设置首页笔记列表显示风格
@@ -101,26 +104,63 @@ public class SettingsActivity extends AppCompatActivity {
             case R.id.settings_item_privacy_switch:     //设置隐私开关
                 boolean isPrivacyEnable = SpUtils.getBoolean(getApplicationContext(), Configs.SP_KEY_PRIVACY_ENABLE);
                 if (isPrivacyEnable) {
-                    SpUtils.saveBoolean(getApplicationContext(), Configs.SP_KEY_PRIVACY_ENABLE,false);
+                    SpUtils.saveBoolean(getApplicationContext(), Configs.SP_KEY_PRIVACY_ENABLE, false);
                     settingsItemPrivacySwitch.setValue(getString(R.string.switch_close));
+                    settingsItemPrivacyType.setVisibility(View.GONE);
+                    settingsGraphyUnlockSet.setVisibility(View.GONE);
                 } else {
-                    SpUtils.saveBoolean(getApplicationContext(), Configs.SP_KEY_PRIVACY_ENABLE,true);
+                    SpUtils.saveBoolean(getApplicationContext(), Configs.SP_KEY_PRIVACY_ENABLE, true);
                     settingsItemPrivacySwitch.setValue(getString(R.string.switch_open));
+                    settingsItemPrivacyType.setVisibility(View.VISIBLE);
+                    //设置解锁类型的详细信息
+                    setPrivacyItemDetail();
                 }
                 break;
             case R.id.settings_item_privacy_type:       //设置隐私模式
-                int privacyType=SpUtils.getInt(getApplicationContext(),Configs.SP_KEY_PRIVACY_TYPE);
-                if (privacyType==Configs.PRIVACY_TYPE_TOUCH_ID){//指纹识别
-                    SpUtils.saveInt(getApplicationContext(),Configs.SP_KEY_PRIVACY_TYPE, Configs.PRIVACY_TYPE_GRAPHY);
+                int privacyType = SpUtils.getInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE);
+                if (privacyType == Configs.PRIVACY_TYPE_TOUCH_ID) {//指纹识别
+                    SpUtils.saveInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE, Configs.PRIVACY_TYPE_GRAPHY);
                     settingsItemPrivacyType.setValue(getString(R.string.privacy_type_graphy));
-                }else if (privacyType==Configs.PRIVACY_TYPE_GRAPHY){//图形解锁
-                    SpUtils.saveInt(getApplicationContext(),Configs.SP_KEY_PRIVACY_TYPE, Configs.PRIVACY_TYPE_TOUCH_ID);
+                    settingsGraphyUnlockSet.setVisibility(View.VISIBLE);
+                } else if (privacyType == Configs.PRIVACY_TYPE_GRAPHY) {//图形解锁
+                    SpUtils.saveInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE, Configs.PRIVACY_TYPE_TOUCH_ID);
                     settingsItemPrivacyType.setValue(getString(R.string.privacy_type_touch_id));
-                }else {//没有设置
-                    SpUtils.saveInt(getApplicationContext(),Configs.SP_KEY_PRIVACY_TYPE, Configs.PRIVACY_TYPE_GRAPHY);
+                    settingsGraphyUnlockSet.setVisibility(View.GONE);
+                } else {//没有设置
+                    SpUtils.saveInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE, Configs.PRIVACY_TYPE_GRAPHY);
                     settingsItemPrivacyType.setValue(getString(R.string.privacy_type_graphy));
+                    settingsGraphyUnlockSet.setVisibility(View.GONE);
                 }
                 break;
+            case R.id.settings_graphy_unlock_set:       //设置图形解锁界面
+                if (SpUtils.getString(getApplicationContext(), Configs.GRAPHY_UNLOCK_PASSWORD).isEmpty()) {
+                    Intent intent = new Intent(SettingsActivity.this, GraphyUnlockActivity.class);
+                    intent.putExtra(Configs.KEY_GRAPHY_PURPOSE, Configs.GRAPHY_SET_PASSWORD);
+                    startActivity(intent);
+                }else {
+                    Intent intent = new Intent(SettingsActivity.this, GraphyUnlockActivity.class);
+                    intent.putExtra(Configs.KEY_GRAPHY_PURPOSE, Configs.GRAPHY_RESET_PASSWORD);
+                    startActivity(intent);
+                }
+                break;
+        }
+    }
+
+    private void setPrivacyItemDetail() {
+        int privacyType = SpUtils.getInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE);
+        if (privacyType == Configs.PRIVACY_TYPE_TOUCH_ID) {//指纹识别
+            settingsItemPrivacyType.setValue(getString(R.string.privacy_type_touch_id));
+            settingsGraphyUnlockSet.setVisibility(GONE);//隐藏图形解锁设置
+        } else if (privacyType == Configs.PRIVACY_TYPE_GRAPHY) {//图形解锁
+            settingsItemPrivacyType.setValue(getString(R.string.privacy_type_graphy));
+            settingsGraphyUnlockSet.setVisibility(View.VISIBLE);//显示图形解锁界面
+            if (SpUtils.getString(getApplicationContext(), Configs.GRAPHY_UNLOCK_PASSWORD).isEmpty()) {
+                settingsGraphyUnlockSet.setValue(getString(R.string.settings_graphy_unlock_new_password));
+            }else {
+                settingsGraphyUnlockSet.setValue(getString(R.string.settings_graphy_unlock_reset_password));
+            }
+        } else {//没有设置
+            settingsItemPrivacyType.setValue(getString(R.string.blank));
         }
     }
 
