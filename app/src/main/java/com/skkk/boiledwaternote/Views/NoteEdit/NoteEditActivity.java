@@ -60,17 +60,17 @@ public class NoteEditActivity extends AppCompatActivity {
     RichEditView revEdit;
     @Bind(R.id.activity_edit_container)
     CoordinatorLayout activityEditContainer;
+    @Bind(R.id.ll_edit_container)
+    LinearLayout llEditContainer;
 
     public final static int ALBUM_REQUEST_CODE = 1;
     public final static int CROP_REQUEST = 2;
-    public final static int CAMERA_REQUEST_CODE = 3;
 
+    public final static int CAMERA_REQUEST_CODE = 3;
     //文件拍照保存的位置
     public static String SAVED_IMAGE_DIR_PATH =
             Environment.getExternalStorageDirectory().getPath()
                     + "/SKRecyclerViewDemo/camera/";// 拍照路径
-    @Bind(R.id.ll_edit_container)
-    LinearLayout llEditContainer;
 
 
     private String cameraPath;

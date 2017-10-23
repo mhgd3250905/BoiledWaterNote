@@ -324,7 +324,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
                         currentHolder.isFormat_quote() ||
                         currentHolder.isForamt_show_checkBox() ||
                         currentHolder.isFormat_title()) {
-                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (currentHolder.isFormat_align_center()) {
@@ -337,7 +337,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             case R.id.iv_format_blod:                //设置文字Blod
                 if (currentHolder.isForamt_show_checkBox() ||
                         currentHolder.isFormat_title()) {
-                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -370,7 +370,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             case R.id.iv_format_italic:             //设置文字斜体
                 if (currentHolder.isForamt_show_checkBox() ||
                         currentHolder.isFormat_title()) {
-                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!isSelected) {
@@ -469,7 +469,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             case R.id.iv_format_underlined:         //设置文字下划线
                 if (currentHolder.isForamt_show_checkBox() ||
                         currentHolder.isFormat_title()) {
-                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!isSelected) {
@@ -503,7 +503,7 @@ public class RichEditView extends RelativeLayout implements View.OnClickListener
             case R.id.iv_format_strike_through:     //设置文字删除线
                 if (currentHolder.isForamt_show_checkBox() ||
                         currentHolder.isFormat_title()) {
-                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    Toasts.costom((Activity) mContext, "当前条目不支持设置该文本样式！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!isSelected) {

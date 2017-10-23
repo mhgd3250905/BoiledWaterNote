@@ -118,4 +118,5 @@
     <item name="tv_graphy_unlock_left" type="id">tv_graphy_unlock_left</item>
     <item name="tv_graphy_unlock_right" type="id">tv_graphy_unlock_right</item>
     <item name="settings_graphy_unlock_set" type="id">settings_graphy_unlock_set</item>
+    <item name="ll_rich_edit_container" type="id">ll_rich_edit_container</item>
 </resources>

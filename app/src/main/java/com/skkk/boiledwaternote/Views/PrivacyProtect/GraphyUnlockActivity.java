@@ -3,6 +3,8 @@ package com.skkk.boiledwaternote.Views.PrivacyProtect;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.ColorRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
@@ -41,6 +43,19 @@ public class GraphyUnlockActivity extends BasePrivacyActivity {
     private int unLockStep = 0;
     private View.OnClickListener cancelClickListener, againClickListener, nextClickListener, completedClickListener;
     private boolean checkResult = false;//验证结果
+    public static final int CHECK_OK=1;
+    /*
+    * 接收验证消息
+    * */
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what==CHECK_OK){
+                setResult(Configs.RESULT_PRIVACY_CHECK_OK);
+                finish();
+            }
+        }
+    };
 
 
     @Override
@@ -174,6 +189,9 @@ public class GraphyUnlockActivity extends BasePrivacyActivity {
                     sbPassword = list2String(getString(R.string.graphy_unlock_password_key), passList);
                     if (sbPassword.toString().equals(SpUtils.getString(GraphyUnlockActivity.this, Configs.GRAPHY_UNLOCK_PASSWORD))) {
                         setTvUnlockTitle("解锁成功",R.color.colorTouchPressLine);  //显示标题
+                        Message msg=Message.obtain();
+                        msg.what=CHECK_OK;
+                        handler.sendMessageDelayed(msg,500);
                         return true;
                     } else {
                         setTvUnlockTitle("解锁失败",R.color.colorTouchErrorLine);      //显示标题
@@ -255,5 +273,9 @@ public class GraphyUnlockActivity extends BasePrivacyActivity {
         tvUnlockTitle.setTextColor(ContextCompat.getColor(getApplicationContext(),color));
     }
 
-
+    @Override
+    public void onBackPressed() {
+        setResult(Configs.RESULT_PRIVACY_CHECK_FAILED);
+        super.onBackPressed();
+    }
 }

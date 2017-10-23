@@ -32,11 +32,13 @@ import com.skkk.boiledwaternote.Modles.Note;
 import com.skkk.boiledwaternote.Modles.NoteModle;
 import com.skkk.boiledwaternote.Utils.Utils.DialogUtils;
 import com.skkk.boiledwaternote.Utils.Utils.PermissionsUtils;
+import com.skkk.boiledwaternote.Utils.Utils.SpUtils;
 import com.skkk.boiledwaternote.Utils.Utils.Toasts;
 import com.skkk.boiledwaternote.Views.Home.NoteListFragment;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditActivity;
 import com.skkk.boiledwaternote.Views.NoteEdit.NoteEditPresenter;
 import com.skkk.boiledwaternote.Views.NoteImage.NoteImageFragment;
+import com.skkk.boiledwaternote.Views.PrivacyProtect.GraphyUnlockActivity;
 import com.skkk.boiledwaternote.Views.PrivacyProtect.TouchIdActivity;
 import com.skkk.boiledwaternote.Views.Settings.SettingsActivity;
 
@@ -350,15 +352,17 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.action_delete) {
             //删除回收站全部笔记
-            if (fragment!=null){
-                if (fragment instanceof NoteListFragment){
-                    NoteListFragment noteListFragment= (NoteListFragment) fragment;
+            if (fragment != null) {
+                if (fragment instanceof NoteListFragment) {
+                    NoteListFragment noteListFragment = (NoteListFragment) fragment;
                     List<Note> allNote = noteListFragment.getAllNote();
-                    NoteModle noteModle=new NoteModle(getApplicationContext());
-                    if (noteModle.deleteAll(allNote)){
-                        Toasts.costom(MainActivity.this, "清空回收站所有笔记！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
-                    }else {
-                        Toasts.costom(MainActivity.this, "清空不彻底！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+                    NoteModle noteModle = new NoteModle(getApplicationContext());
+                    if (noteModle.deleteAll(allNote)) {
+                        Toasts.costom(MainActivity.this, "清空回收站所有笔记！", R.drawable.vector_drawable_pen_blue,
+                                Color.WHITE, 10f, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toasts.costom(MainActivity.this, "清空不彻底！", R.drawable.vector_drawable_pen_blue,
+                                Color.WHITE, 10f, Toast.LENGTH_SHORT).show();
                     }
                     noteListFragment.onResume();
                 }
@@ -393,19 +397,54 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_image) {//图片
             fragment = NoteImageFragment.getInstance(Note.NoteType.ALL_NOTE.getValue());
         } else if (id == R.id.nav_privacy) {//隐私
-            /*
-            * 跳转到验证界面
-            * */
-            if (fragment instanceof NoteListFragment) {
-                NoteListFragment noteListFragment = (NoteListFragment) fragment;
-                if (noteListFragment.getNoteType() != Note.NoteType.PRIVACY_NOTE.getValue()) {
+            //如果开启了隐私保护，那么就设置密码验证
+            if (SpUtils.getBoolean(getApplicationContext(),Configs.SP_KEY_PRIVACY_ENABLE)) {
+                /*
+                * 跳转到验证界面
+                * */
+                if (fragment instanceof NoteListFragment) {
+                    NoteListFragment noteListFragment = (NoteListFragment) fragment;
+                    if (noteListFragment.getNoteType() != Note.NoteType.PRIVACY_NOTE.getValue()) {
+                        /*
+                        * 如果上一个内容不是隐私界面
+                        * */
+                        Intent intent = new Intent();
+                        if (SpUtils.getInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE) == Configs.PRIVACY_TYPE_TOUCH_ID) {
+                            /*
+                            * 如果加密方式是指纹识别
+                            * */
+                            intent.setClass(MainActivity.this, TouchIdActivity.class);
+                        } else if (SpUtils.getInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE) == Configs.PRIVACY_TYPE_GRAPHY) {
+                            /*
+                            * 如果加密方式是图形解锁
+                            * */
+                            intent.setClass(MainActivity.this, GraphyUnlockActivity.class);
+                            intent.putExtra(Configs.KEY_GRAPHY_PURPOSE, Configs.GRAPHY_UNLOCK);
+                        }
+                        startActivityForResult(intent, Configs.REQUEST_PRIVACY_CHECK);
+                        return true;
+                    } else {
+                        /*
+                        * 隐私笔记中再次进入隐私笔记不需要进入密码验证
+                        * */
+                        fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
+                    }
+                } else {
                     Intent intent = new Intent();
-                    intent.setClass(MainActivity.this, TouchIdActivity.class);
+                    if (SpUtils.getInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE) == Configs.PRIVACY_TYPE_TOUCH_ID) {
+                        intent.setClass(MainActivity.this, TouchIdActivity.class);
+                    } else if (SpUtils.getInt(getApplicationContext(), Configs.SP_KEY_PRIVACY_TYPE) == Configs.PRIVACY_TYPE_GRAPHY) {
+                        intent.setClass(MainActivity.this, GraphyUnlockActivity.class);
+                        intent.putExtra(Configs.KEY_GRAPHY_PURPOSE, Configs.GRAPHY_UNLOCK);
+                    }
                     startActivityForResult(intent, Configs.REQUEST_PRIVACY_CHECK);
                     return true;
-                } else {
-                    fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
                 }
+            }else {
+                /*
+                * 直接开启内容
+                * */
+                fragment = NoteListFragment.getInstance(Note.NoteType.PRIVACY_NOTE.getValue());
             }
         } else if (id == R.id.nav_recycle) {//回收站
             menu.findItem(R.id.action_add).setVisible(false);
@@ -413,7 +452,8 @@ public class MainActivity extends AppCompatActivity
             fragment = NoteListFragment.getInstance(Note.NoteType.RECYCLE_NOTE.getValue());
         } else if (id == R.id.nav_about) {//关于
             navigationMenu.findItem(id).setChecked(false);
-            Toasts.costom(this, "您点击了关于按钮！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f, Toast.LENGTH_LONG).show();
+            Toasts.costom(this, "您点击了关于按钮！", R.drawable.vector_drawable_pen_blue, Color.WHITE, 10f,
+                    Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_setting) {//设置:跳转到设置界面
             navigationMenu.findItem(id).setChecked(false);
